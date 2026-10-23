@@ -42,6 +42,7 @@ object Kp {
     val slate50 = Color(0xFFF8FAFC); val slate100 = Color(0xFFF1F5F9); val slate200 = Color(0xFFE2E8F0); val slate300 = Color(0xFFCBD5E1)
     val slate400 = Color(0xFF94A3B8); val slate500 = Color(0xFF64748B); val slate600 = Color(0xFF475569); val slate700 = Color(0xFF334155)
     val slate800 = Color(0xFF1E293B); val slate900 = Color(0xFF0F172A); val slate950 = Color(0xFF020617)
+    val gray50 = Color(0xFFF9FAFB); val gray100 = Color(0xFFF3F4F6); val gray500 = Color(0xFF6B7280); val gray600 = Color(0xFF4B5563); val gray800 = Color(0xFF1F2937)
     val gray200 = Color(0xFFE5E7EB); val gray300 = Color(0xFFD1D5DB); val gray400 = Color(0xFF9CA3AF); val gray700 = Color(0xFF374151); val gray900 = Color(0xFF111827)
     val emerald50 = Color(0xFFECFDF5); val emerald100 = Color(0xFFD1FAE5); val emerald300 = Color(0xFF6EE7B7); val emerald600 = Color(0xFF059669); val emerald700 = Color(0xFF047857); val emerald900 = Color(0xFF064E3B)
     val amber50 = Color(0xFFFFFBEB); val amber100 = Color(0xFFFEF3C7); val amber200 = Color(0xFFFDE68A); val amber300 = Color(0xFFFCD34D); val amber400 = Color(0xFFFBBF24); val amber700 = Color(0xFFB45309); val amber800 = Color(0xFF92400E); val amber900 = Color(0xFF78350F)
@@ -122,6 +123,10 @@ fun Modifier.sup(
 }
 
 /** Linha inferior (border-bottom) sem bordas laterais. */
+fun Modifier.linhaSuperior(cor: Color = Kp.gray200, largura: Dp = 1.dp) = drawBehind {
+    drawLine(cor, Offset(0f, largura.toPx() / 2), Offset(size.width, largura.toPx() / 2), largura.toPx())
+}
+
 fun Modifier.linhaInferior(cor: Color, largura: Dp = 1.dp) = drawBehind {
     val y = size.height - largura.toPx() / 2
     drawLine(cor, Offset(0f, y), Offset(size.width, y), largura.toPx())

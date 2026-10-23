@@ -125,7 +125,7 @@ fun BarraInferior(aba: Aba, papel: Papel, aoInicio: () -> Unit, aoAnunciar: () -
                 // `-mt-5`: o círculo sobe 20 px acima da barra; no fluxo ocupa só 20 px, e o rótulo fica abaixo como na origem.
                 Column(Modifier.weight(1f).toque(aoTocar = aoAnunciar), horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(Modifier.height(20.dp), contentAlignment = Alignment.BottomCenter) {
-                        Box(Modifier.wrapContentHeight(Alignment.Bottom, unbounded = true).requiredSize(40.dp).sup(40.dp, fundo = marca.c600, borda = marca.c900, bordaLargura = 4.dp,
+                        Box(Modifier.wrapContentHeight(Alignment.Bottom, unbounded = true).requiredSize(40.dp).sup(40.dp, fundo = marca.c600, borda = if (aba == Aba.ANUNCIAR) Kp.yellow400.copy(.75f) else marca.c900, bordaLargura = 4.dp,
                             forma = CircleShape, sombra = Color.Black.copy(.1f), desfoque = 6.dp), contentAlignment = Alignment.Center) { FaIcone(Fa.PLUS, 16f, Color.White) }
                     }
                     T("Anunciar", 10f, if (aba == Aba.ANUNCIAR) Kp.yellow400 else marca.c100, 500, Modifier.padding(top = 7.dp), linha = 15f)

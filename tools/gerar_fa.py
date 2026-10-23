@@ -11,7 +11,9 @@ for m in re.finditer(r'((?:\.fa-[a-z0-9-]+(?::before)?,?)+)\{(?:--fa|content):"\
     for nome in re.findall(r'\.fa-([a-z0-9-]+)', m.group(1)):
         mapa.setdefault(nome, m.group(2))
 h = open(html, encoding='utf-8').read()
-usados = sorted(set(re.findall(r'fa-([a-z0-9]+(?:-[a-z0-9]+)*)', h)) & set(mapa))
+# Extras usados só pelas funções novas pedidas pelo utilizador (modo poupança, actualizador, copiar referência).
+EXTRAS = {'copy', 'play', 'pause', 'download', 'leaf', 'lock-open', 'circle-exclamation'}
+usados = sorted((set(re.findall(r'fa-([a-z0-9]+(?:-[a-z0-9]+)*)', h)) | EXTRAS) & set(mapa))
 ignorar = {'solid', 'regular', 'brands', 'spin', 'pulse', 'fw', 'lg', 'xs', 'sm', 'xl', '2x', '3x', 'beat', 'shake', 'bounce', 'fade', 'flip'}
 linhas = []
 for n in usados:

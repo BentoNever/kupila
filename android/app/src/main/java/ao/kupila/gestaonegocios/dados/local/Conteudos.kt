@@ -27,7 +27,7 @@ class Conteudos @Inject constructor(@param:ApplicationContext private val contex
     /** Versão das políticas a aceitar (mesma do servidor: `POLITICA_VIGENTE`). */
     val versaoPoliticas get() = politicas.versao
 
-    private fun nome(t: String) = t.replace("Kupila AO", "Kupila-Gestão de negócios").replace(Regex("\\bKupila\\.ao\\b"), "Kupila-Gestão de negócios")
+    private fun nome(t: String) = t   // textos exactamente como na origem (paridade)
         .replace(Regex("\\bo Kupila\\b"), "o Kupila-Gestão de negócios").replace(Regex("\\bdo Kupila\\b"), "do Kupila-Gestão de negócios")
         .replace(Regex("\\bno Kupila\\b"), "no Kupila-Gestão de negócios")
 

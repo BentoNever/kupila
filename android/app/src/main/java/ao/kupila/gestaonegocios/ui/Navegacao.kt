@@ -75,7 +75,10 @@ object Rotas {
     const val ANUNCIAR = "anunciar?rascunho={rascunho}&editar={editar}"; const val POLITICAS_ANUNCIAR = "politicas-anunciar"
     fun anunciar(rascunho: String? = null, editar: String? = null) = "anunciar?rascunho=${rascunho.orEmpty()}&editar=${editar.orEmpty()}"
     const val CHECKOUT = "checkout/{id}"; fun checkout(id: String) = "checkout/$id"
-    const val MEUS = "meus-anuncios"; const val NOTIFICACOES = "notificacoes"; const val ADMIN = "admin"
+    const val MEUS = "meus-anuncios"; const val NOTIFICACOES = "notificacoes"; const val ADMIN = "admin"; const val PENDENTES = "pendentes"; const val CONFIANCA = "confianca"; const val PERFIL = "perfil-proprietario"; const val AJUSTES = "ajustes"
+    const val UTILIZADORES = "utilizadores"; const val MONITOR = "monitor"; const val HISTORICO = "historico"; const val DIRECTORIO = "directorio"; const val MONETIZACAO = "monetizacao"
+    const val MONITOR_DETALHE = "monitor-detalhe/{tipo}?c={c}&m={m}"; fun monitorDetalhe(t: String, c: String = "", m: String = "") = "monitor-detalhe/$t?c=$c&m=$m"
+    const val FICHA = "ficha/{uid}"; fun ficha(uid: String) = "ficha/$uid"
 }
 
 @Composable
@@ -157,7 +160,7 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
             avancar = { avancarPara?.let { nav.navigate(it) }; avancarPara = null }, podeAvancar = avancarPara != null && !modalAberto,
             sincronizar = { abrir(Rotas.POUPANCA) }, porSincronizar = 0,
             meusAnuncios = { nav.popBackStack(BASE, false); aba = Aba.PROPRIETARIO }, avisoMeusAnuncios = false,
-            pendentes = { abrir(Rotas.NEGOCIOS) }, nPendentes = pendentes, ajustes = { abrir(Rotas.ADMIN) },
+            pendentes = { abrir(Rotas.PENDENTES) }, nPendentes = pendentes, ajustes = { abrir(Rotas.AJUSTES) },
             faq = { abrir(Rotas.FAQ) }, simulador = { abrir(Rotas.SIMULADOR) }, politicas = { abrir(Rotas.POLITICAS) },
             conta = { abrir(Rotas.CONTA) }, notificacoes = { abrir(Rotas.NOTIFICACOES) }, naoLidas = naoLidas,
             inicio = { nav.popBackStack(BASE, false); aba = Aba.EXPLORAR },
@@ -168,11 +171,15 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                 BarraLocalizacao(r.perfil.nome, explorar.geografia.provincias, filtro.provincia, explorar::provincia)
                 when (aba) {
                     Aba.EXPLORAR -> ao.kupila.gestaonegocios.ui.home.HomeEcra(explorar, aoAbrir = { abrir(Rotas.detalhe(it)) },
-                        aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.NEGOCIOS) })
+                        aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.CONFIANCA) },
+                        reservas = { ao.kupila.gestaonegocios.ui.negocios.ReservasHome(hiltViewModel(key = "home-reservas"), aoPagar = { abrir(Rotas.checkout(it)) }, aoProduto = { abrir(Rotas.detalhe(it)) }) })
                     Aba.ANUNCIAR -> AnunciarEcra(hiltViewModel(key = "aba-anunciar"), aoVoltar = { aba = Aba.EXPLORAR }, aoLerPoliticas = { abrir(Rotas.POLITICAS) },
                         aoPagar = { aba = Aba.EXPLORAR; abrir(Rotas.checkout(it)) }, aoPublicado = { aba = Aba.EXPLORAR; abrir(Rotas.detalhe(it)) })
-                    Aba.PROPRIETARIO -> ao.kupila.gestaonegocios.ui.meus.MeusAnunciosEcra(hiltViewModel(key = "aba-proprietario"), aoVoltar = { aba = Aba.EXPLORAR },
-                        aoAbrir = { abrir(Rotas.detalhe(it)) }, aoEditar = { abrir(Rotas.anunciar(editar = it)) })
+                    Aba.PROPRIETARIO -> ao.kupila.gestaonegocios.ui.painel.PainelEcra(hiltViewModel(key = "aba-painel"), aoAbrir = { abrir(Rotas.detalhe(it)) },
+                        aoEditar = { abrir(Rotas.anunciar(editar = it)) }, aoPerfil = { abrir(Rotas.PERFIL) },
+                        aoUtilizadores = { abrir(Rotas.UTILIZADORES) }, aoCatalogo = { abrir(Rotas.monitorDetalhe("PRODUCTS")) }, aoMonitor = { abrir(Rotas.MONITOR) },
+                        aoAdministradores = { abrir(Rotas.DIRECTORIO) }, aoAutorizacoes = { abrir(Rotas.MEUS) }, aoHistorico = { abrir(Rotas.HISTORICO) },
+                        aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.CONFIANCA) })
                 }
             }
             NavHost(nav, startDestination = BASE, Modifier.fillMaxSize(),
@@ -199,14 +206,30 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                     PoliticasEcra(p.manualPoliticas, p.versao, comAceite = true, aoVoltar = fechar, aoConfirmarLeitura = { anunciar.leituraPolitica(); fechar() })
                 } }
                 composable(Rotas.CHECKOUT) { Modal(fechar) {
-                    CheckoutEcra(hiltViewModel(), aoVoltar = fechar, aoConcluido = { tipo, _, listingId ->
+                    CheckoutEcra(hiltViewModel(), aoVoltar = fechar, aoRegras = { abrir(Rotas.POLITICAS) }, aoConcluido = { tipo, _, listingId ->
                         nav.navigate(if (tipo == "RESERVATION") Rotas.NEGOCIOS else Rotas.detalhe(listingId)) { popUpTo(Rotas.CHECKOUT) { inclusive = true } }
                     })
                 } }
                 composable(Rotas.RASCUNHOS) { Modal(fechar) {
                     RascunhosEcra(hiltViewModel(), aoVoltar = fechar, aoAbrir = { abrir(Rotas.anunciar(rascunho = it)) }, aoNovo = { nav.popBackStack(BASE, false); aba = Aba.ANUNCIAR })
                 } }
-                composable(Rotas.POUPANCA) { Modal(fechar) { PoupancaEcra(aoVoltar = fechar) } }
+                composable(Rotas.POUPANCA) { Modal(fechar) { PoupancaEcra(aoVoltar = fechar, offline = r.offline,
+                    aoSincronizar = { ambito.launch { r.eventos.actualizar(r.eventos.essenciais + r.eventos.administracao); r.catalogo.sincronizar(automatica = false) } },
+                    aoActualizacao = { abrir(Rotas.ACTUALIZACAO) }) } }
+                composable(Rotas.PENDENTES) { Modal(fechar) { ao.kupila.gestaonegocios.ui.pendentes.PendentesEcra(hiltViewModel(), aoVoltar = fechar) } }
+                composable(Rotas.AJUSTES) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.AjustesEcra(hiltViewModel(), aoFechar = fechar, aoHistorico = { abrir(Rotas.MONETIZACAO) }) } }
+                composable(Rotas.MONETIZACAO) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.MonetizacaoEcra(hiltViewModel(), aoFechar = fechar) } }
+                composable(Rotas.UTILIZADORES) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.UtilizadoresEcra(hiltViewModel(), aoFechar = fechar, aoFicha = { abrir(Rotas.ficha(it)) }) } }
+                composable(Rotas.FICHA) { e -> Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.FichaUtilizadorEcra(hiltViewModel(), e.arguments?.getString("uid").orEmpty(), aoFechar = fechar, aoHistorico = { abrir(Rotas.HISTORICO) }) } }
+                composable(Rotas.MONITOR) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.MonitorEcra(hiltViewModel(), aoFechar = fechar, aoDetalhe = { t, c, m -> abrir(Rotas.monitorDetalhe(t, c, m)) }) } }
+                composable(Rotas.MONITOR_DETALHE, arguments = listOf(navArgument("c") { type = NavType.StringType; defaultValue = "" }, navArgument("m") { type = NavType.StringType; defaultValue = "" })) { e -> Modal(fechar) {
+                    ao.kupila.gestaonegocios.ui.admin.MonitorDetalheEcra(hiltViewModel(), e.arguments?.getString("tipo").orEmpty(), e.arguments?.getString("c").orEmpty(), e.arguments?.getString("m").orEmpty(),
+                        aoFechar = fechar, aoFicha = { abrir(Rotas.ficha(it)) }, aoProduto = { abrir(Rotas.detalhe(it)) })
+                } }
+                composable(Rotas.HISTORICO) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.HistoricoEcra(hiltViewModel(), aoFechar = fechar) } }
+                composable(Rotas.DIRECTORIO) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.DirectorioEcra(hiltViewModel(), aoFechar = fechar, aoFicha = { abrir(Rotas.ficha(it)) }) } }
+                composable(Rotas.PERFIL) { Modal(fechar) { ao.kupila.gestaonegocios.ui.perfil.PerfilProprietarioEcra(hiltViewModel(), aoFechar = fechar) } }
+                composable(Rotas.CONFIANCA) { Modal(fechar) { ao.kupila.gestaonegocios.ui.confianca.ConfiancaEcra(hiltViewModel(), aoVoltar = fechar) } }
                 composable(Rotas.MEUS) { Modal(fechar) {
                     ao.kupila.gestaonegocios.ui.meus.MeusAnunciosEcra(hiltViewModel(), aoVoltar = fechar, aoAbrir = { abrir(Rotas.detalhe(it)) }, aoEditar = { abrir(Rotas.anunciar(editar = it)) })
                 } }
@@ -227,13 +250,13 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                 composable(Rotas.CONTA) { Modal(fechar) {
                     ContaEcra(r.perfil, r.offline, modoLocal, raiz.ajustes::definirModoLocal,
                         aoFaq = { abrir(Rotas.FAQ) }, aoPoliticas = { abrir(Rotas.POLITICAS) }, aoSimulador = { abrir(Rotas.SIMULADOR) },
-                        aoSobre = { abrir(Rotas.SOBRE) }, aoProtecao = { abrir(Rotas.PROTECAO) }, aoPerfilProprietario = null,
+                        aoSobre = { abrir(Rotas.SOBRE) }, aoProtecao = { abrir(Rotas.PROTECAO) }, aoPerfilProprietario = { abrir(Rotas.PERFIL) },
                         aoSair = { ambito.launch { raiz.sessao.sair() } },
                         aoRascunhos = if (anuncia) ({ abrir(Rotas.RASCUNHOS) }) else null,
                         aoPoupanca = { abrir(Rotas.POUPANCA) }, aoActualizacao = { abrir(Rotas.ACTUALIZACAO) },
                         aoMeusAnuncios = if (anuncia) ({ nav.popBackStack(BASE, false); aba = Aba.PROPRIETARIO }) else null,
                         aoNotificacoes = { abrir(Rotas.NOTIFICACOES) }, naoLidas = naoLidas,
-                        aoAdmin = if (Permissoes.eAdministrador(r.perfil)) ({ abrir(Rotas.ADMIN) }) else null,
+                        aoAdmin = if (Permissoes.eAdministrador(r.perfil)) ({ abrir(Rotas.MONITOR) }) else null,
                         aoFechar = fechar, aoNegocios = { abrir(Rotas.NEGOCIOS) })
                 } }
                 composable(Rotas.FAQ) { Modal(fechar) { FaqEcra(raiz.conteudos.perguntas(Permissoes.eAdministrador(r.perfil)), aoVoltar = fechar, aoPoliticas = { abrir(Rotas.POLITICAS) }) } }

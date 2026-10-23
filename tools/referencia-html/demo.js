@@ -27,6 +27,13 @@
   window.__entrar = function (uid) {
     if (window.KupilaAccessGate208) KupilaAccessGate208.explicit = true;
     document.documentElement.classList.remove('kupila-login-first-208');
+    const t = new Date().toISOString();
+    const demo = [['MGR-001', 'Administrador Kupila', 'admin@kupila.ao', 'GESTOR'], ['OWN-001', 'Proprietário Demo', 'dono@kupila.ao', 'PROPRIETARIO'], ['CLI-001', 'Cliente Demo', 'cliente@kupila.ao', 'CLIENTE']];
+    try {
+      for (const [id, name, email, role] of demo) if (!appUsers.some((u) => u.id === id)) appUsers.push({ id, name, email, role, status: 'ACTIVE', phonePrimary: '923000000', province: 'Luanda', municipality: 'Talatona', createdAt: t, updatedAt: t });
+      if (!auditLog.length) auditLog.push({ id: 'AUD-1', action: 'LOGIN', actorId: 'MGR-001', actorName: 'Administrador Kupila', actorRole: 'GESTOR', entity: 'USER', entityId: 'MGR-001', details: 'Sessão iniciada.', createdAt: t },
+        { id: 'AUD-2', action: 'CREATE_LISTING', actorId: 'OWN-001', actorName: 'Proprietário Demo', actorRole: 'PROPRIETARIO', entity: 'LISTING', entityId: 'REF-2', details: 'Anúncio publicado.', createdAt: t });
+    } catch (_) { }
     activeUserId = uid; mockListings = window.__demoListings;
     try { showAppScreen(); } catch (_) { }
     activeUserId = uid;

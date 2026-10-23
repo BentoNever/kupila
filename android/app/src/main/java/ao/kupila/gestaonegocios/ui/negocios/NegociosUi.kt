@@ -52,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ao.kupila.gestaonegocios.dados.eventos.Registo
 import ao.kupila.gestaonegocios.dominio.financeiro.Dinheiro
@@ -371,5 +372,34 @@ private fun CartaoPendencia(vm: NegociosViewModel, p: Pendencia, ocupado: String
             }
         }, confirmButton = { TextButton(onClick = { vm.rejeitar(i, motivo, porReferencia); rejeitar = false }) { Text("Rejeitar") } },
             dismissButton = { TextButton(onClick = { rejeitar = false }) { Text("Cancelar") } })
+    }
+}
+
+/** "Minhas Reservas / acompanhamento em tempo real" da Home (`#my-reservations-section`, HTML 6753-6762): só aparece se houver reservas ou pagamentos. */
+@Composable
+fun ReservasHome(vm: NegociosViewModel, aoPagar: (String) -> Unit, aoProduto: (String) -> Unit) {
+    val rs by vm.reservasCliente.collectAsStateWithLifecycle()
+    val pag by vm.pagamentosAbertos.collectAsStateWithLifecycle()
+    val rfs by vm.reembolsosCliente.collectAsStateWithLifecycle()
+    val ocupado by vm.ocupado.collectAsStateWithLifecycle()
+    if (rs.isEmpty() && pag.isEmpty()) return
+    Column(Modifier.fillMaxWidth().padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(verticalAlignment = Alignment.Bottom) {
+            Column(Modifier.weight(1f)) {
+                ao.kupila.gestaonegocios.ui.kp.T("Reservas e Reembolsos", 13f, ao.kupila.gestaonegocios.ui.kp.Kp.slate900, 900)
+                ao.kupila.gestaonegocios.ui.kp.T("Acompanhamento em tempo real", 8f, ao.kupila.gestaonegocios.ui.kp.Kp.slate400)
+            }
+            ao.kupila.gestaonegocios.ui.kp.KpPilula("AO VIVO", ao.kupila.gestaonegocios.ui.kp.Kp.amber100, ao.kupila.gestaonegocios.ui.kp.Kp.amber800, tamanho = 7f, peso = 900,
+                icone = ao.kupila.gestaonegocios.ui.comum.Fa.CLOCK)
+        }
+        pag.forEach { i ->
+            Card(onClick = { aoPagar(i.id) }, modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(12.dp)) {
+                    Text(i.s("listingTitle"), fontWeight = FontWeight.SemiBold, fontSize = 11.sp)
+                    Text("${if (i.s("type") == "RESERVATION") "Sinal" else "Publicação"} · ${aoa(i.n("amount"))} · ${rotuloIntencao(i.s("status"))}", fontSize = 9.sp)
+                }
+            }
+        }
+        rs.forEach { rc -> CartaoReservaCliente(vm, rc, rfs.firstOrNull { it.s("reservationId") == rc.r.id }, ocupado, aoProduto) }
     }
 }

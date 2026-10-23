@@ -1,0 +1,11 @@
+﻿[{"nome":"24-checkout-1","recarregar":true,"ficheiro":"demo.js","espera":200,"foto":false,"js":"__entrar('CLI-001'); return 'ok'"},
+ {"nome":"24-checkout-1","ficheiro":"checkout.js","espera":1500,"js":"return __checkout()"},
+ {"nome":"24-checkout-1-r1","espera":600,"js":"return __rolar(650)"},
+ {"nome":"24-checkout-1-r2","espera":600,"js":"return __rolar(1300)"},
+ {"nome":"25-checkout-2","espera":1200,"js":"__passo2(); return __rolar(0)"},
+ {"nome":"25-checkout-2-r1","espera":600,"js":"return __rolar(650)"},
+ {"nome":"26-recibo","recarregar":true,"ficheiro":"demo.js","espera":200,"foto":false,"js":"__entrar('CLI-001'); return 'ok'"},
+ {"nome":"26-recibo","ficheiro":"checkout.js","espera":1500,"js":"return __mostrar('modal-receipt')"},
+ {"nome":"27-reembolso","recarregar":true,"ficheiro":"demo.js","espera":200,"foto":false,"js":"__entrar('CLI-001'); return 'ok'"},
+ {"nome":"27-reembolso","ficheiro":"checkout.js","espera":1500,"js":"return __mostrar('modal-refund-request')"},
+ {"nome":"27-reembolso-r1","espera":600,"js":"return __rolar(650)"}]

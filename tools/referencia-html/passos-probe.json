@@ -1,0 +1,38 @@
+[
+    {
+        "nome":  "53-directorio",
+        "recarregar":  true,
+        "ficheiro":  "demo.js",
+        "espera":  1800,
+        "js":  "__entrar(\"MGR-001\"); await new Promise(r=\u003esetTimeout(r,500)); try{ openAdministratorDirectory() }catch(e){ return \"ERRO \"+e.message } return \"ok\""
+    },
+    {
+        "nome":  "54-historico",
+        "recarregar":  true,
+        "ficheiro":  "demo.js",
+        "espera":  1800,
+        "js":  "__entrar(\"MGR-001\"); await new Promise(r=\u003esetTimeout(r,500)); try{ openOperationHistory() }catch(e){ return \"ERRO \"+e.message } return \"ok\""
+    },
+    {
+        "nome":  "54-historico-r1",
+        "espera":  600,
+        "js":  "return __rolar(650)"
+    },
+    {
+        "nome":  "57-ficha",
+        "recarregar":  true,
+        "ficheiro":  "demo.js",
+        "espera":  1800,
+        "js":  "__entrar(\"MGR-001\"); await new Promise(r=\u003esetTimeout(r,500)); try{ openUserRecord(\"OWN-001\") }catch(e){ return \"ERRO \"+e.message } return \"ok\""
+    },
+    {
+        "nome":  "57-ficha-r1",
+        "espera":  600,
+        "js":  "return __rolar(650)"
+    },
+    {
+        "nome":  "57-ficha-r2",
+        "espera":  600,
+        "js":  "return __rolar(1300)"
+    }
+]

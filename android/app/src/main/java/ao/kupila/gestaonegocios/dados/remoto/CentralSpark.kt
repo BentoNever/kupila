@@ -129,6 +129,19 @@ class CentralSpark @Inject constructor() : ServicoCentral {
         }
     }
 
+    /**
+     * Perfil próprio (saveOwnerRegistration): as regras de produção deixam o titular alterar os seus dados, nunca papel, estado,
+     * data de criação ou e-mail. Foto inline como a origem (data URL comprimido).
+     */
+    suspend fun actualizarPerfil(campos: Map<String, Any?>, fotoJpeg: ByteArray?) {
+        val agora = Origem.agoraIso()
+        val m = campos.filterKeys { it in setOf("name", "phonePrimary", "phoneAlt", "province", "municipality", "neighborhood", "alertChannel") }.toMutableMap()
+        if (fotoJpeg != null) { m["photoInline"] = Origem.dataUrlJpeg(fotoJpeg); m["photoInlineBytes"] = fotoJpeg.size; m["photoSource"] = "FIRESTORE_INLINE"; m["photoUpdatedAt"] = agora }
+        m["updatedAt"] = agora; m["ownerRegistrationCompletedAt"] = agora
+        db.document("users/$uid").set(m, com.google.firebase.firestore.SetOptions.merge()).await()
+        auditar("UPDATE_OWN_PROFILE", "USER", uid, "Cadastro do Proprietário actualizado pelo titular (Android).")
+    }
+
     /** Auditoria no formato da origem (`recordOperation`, HTML 12397): permitido pelas regras para o próprio actor. */
     suspend fun auditar(accao: String, entidade: String, entidadeId: String, detalhes: String = "") {
         runCatching {

@@ -86,6 +86,7 @@ class NegociosViewModel @Inject constructor(
             .sortedWith(compareByDescending<Pendencia> { it.coincide }.thenBy { it.intent.ms("receiptSubmittedAt") ?: 0 })
     }, emptyList())
     val reembolsosAdmin = st(lista(Conjunto.REEMBOLSOS_TODOS), emptyList())
+    val intencoesTodas = st(lista(Conjunto.INTENCOES_TODAS), emptyList())
     val reservasTodas = st(lista(Conjunto.RESERVAS_TODAS), emptyList())
 
     private val _mensagem = MutableStateFlow<String?>(null); val mensagem: StateFlow<String?> = _mensagem.asStateFlow()

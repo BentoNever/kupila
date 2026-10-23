@@ -211,8 +211,10 @@ class SessaoRepositorio @Inject constructor(
     // ---------------------------------------------------------------- vigilância da sessão
     private fun vigiar(uid: String, sessaoId: String) {
         escuta?.remove()
-        escuta = FirebaseFirestore.getInstance().document("activeSessions/$uid").addSnapshotListener { s, _ ->
-            val actual = s?.getString("sessionId") ?: return@addSnapshotListener
+        escuta = FirebaseFirestore.getInstance().document("activeSessions/$uid").addSnapshotListener(com.google.firebase.firestore.MetadataChanges.INCLUDE) { s, _ ->
+            // Só instantâneos confirmados pelo servidor: a cache local pode trazer a sessão anterior e encerrar esta por engano.
+            if (s == null || s.metadata.isFromCache || s.metadata.hasPendingWrites()) return@addSnapshotListener
+            val actual = s.getString("sessionId") ?: return@addSnapshotListener
             if (actual != sessaoId && _estado.value is EstadoSessao.Activa) ambito.launch { substituida() }
         }
         batimento?.cancel()

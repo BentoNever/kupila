@@ -79,12 +79,19 @@ class AdminViewModel @Inject constructor(
     private val utilizadores: UtilizadoresRepositorio,
     private val testemunhos: TestemunhosRepositorio,
     val geografia: Geografia,
+    private val documentos: ao.kupila.gestaonegocios.dados.media.Documentos,
+    private val imagens: ao.kupila.gestaonegocios.dados.media.Imagens,
 ) : ViewModel() {
     private fun lista(c: Conjunto) = conta.recursos.flatMapLatest { it?.eventos?.observar(c) ?: flowOf(emptyList()) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val users = lista(Conjunto.UTILIZADORES)
     val presenca = lista(Conjunto.PRESENCA)
     val testemunhosPendentes = lista(Conjunto.TESTEMUNHOS_PENDENTES)
+    val auditoria = lista(Conjunto.AUDITORIA)
+    val reservas = lista(Conjunto.RESERVAS_TODAS)
+    val intencoes = lista(Conjunto.INTENCOES_TODAS)
+    val produtos = conta.recursos.flatMapLatest { it?.catalogo?.todos() ?: flowOf(emptyList()) }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val actualizadoEm = MutableStateFlow(System.currentTimeMillis())
     val mensagem = MutableStateFlow<String?>(null)
     val ocupado = MutableStateFlow(false)
     private val admin get() = conta.recursos.value!!.perfil
@@ -93,7 +100,8 @@ class AdminViewModel @Inject constructor(
     init { actualizar() }
     /** Utilizadores por delta (`updatedAt`): só o que mudou desde a última abertura. */
     fun actualizar() = viewModelScope.launch {
-        conta.recursos.value?.eventos?.actualizar(listOf(Conjunto.UTILIZADORES, Conjunto.PRESENCA, Conjunto.TESTEMUNHOS_PENDENTES))
+        conta.recursos.value?.eventos?.actualizar(listOf(Conjunto.UTILIZADORES, Conjunto.PRESENCA, Conjunto.TESTEMUNHOS_PENDENTES, Conjunto.AUDITORIA, Conjunto.RESERVAS_TODAS, Conjunto.INTENCOES_TODAS))
+        actualizadoEm.value = System.currentTimeMillis()
     }
 
     private fun accao(bloco: suspend () -> String) = viewModelScope.launch {
@@ -106,9 +114,24 @@ class AdminViewModel @Inject constructor(
 
     fun estado(uid: String, e: EstadoConta, motivo: String) = accao { utilizadores.alterarEstado(admin, uid, e.codigo, motivo.ifBlank { "Alteração administrativa." }); "Estado: ${e.rotulo}." }
     fun promover(uid: String, motivo: String) = accao { utilizadores.concederAdministrador(admin, uid, motivo); "Privilégios de Administrador concedidos." }
-    fun criar(papel: Papel, nome: String, email: String, senha: String, tel: String, prov: String, mun: String, bairro: String) = accao {
+    fun criar(papel: Papel, nome: String, email: String, senha: String, tel: String, prov: String, mun: String, bairro: String,
+              estado: EstadoConta = EstadoConta.ACTIVA, telAlt: String = "", foto: android.net.Uri? = null, aoCriado: () -> Unit = {}) = accao {
         require(nome.isNotBlank() && email.contains('@') && senha.length >= 6) { "Indique nome, e-mail válido e palavra-passe com 6+ caracteres." }
-        utilizadores.criar(admin, papel, EstadoConta.ACTIVA.codigo, nome, email, senha, tel, "", prov, mun, bairro, null); "Conta criada."
+        require(tel.length == 9) { "Indique o telefone principal com 9 dígitos." }
+        require(papel != Papel.PROPRIETARIO || (mun.isNotBlank() && bairro.isNotBlank())) { "Indique província, município e bairro do Proprietário." }
+        val dataUrl = foto?.let { ao.kupila.gestaonegocios.dados.remoto.Origem.dataUrlJpeg(imagens.fotoPerfil(it)) }
+        utilizadores.criar(admin, papel, estado.codigo, nome.trim(), email.trim(), senha, tel, telAlt, prov, mun, bairro.trim(), dataUrl)
+        aoCriado(); "Utilizador guardado."
+    }
+    /** "Baixar JPG/PDF" da ficha (`exportUserRecordJPG166/PDF166`): gera no aparelho e abre o seletor de partilha. */
+    fun exportarFicha(u: Registo, linhas: List<ao.kupila.gestaonegocios.dados.media.LinhaDoc>, pdf: Boolean, aoPronto: (android.content.Intent) -> Unit) = viewModelScope.launch {
+        val nome = "ficha-" + u.id.take(12)
+        val titulo = "Ficha do Utilizador"; val sub = u.s("name").ifBlank { u.s("email") }
+        val rodape = "Documento gerado pelo Administrador em " + java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.forLanguageTag("pt-AO")).format(java.util.Date()) + ". Dados pessoais confidenciais."
+        runCatching {
+            val ficheiro = if (pdf) documentos.pdf(nome, titulo, sub, linhas, rodape) else documentos.jpg(nome, titulo, sub, linhas, rodape)
+            aoPronto(documentos.partilhar(ficheiro, if (pdf) "application/pdf" else "image/jpeg"))
+        }.onFailure { mensagem.value = "Não foi possível gerar a ficha." }
     }
     fun moderar(id: String, aprovado: Boolean) = accao { testemunhos.moderar(id, aprovado, admin); if (aprovado) "Testemunho publicado." else "Testemunho rejeitado." }
     fun guardar(a: AjustesPlataforma) = accao {
