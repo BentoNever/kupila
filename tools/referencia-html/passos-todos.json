@@ -1,0 +1,388 @@
+[
+ {
+  "nome": "00-init",
+  "ficheiro": "demo.js",
+  "foto": false,
+  "espera": 300,
+  "js": "return 'ok'"
+ },
+ {
+  "nome": "20-detalhe",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openDetails('REF-1') }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "20-detalhe-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "20-detalhe-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "20-detalhe-r3",
+  "espera": 500,
+  "js": "return __rolar(2100)"
+ },
+ {
+  "nome": "20-detalhe-r4",
+  "espera": 500,
+  "js": "return __rolar(2800)"
+ },
+ {
+  "nome": "21-detalhe-reservado",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openDetails('REF-3') }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "21-detalhe-reservado-r1",
+  "espera": 500,
+  "js": "return __rolar(900)"
+ },
+ {
+  "nome": "22-detalhe-dono",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('OWN-001'); await new Promise(r=>setTimeout(r,400)); try{ openDetails('REF-2') }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "22-detalhe-dono-r1",
+  "espera": 500,
+  "js": "return __rolar(900)"
+ },
+ {
+  "nome": "22-detalhe-dono-r2",
+  "espera": 500,
+  "js": "return __rolar(1800)"
+ },
+ {
+  "nome": "23-checkout",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openDetails('REF-1'); await new Promise(r=>setTimeout(r,600)); document.querySelector('#modal-details button[onclick*=\"Checkout\"],#modal-details button[onclick*=\"checkout\"],#modal-details button[onclick*=\"reserv\"]')?.click() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "23-checkout-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "23-checkout-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "30-sessao",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('OWN-001'); await new Promise(r=>setTimeout(r,400)); try{ openSessionModal() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "30-sessao-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "31-notificacoes",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('OWN-001'); await new Promise(r=>setTimeout(r,400)); try{ openNotifications() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "32-ajustes-admin",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openSettings() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "32-ajustes-admin-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "32-ajustes-admin-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "32-ajustes-admin-r3",
+  "espera": 500,
+  "js": "return __rolar(2100)"
+ },
+ {
+  "nome": "32-ajustes-admin-r4",
+  "espera": 500,
+  "js": "return __rolar(2800)"
+ },
+ {
+  "nome": "32-ajustes-admin-r5",
+  "espera": 500,
+  "js": "return __rolar(3500)"
+ },
+ {
+  "nome": "33-faq",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openKupilaFaq() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "33-faq-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "34-simulador",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openIntermediationSimulator() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "34-simulador-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "34-simulador-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "35-politicas",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openKupilaPolicies('GENERAL') }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "35-politicas-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "36-reserva-protegida",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openReservationProtectionInfo() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "36-reserva-protegida-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "37-offline",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openKupilaOfflineCenter() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "38-testemunhos",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('CLI-001'); await new Promise(r=>setTimeout(r,400)); try{ openTrustCenter() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "38-testemunhos-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "40-anunciar",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('OWN-001'); await new Promise(r=>setTimeout(r,400)); try{ startCreateListing() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "40-anunciar-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "40-anunciar-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "40-anunciar-r3",
+  "espera": 500,
+  "js": "return __rolar(2100)"
+ },
+ {
+  "nome": "40-anunciar-r4",
+  "espera": 500,
+  "js": "return __rolar(2800)"
+ },
+ {
+  "nome": "40-anunciar-r5",
+  "espera": 500,
+  "js": "return __rolar(3500)"
+ },
+ {
+  "nome": "40-anunciar-r6",
+  "espera": 500,
+  "js": "return __rolar(4200)"
+ },
+ {
+  "nome": "40-anunciar-r7",
+  "espera": 500,
+  "js": "return __rolar(4900)"
+ },
+ {
+  "nome": "41-proprietario",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('OWN-001'); await new Promise(r=>setTimeout(r,400)); try{ switchTab('my-listings') }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "41-proprietario-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "41-proprietario-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "42-registo-proprietario",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('OWN-001'); await new Promise(r=>setTimeout(r,400)); try{ openOwnerRegistration() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "42-registo-proprietario-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "42-registo-proprietario-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "43-autorizacoes",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('OWN-001'); await new Promise(r=>setTimeout(r,400)); try{ openAuthorizationCenter() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "50-admin-pendentes",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openAdminPendingProcesses() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "50-admin-pendentes-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "51-admin-monitor",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openPlatformMonitoring() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "51-admin-monitor-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "51-admin-monitor-r2",
+  "espera": 500,
+  "js": "return __rolar(1400)"
+ },
+ {
+  "nome": "52-admin-utilizadores",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openUserManagement() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "52-admin-utilizadores-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "53-admin-directorio",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openAdministratorDirectory() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "54-admin-historico",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openOperationHistory() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "55-admin-monetizacao",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openMonetizationHistory() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "56-admin-catalogo",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openAdminCatalogCenter63() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "56-admin-catalogo-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ },
+ {
+  "nome": "57-admin-lixeira",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ openTrash() }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "58-admin-home",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{  }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "59-proprietario-admin",
+  "recarregar": true,
+  "ficheiro": "demo.js",
+  "espera": 1800,
+  "js": "__entrar('MGR-001'); await new Promise(r=>setTimeout(r,400)); try{ switchTab('my-listings') }catch(e){ return 'ERRO '+e.message } return 'ok'"
+ },
+ {
+  "nome": "59-proprietario-admin-r1",
+  "espera": 500,
+  "js": "return __rolar(700)"
+ }
+]

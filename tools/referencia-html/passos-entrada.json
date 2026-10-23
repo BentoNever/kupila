@@ -1,0 +1,14 @@
+[
+  {"nome": "02-login-estilos", "recarregar": true, "ficheiro": "demo.js", "foto": false, "espera": 300,
+   "js": "return __estilos(['#login-screen','#login-screen > div','#login-screen > div > div','#login-fullscreen-toggle','#login-screen .kupila-brand-logo-target','#login-screen h1','#login-screen h1 span','#login-screen > div > div > p','#login-screen form','#login-screen label','#login-identifier','#login-password','#login-password + button','#login-screen form > div:nth-of-type(4) button','#login-screen form > div:nth-of-type(4) span','#login-auto-status','#login-submit-button','#login-submit-button + button'])"},
+  {"nome": "03-login-contas", "espera": 1200,
+   "js": "window.loadKnownDeviceAccounts=()=>[{uid:'a1',name:'Bento Sousa',email:'bento@kupila.ao',role:'PROPRIETARIO',photo:'',lastLoginAt:new Date().toISOString(),loginCount:4},{uid:'a2',name:'Maria Lopes',email:'maria@kupila.ao',role:'CLIENTE',photo:'',lastLoginAt:new Date(Date.now()-86400000).toISOString(),loginCount:1}]; window.hasSecureQuickLogin=(u)=>u==='a1'; renderKnownDeviceAccounts(); return document.getElementById('known-device-account-list').innerHTML.slice(0,3000)"},
+  {"nome": "03b-login-contas-estilos", "foto": false, "js": "return __estilos(['#known-device-accounts','#known-device-accounts > div:first-child p:first-child','#known-device-accounts > div:first-child p:last-child','#known-device-count','#known-device-account-list','.kupila-quick-account-card','.kupila-quick-account-main','.kupila-quick-account-avatar','.kupila-quick-account-card *:nth-child(2)'])"},
+  {"nome": "04-cadastro", "espera": 1000, "js": "openRegisterScreen(); return 'ok'"},
+  {"nome": "04-cadastro-r1", "espera": 600, "js": "const s=document.getElementById('register-screen'); s.scrollTop=700; return s.scrollHeight"},
+  {"nome": "04-cadastro-proprietario", "espera": 800, "js": "const s=document.getElementById('register-screen'); s.scrollTop=0; const r=document.getElementById('register-role'); r.value='PROPRIETARIO'; toggleRegisterOwnerFields(); return 'ok'"},
+  {"nome": "04-cadastro-proprietario-r1", "espera": 600, "js": "const s=document.getElementById('register-screen'); s.scrollTop=700; return s.scrollHeight"},
+  {"nome": "04-cadastro-proprietario-r2", "espera": 600, "js": "const s=document.getElementById('register-screen'); s.scrollTop=1400; return s.scrollHeight"},
+  {"nome": "05-recuperacao", "recarregar": true, "ficheiro": "demo.js", "espera": 1000, "js": "openCredentialRecovery(); return 'ok'"},
+  {"nome": "06-conflito-sessao", "recarregar": true, "ficheiro": "demo.js", "espera": 1000, "js": "const m=document.getElementById('modal-single-session-conflict'); m.classList.remove('hidden'); m.style.display='flex'; return 'ok'"}
+]

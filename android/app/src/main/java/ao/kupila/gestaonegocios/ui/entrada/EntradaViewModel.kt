@@ -26,7 +26,7 @@ data class EstadoLogin(
     val aEntrar: Boolean = false,
     val erro: String? = null,
     /** Mensagem do estado da entrada automática (`setAutoLoginStatus`). */
-    val estadoAutomatico: String = "Entrada automática activa: depois de inserir credenciais válidas, o acesso inicia sozinho.",
+    val estadoAutomatico: String = "Login automático activo: depois de inserir credenciais válidas, o acesso inicia sozinho.",
 )
 
 /**
@@ -50,7 +50,19 @@ class LoginViewModel @Inject constructor(
     fun email(v: String) { guardado["email"] = v; _estado.update { it.copy(email = v, erro = null) }; aoEditar() }
     fun senha(v: String) { _estado.update { it.copy(senha = v, erro = null) }; aoEditar() }
 
-    fun escolherConta(c: ContaConhecida) { email(c.email) }
+    /** Conta com credencial segura entra de imediato; sem ela, preenche o e-mail e pede só a palavra-passe ("Confirmar"). */
+    fun escolherConta(c: ContaConhecida) {
+        automatico?.cancel()
+        guardado["email"] = c.email
+        viewModelScope.launch {
+            val s = dispositivoRef.acessoRapido(c.email)
+            _estado.update { it.copy(email = c.email, senha = s ?: "", erro = null) }
+            if (s != null && !executar()) {
+                dispositivoRef.removerAcessoRapido(c.email)
+                _estado.update { it.copy(senha = "", erro = (it.erro ?: "") .ifBlank { "Confirme a palavra-passe desta conta." }) }
+            }
+        }
+    }
     fun esquecerConta(c: ContaConhecida) = viewModelScope.launch { dispositivoRef.esquecer(c.uid) }
 
     private fun aoEditar() {
@@ -84,6 +96,7 @@ class LoginViewModel @Inject constructor(
         if (e.senha.isEmpty()) { _estado.update { it.copy(erro = "Informe a palavra-passe.") }; return false }
         _estado.update { it.copy(aEntrar = true, erro = null) }
         val r = sessao.entrar(e.email, e.senha)
+        if (r.isSuccess) runCatching { dispositivoRef.guardarAcessoRapido(e.email, e.senha) }
         _estado.update { it.copy(aEntrar = false, erro = r.exceptionOrNull()?.let(MensagensErro::de), senha = if (r.isSuccess) "" else it.senha) }
         return r.isSuccess
     }

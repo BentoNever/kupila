@@ -57,6 +57,9 @@ class DetalheViewModel @Inject constructor(
     private val transaccoes: ao.kupila.gestaonegocios.dados.transaccoes.TransaccoesRepositorio,
     guardado: SavedStateHandle,
 ) : ViewModel() {
+    /** Validade da reserva após confirmação (details-reservation-validity), dos ajustes globais. */
+    fun prazoReservaHoras(): Long = (ajustes.ajustes.value.prazoReservaMinutos / 60).coerceAtLeast(1)
+
     private val _aReservar = MutableStateFlow(false)
     val aReservar: StateFlow<Boolean> = _aReservar.asStateFlow()
 

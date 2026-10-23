@@ -25,8 +25,8 @@ android {
         applicationId = "ao.kupila.gestaonegocios"
         minSdk = 26
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "FIREBASE_PROJECTO", fb("projectId"))
         buildConfigField("String", "FIREBASE_APP_ID", fb("applicationId"))

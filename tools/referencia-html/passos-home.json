@@ -1,0 +1,8 @@
+[
+  {"nome": "10-home", "ficheiro": "demo.js", "espera": 2500,
+   "js": "window.KupilaAccessGate208&&(KupilaAccessGate208.explicit=true); document.documentElement.classList.remove('kupila-login-first-208'); activeUserId='OWN-001'; mockListings=window.__demoListings; try{showAppScreen()}catch(e){return 'show:'+e} try{hideKupilaLoading(true)}catch(_){} document.getElementById('login-screen').style.display='none'; try{applyFilters(true)}catch(e){return 'filt:'+e} document.querySelectorAll('.kupila-loading,#kupila-loading').forEach(x=>x.style.display='none'); return {app:getComputedStyle(document.getElementById('app-container')).display, cards:document.querySelectorAll('.kupila-catalog-card').length, h: document.getElementById('main-content').scrollHeight};"},
+  {"nome": "11-home-scroll1", "js": "document.getElementById('main-content').scrollTop=700;"},
+  {"nome": "12-home-scroll2", "js": "document.getElementById('main-content').scrollTop=1400;"},
+  {"nome": "13-home-scroll3", "js": "document.getElementById('main-content').scrollTop=2100;"},
+  {"nome": "14-home-scroll4", "js": "document.getElementById('main-content').scrollTop=2800;"}
+]

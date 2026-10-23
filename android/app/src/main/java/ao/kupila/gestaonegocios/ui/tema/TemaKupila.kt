@@ -93,7 +93,7 @@ fun TemaKupila(identidade: IdentidadeVisual, modoLocal: ModoAparencia? = null, c
         aviso = if (escuro) Color(0xFFFBBF24) else Color(0xFFB45309),
         pago = if (escuro) Color(0xFFF0ABFC) else Color(0xFFA21CAF),
     )
-    CompositionLocalProvider(LocalCoresKupila provides extra) {
+    CompositionLocalProvider(LocalCoresKupila provides extra, ao.kupila.gestaonegocios.ui.kp.LocalMarca provides ao.kupila.gestaonegocios.ui.kp.Marca(Color(identidade.primaria), d)) {
         MaterialTheme(colorScheme = esquema(identidade, escuro), typography = tipografia, content = conteudo)
     }
 }

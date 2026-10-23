@@ -4,37 +4,36 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,73 +41,142 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ao.kupila.gestaonegocios.dominio.perfis.CanalAlerta
 import ao.kupila.gestaonegocios.dominio.perfis.Papel
-import ao.kupila.gestaonegocios.ui.comum.Aviso
-import ao.kupila.gestaonegocios.ui.comum.BotaoPrincipal
-import ao.kupila.gestaonegocios.ui.comum.BotaoSecundario
-import ao.kupila.gestaonegocios.ui.comum.Campo
-import ao.kupila.gestaonegocios.ui.comum.CampoSenha
-import ao.kupila.gestaonegocios.ui.comum.Seletor
-import ao.kupila.gestaonegocios.ui.comum.TipoAviso
+import ao.kupila.gestaonegocios.ui.comum.Fa
+import ao.kupila.gestaonegocios.ui.kp.FaIcone
+import ao.kupila.gestaonegocios.ui.kp.Kp
+import ao.kupila.gestaonegocios.ui.kp.KpBotao
+import ao.kupila.gestaonegocios.ui.kp.KpBotaoSec
+import ao.kupila.gestaonegocios.ui.kp.KpCaixa
+import ao.kupila.gestaonegocios.ui.kp.KpEntrada
+import ao.kupila.gestaonegocios.ui.kp.KpRotulo
+import ao.kupila.gestaonegocios.ui.kp.KpSelect
+import ao.kupila.gestaonegocios.ui.kp.LocalMarca
+import ao.kupila.gestaonegocios.ui.kp.T
+import ao.kupila.gestaonegocios.ui.kp.sup
+import ao.kupila.gestaonegocios.ui.kp.toque
 import coil3.compose.AsyncImage
 import java.io.File
 
-/** Ecrã "Criar conta" (HTML 6547-6571). O cadastro público só cria Cliente ou Proprietário. */
+/** CADASTRO DE NOVO UTILIZADOR (`#register-screen`, HTML 6544-6581): só Cliente ou Proprietário; Administrador não é criado por cadastro público. */
 @Composable
 fun CadastroEcra(vm: CadastroViewModel, logo: String?, aoVoltar: () -> Unit, aoLerPoliticas: () -> Unit) {
     val e by vm.estado.collectAsStateWithLifecycle()
     val f = e.form
+    val marca = LocalMarca.current
     val escolher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { it?.let(vm::foto) }
-    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).verticalScroll(rememberScrollState()).imePadding()) {
-        CabecalhoMarca(logo, if (e.completar) "Concluir cadastro" else "Criar conta")
-        Column(Modifier.widthIn(max = 560.dp).align(Alignment.CenterHorizontally).padding(20.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            if (e.completar) Aviso("A conta já foi criada mas o cadastro não terminou. Complete os dados para continuar.", TipoAviso.INFO)
-            Text("Perfil *", style = MaterialTheme.typography.titleSmall)
-            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                Papel.publicos.forEachIndexed { i, p ->
-                    SegmentedButton(selected = f.papel == p, onClick = { vm.papel(p) }, shape = SegmentedButtonDefaults.itemShape(i, Papel.publicos.size)) { Text(p.rotulo) }
+    Box(Modifier.fillMaxSize().background(Kp.slate100).safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(12.dp, 12.dp, 12.dp, 24.dp),
+        contentAlignment = Alignment.TopCenter) {
+        Column(Modifier.widthIn(max = 388.dp).fillMaxWidth().padding(horizontal = 2.dp)
+            .sup(24.dp, fundo = Color.White, borda = Kp.gray200, sombra = Color.Black.copy(alpha = .25f), desfoque = 50.dp)) {
+            Row(Modifier.fillMaxWidth().background(marca.c700).padding(20.dp, 20.dp, 20.dp, 16.dp), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(Modifier.size(36.dp).sup(36.dp, fundo = Color.White.copy(alpha = .10f), forma = CircleShape).toque(aoTocar = aoVoltar), contentAlignment = Alignment.Center) {
+                    FaIcone(Fa.ARROW_LEFT, 14f, Color.White)
+                }
+                Column {
+                    T(if (e.completar) "Concluir cadastro" else "Criar conta Kupila", 16f, Color.White, 700, linha = 24f)
+                    T(if (e.completar) "Complete os dados para continuar" else "Cadastro seguro no Kupila", 10f, marca.c100, linha = 15f)
                 }
             }
-            Text(if (f.papel == Papel.CLIENTE) "O Cliente pesquisa e reserva produtos." else "O Proprietário também anuncia e gere os seus próprios produtos.",
-                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Campo(f.nome, vm::nome, "Nome completo", obrigatorio = true, erro = e.erros["nome"], maxCaracteres = 120)
-            Campo(f.email, vm::email, "E-mail", obrigatorio = true, teclado = KeyboardType.Email, erro = e.erros["email"], enabled = !e.completar)
-            Campo(f.telefone, vm::telefone, "Telefone principal", obrigatorio = true, teclado = KeyboardType.Phone, prefixo = "+244 ", erro = e.erros["telefone"])
-            if (f.papel == Papel.PROPRIETARIO) {
-                Text("Foto do Proprietário *", style = MaterialTheme.typography.titleSmall)
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Box(Modifier.size(88.dp).clip(RoundedCornerShape(18.dp)).background(MaterialTheme.colorScheme.surfaceVariant)
-                        .clickable(onClickLabel = "Escolher foto") { escolher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
-                        contentAlignment = Alignment.Center) {
-                        when {
-                            e.aProcessarFoto -> CircularProgressIndicator(Modifier.size(28.dp))
-                            f.fotoCaminho != null -> AsyncImage(File(f.fotoCaminho), "Foto seleccionada", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-                            else -> Icon(Icons.Filled.AddAPhoto, null)
+            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (e.completar) KpCaixa(marca.c50, marca.c100) { T("A conta já foi criada mas o cadastro não terminou. Complete os dados para continuar.", 10f, marca.c900, linha = 15f) }
+                Campo("Perfil", true) {
+                    KpSelect(Papel.publicos.map { it to it.rotulo }, f.papel, vm::papel, altura = 41.dp, raio = 12.dp)
+                }
+                Campo("Nome completo", true, e.erros["nome"]) { KpEntrada(f.nome, vm::nome, altura = 42.dp, raio = 12.dp, padH = 10.dp) }
+                Campo("E-mail", true, e.erros["email"]) {
+                    KpEntrada(f.email, vm::email, altura = 42.dp, raio = 12.dp, padH = 10.dp, teclado = KeyboardType.Email, activo = !e.completar)
+                    if (e.completar) Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                        FaIcone(Fa.LOCK, 9f, marca.c700); Spacer(Modifier.width(4.dp)); T("E-mail confirmado pela autenticação; não pode ser alterado aqui.", 9f, marca.c700)
+                    }
+                }
+                Campo("Telefone principal", true, e.erros["telefone"]) {
+                    KpEntrada(f.telefone, { vm.telefone(it.filter(Char::isDigit).take(9)) }, altura = 42.dp, raio = 12.dp, padH = 12.dp, prefixo = "+244", teclado = KeyboardType.Phone)
+                }
+                if (f.papel == Papel.PROPRIETARIO) {
+                    Box(Modifier.fillMaxWidth().height(1.dp).background(Kp.gray900))
+                    Campo("Foto do Proprietário", true, e.erros["foto"]) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Box(Modifier.size(64.dp).clip(RoundedCornerShape(16.dp)).background(Color(0xFFF9FAFB))
+                                .tracejado(Kp.gray300, 16f).toque { escolher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                                contentAlignment = Alignment.Center) {
+                                when {
+                                    e.aProcessarFoto -> CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp, color = marca.c600)
+                                    f.fotoCaminho != null -> AsyncImage(File(f.fotoCaminho), "Foto seleccionada", Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                                    else -> FaIcone(Fa.USER, 16f, Kp.gray400)
+                                }
+                            }
+                            T("Foto obrigatória. Será optimizada automaticamente para garantir carregamento rápido e menor consumo de dados.", 9f, Color(0xFF6B7280), Modifier.weight(1f), linha = 13.5f)
                         }
                     }
-                    Text("JPG, PNG ou WebP até 2 MB. A foto é optimizada no dispositivo.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box(Modifier.weight(1f)) { Campo("Província", true) { KpSelect(vm.geografia.provincias.map { it to it }, f.provincia, vm::provincia, altura = 41.dp, raio = 12.dp) } }
+                        Box(Modifier.weight(1f)) { Campo("Município", true, e.erros["municipio"]) {
+                            KpSelect(vm.geografia.municipios(f.provincia).map { it to it }, f.municipio.ifEmpty { null }, vm::municipio, altura = 41.dp, raio = 12.dp) } }
+                    }
+                    Campo("Bairro", true, e.erros["bairro"]) { KpEntrada(f.bairro, vm::bairro, altura = 42.dp, raio = 12.dp, padH = 10.dp) }
+                    Campo("Telefone alternativo", false, e.erros["telefoneAlt"]) {
+                        KpEntrada(f.telefoneAlt, { vm.telefoneAlt(it.filter(Char::isDigit).take(9)) }, altura = 42.dp, raio = 12.dp, padH = 12.dp, prefixo = "+244", teclado = KeyboardType.Phone)
+                    }
+                    Campo("Canal preferido para alertas", false) {
+                        KpSelect(CanalAlerta.entries.map { it to it.rotulo }, f.canal, vm::canal, altura = 41.dp, raio = 12.dp)
+                        T("Usado para alertas de reserva e interesse relevante nos seus anúncios.", 8f, Kp.gray400, Modifier.padding(top = 4.dp))
+                    }
                 }
-                e.erros["foto"]?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-                Seletor("Província", vm.geografia.provincias.map { it to it }, f.provincia, vm::provincia, obrigatorio = true)
-                Seletor("Município", vm.geografia.municipios(f.provincia).map { it to it }, f.municipio.ifEmpty { null }, vm::municipio, obrigatorio = true, erro = e.erros["municipio"])
-                Campo(f.bairro, vm::bairro, "Bairro", obrigatorio = true, erro = e.erros["bairro"], maxCaracteres = 100)
-                Campo(f.telefoneAlt, vm::telefoneAlt, "Telefone alternativo", teclado = KeyboardType.Phone, prefixo = "+244 ", erro = e.erros["telefoneAlt"])
-                Seletor("Canal preferido para alertas", CanalAlerta.entries.map { it to it.rotulo }, f.canal, vm::canal)
+                if (!e.completar) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Box(Modifier.weight(1f)) { Campo("Palavra-passe", true, e.erros["senha"]) { KpEntrada(f.senha, vm::senha, senha = true, altura = 42.dp, raio = 12.dp, padH = 10.dp) } }
+                    Box(Modifier.weight(1f)) { Campo("Confirmar", true, e.erros["confirmar"]) {
+                        KpEntrada(f.confirmar, vm::confirmar, senha = true, altura = 42.dp, raio = 12.dp, padH = 10.dp, ime = ImeAction.Done) } }
+                }
+                Column(Modifier.fillMaxWidth().sup(16.dp, fundo = Kp.slate50, borda = Kp.slate200).padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FaIcone(Fa.FILE_SHIELD, 12f, marca.c600, Modifier.padding(top = 2.dp))
+                        Column {
+                            T("Políticas de Uso obrigatórias", 10f, Kp.slate800, 700, linha = 15f)
+                            T("Antes de criar a conta, leia as regras de utilização, privacidade, reservas, intermediação, taxas e comissões do Kupila.", 9f, Kp.slate500, linha = 14f)
+                        }
+                    }
+                    KpBotaoSec("Ler Políticas e Regras do Kupila", aoLerPoliticas, icone = Fa.BOOK_OPEN, altura = 33.dp, tamanho = 10f)
+                    Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Checkbox(f.politicasAceites, vm::aceitar, enabled = f.politicasLidas, modifier = Modifier.size(16.dp),
+                            colors = CheckboxDefaults.colors(checkedColor = marca.c600))
+                        T("Li integralmente e aceito as Políticas de Uso e Regras de Intermediação do Kupila.", 9f, Kp.slate700, linha = 13.5f)
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        FaIcone(if (f.politicasLidas) Fa.CIRCLE_CHECK else Fa.LOCK, 8f, if (f.politicasLidas) Kp.emerald700 else Kp.amber700); Spacer(Modifier.width(4.dp))
+                        T(if (f.politicasLidas) "Leitura concluída: já pode aceitar." else "Abra as políticas e conclua a leitura para habilitar o aceite.", 8f,
+                            if (f.politicasLidas) Kp.emerald700 else Kp.amber700)
+                    }
+                    e.erros["politicas"]?.let { T(it, 8f, Kp.red600) }
+                }
+                if (e.aEnviar) KpCaixa(Kp.amber50, Kp.amber200) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator(Modifier.size(10.dp), strokeWidth = 1.5.dp, color = Kp.amber800); Spacer(Modifier.width(6.dp)); T("A preparar cadastro…", 10f, Kp.amber800)
+                    }
+                }
+                e.erroGeral?.let { KpCaixa(Kp.red50, Color(0xFFFEE2E2)) { T(it, 10f, Kp.red700, linha = 15f) } }
+                if (e.erros.isNotEmpty()) KpCaixa(Kp.red50, Color(0xFFFEE2E2)) { T("Reveja os campos assinalados. Os dados preenchidos foram preservados.", 10f, Kp.red700, linha = 15f) }
+                KpBotao(if (e.completar) "Concluir cadastro" else "Criar conta", vm::enviar, icone = Fa.USER_CHECK, ocupado = e.aEnviar, altura = 40.dp, raio = 12.dp, tamanho = 12f)
+                T("O Administrador não pode ser criado por cadastro público.", 9f, Color(0xFF6B7280), centro = true, modifier = Modifier.fillMaxWidth())
             }
-            if (!e.completar) {
-                CampoSenha(f.senha, vm::senha, "Palavra-passe *", erro = e.erros["senha"], accaoIme = ImeAction.Next)
-                CampoSenha(f.confirmar, vm::confirmar, "Confirmar palavra-passe *", erro = e.erros["confirmar"])
-            }
-            TextButton(onClick = aoLerPoliticas) { Text("Ler Políticas e Regras do Kupila-Gestão de negócios") }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = f.politicasAceites, onCheckedChange = vm::aceitar, enabled = f.politicasLidas)
-                Text(if (f.politicasLidas) "Li e aceito as Políticas de Uso e Regras de Intermediação." else "Leia as políticas até ao fim para poder aceitar.",
-                    style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-            }
-            e.erros["politicas"]?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-            e.erroGeral?.let { Aviso(it, TipoAviso.ERRO) }
-            if (e.erros.isNotEmpty()) Aviso("Reveja os campos assinalados. Os dados preenchidos foram preservados.", TipoAviso.AVISO)
-            BotaoPrincipal(if (e.completar) "Concluir cadastro" else "Criar conta", vm::enviar, ocupado = e.aEnviar)
-            BotaoSecundario("Voltar ao login", aoVoltar)
         }
     }
 }
+
+@Composable
+private fun Campo(rotulo: String, obrigatorio: Boolean, erro: String? = null, conteudo: @Composable () -> Unit) {
+    Column {
+        KpRotulo(rotulo, 12f, obrigatorio)
+        Spacer(Modifier.height(2.dp))
+        conteudo()
+        erro?.let { T(it, 9f, Kp.red600, Modifier.padding(top = 3.dp)) }
+    }
+}
+
+/** `border-2 border-dashed`. */
+private fun Modifier.tracejado(cor: Color, raio: Float) = this.drawBehind {
+    val r = raio.dp.toPx()
+    drawRoundRect(cor, cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r),
+        style = Stroke(2.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 4.dp.toPx()))))
+}
+
