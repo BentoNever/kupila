@@ -79,5 +79,6 @@ class ExplorarViewModel @Inject constructor(conta: ContaActiva, val geografia: G
     fun vitrine(v: Vitrine) = mudar { it.copy(vitrine = v) }
 
     fun carregarMais() = viewModelScope.launch { recursos.value?.catalogo?.carregarMais() }
-    fun actualizar() { recursos.value?.catalogo?.iniciar() }
+    /** Puxar para actualizar: pedido explícito (lê só o que mudou desde a última vez). */
+    fun actualizar() = viewModelScope.launch { recursos.value?.catalogo?.sincronizar(automatica = false) }
 }

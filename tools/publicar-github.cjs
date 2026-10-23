@@ -4,7 +4,9 @@
  * cria o repositório se não existir, envia os ficheiros num único commit (Git Data API) e, opcionalmente, cria um
  * release com o APK. Usa a GitHub CLI já autenticada (o token não sai desta máquina excepto para api.github.com).
  *
- * Uso: node tools/publicar-github.cjs [--apk <caminho> --tag <tag> --titulo <t> --notas <ficheiro.md> --prerelease]
+ * Uso: node tools/publicar-github.cjs [--apk <caminho> --versao-code <n> --versao-nome <x.y.z[-dev]> --pacote <id> --novidades "a;b"
+ *        --titulo <t> --notas <ficheiro.md> --prerelease]
+ * O release leva a linha `KUPILA-MANIFEST: {json}` lida pelo actualizador da app (tag, nome do APK e SHA-256 conferidos lá).
  */
 const fs = require('fs');
 const path = require('path');
@@ -25,7 +27,7 @@ function api(metodo, rota, corpo, tentativa = 1) {
   catch (e) {
     // Rede instável: 401/5xx/reset intermitentes. Repete com espera crescente; erros persistentes sobem.
     if (tentativa >= 5 || /Not Found|already exists|Reference already exists|422/.test(String(e.message))) throw e;
-    spawnSync(process.execPath, ['-e', setTimeout(()=>{}, )]);
+    spawnSync(process.execPath, ['-e', `setTimeout(()=>{}, ${tentativa * 3000})`]);
     return api(metodo, rota, corpo, tentativa + 1);
   }
 }
@@ -84,10 +86,23 @@ function principal() {
 
   const apk = arg('--apk');
   if (apk) {
-    const tag = arg('--tag');
-    const args = ['release', 'create', tag, apk, '-R', `${DONO}/${REPO}`, '--target', ramo, '--title', arg('--titulo') || tag];
-    if (arg('--notas')) args.push('--notes-file', arg('--notas'));
+    const nome = arg('--versao-nome'), codigo = Number(arg('--versao-code')), pacote = arg('--pacote');
+    if (!nome || !codigo || !pacote) throw new Error('--versao-nome, --versao-code e --pacote são obrigatórios com --apk.');
+    const tag = `v${nome}`;
+    const ficheiro = `kupila-gestao-negocios-${nome.replace(/-dev$/, '')}${pacote.endsWith('.dev') ? '-dev' : ''}.apk`;
+    const copia = path.join(require('os').tmpdir(), ficheiro);
+    fs.copyFileSync(apk, copia);
+    const bytes = fs.readFileSync(copia);
+    const manifesto = { versionCode: codigo, versionName: nome, pacote, tamanho: bytes.length,
+      sha256: require('crypto').createHash('sha256').update(bytes).digest('hex'),
+      apk: `https://github.com/${DONO}/${REPO}/releases/download/${tag}/${ficheiro}`,
+      novidades: (arg('--novidades') || '').split(';').map((s) => s.trim()).filter(Boolean), obrigatoria: argv.includes('--obrigatoria') };
+    const notas = (arg('--notas') ? fs.readFileSync(arg('--notas'), 'utf8').trim() + '\n\n' : '') + 'KUPILA-MANIFEST: ' + JSON.stringify(manifesto) + '\n';
+    const fNotas = path.join(require('os').tmpdir(), `kupila-notas-${codigo}.md`);
+    fs.writeFileSync(fNotas, notas);
+    const args = ['release', 'create', tag, copia, '-R', `${DONO}/${REPO}`, '--target', ramo, '--title', arg('--titulo') || tag, '--notes-file', fNotas];
     if (argv.includes('--prerelease')) args.push('--prerelease');
+    console.log('manifesto:', JSON.stringify(manifesto));
     const r = spawnSync(gh, args, { encoding: 'utf8', windowsHide: true, timeout: 900000 });
     if (r.status !== 0) throw new Error('release: ' + (r.stderr || r.stdout));
     console.log('release:', r.stdout.trim());

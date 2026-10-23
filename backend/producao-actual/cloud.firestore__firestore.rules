@@ -1,0 +1,344 @@
+// Kupila 1.0.188 · Firestore — resolução robusta de Administrador e dados protegidos
+// Mantém deny-by-default e compatibilidade com perfis existentes.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+    function hasProfile() {
+      return signedIn() && exists(userPath(request.auth.uid));
+    }
+    function profile() {
+      return get(userPath(request.auth.uid)).data;
+    }
+    function activeUser() {
+      return hasProfile() && profile().status == 'ACTIVE';
+    }
+    // Administração: aceita o perfil Firestore activo e, quando configuradas no
+    // Firebase Auth, custom claims administrativas. Isto evita que um Administrador
+    // autenticado fique bloqueado apenas porque o perfil ainda não foi hidratado.
+    function hasAdminClaim() {
+      return signedIn() && (
+        request.auth.token.admin == true
+        || request.auth.token.isAdmin == true
+        || request.auth.token.role in ['GESTOR', 'ADMINISTRADOR', 'ADMIN']
+      );
+    }
+
+    function hasManagerProfile() {
+      return activeUser()
+        && profile().role in ['GESTOR', 'ADMINISTRADOR', 'ADMIN'];
+    }
+
+    function isManager() {
+      return hasAdminClaim() || hasManagerProfile();
+    }
+    function isOwnerRole() {
+      return activeUser() && profile().role == 'PROPRIETARIO';
+    }
+    function isClientRole() {
+      return activeUser() && profile().role == 'CLIENTE';
+    }
+    function owns(fieldValue) {
+      return activeUser() && fieldValue == request.auth.uid;
+    }
+    function productOwner(listingId) {
+      return get(/databases/$(database)/documents/products/$(listingId)).data.ownerId;
+    }
+    function reservedByMe(listingId) {
+      return activeUser()
+        && exists(/databases/$(database)/documents/products/$(listingId))
+        && get(/databases/$(database)/documents/products/$(listingId)).data.reservedByUserId == request.auth.uid;
+    }
+
+    // Perfis: cada utilizador cria o próprio perfil apenas como Cliente/Proprietário.
+    // Ele nunca pode promover a própria conta para Administrador nem activar/desactivar o próprio estado.
+    match /users/{uid} {
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.role in ['CLIENTE', 'PROPRIETARIO']
+        && request.resource.data.status == 'ACTIVE'
+        && (!('email' in request.resource.data) || request.resource.data.email == request.auth.token.email);
+      allow read: if signedIn() && (request.auth.uid == uid || isManager());
+      allow update: if isManager() || (
+        activeUser()
+        && request.auth.uid == uid
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (!('email' in resource.data) || request.resource.data.email == resource.data.email)
+      );
+      allow delete: if isManager();
+    }
+
+    // Configuração global — qualquer conta autenticada pode ler.
+    // Escrita continua exclusivamente administrativa.
+    match /settings/{docId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isManager();
+    }
+
+    // Catálogo público do Kupila.
+    match /products/{listingId} {
+      allow read: if activeUser();
+      allow create: if isManager() || (
+        isOwnerRole()
+        && request.resource.data.ownerId == request.auth.uid
+      );
+      allow update: if isManager()
+        || (isOwnerRole()
+          && resource.data.ownerId == request.auth.uid
+          && request.resource.data.ownerId == resource.data.ownerId)
+        || (isClientRole()
+          && resource.data.status == 'ACTIVE'
+          && request.resource.data.status == 'RESERVED'
+          && request.resource.data.reservedByUserId == request.auth.uid
+          && request.resource.data.ownerId == resource.data.ownerId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'status','reservedAt','reservationExpiresAt','reservedByUserId','reservedByName',
+            'commissionPercentSnapshot','commissionAmountSnapshot','reservationCommissionTransactionId'
+          ]));
+      allow delete: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+    }
+
+    // Dados privados do produto. O Cliente só recebe depois de a reserva do produto estar associada à sua conta.
+    match /productPrivate/{listingId} {
+      allow read: if isManager()
+        || (isOwnerRole() && resource.data.ownerId == request.auth.uid)
+        || reservedByMe(listingId);
+      allow create: if isManager() || (
+        isOwnerRole()
+        && request.resource.data.ownerId == request.auth.uid
+        && exists(/databases/$(database)/documents/products/$(listingId))
+        && productOwner(listingId) == request.auth.uid
+      );
+      allow update: if isManager() || (
+        isOwnerRole()
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == resource.data.ownerId
+      );
+      allow delete: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+    }
+
+    // Comprovativos de titularidade segmentados em partes no Firestore.
+    match /productFiles/{fileChunkId} {
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow create: if isManager() || (isOwnerRole() && request.resource.data.ownerId == request.auth.uid);
+      allow update, delete: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+    }
+
+    // Claims anti-duplicação. A leitura autenticada é necessária à pré-verificação global.
+    match /productIdentityClaims/{claimId} {
+      allow read: if activeUser();
+      allow create: if isManager() || (isOwnerRole() && request.resource.data.ownerId == request.auth.uid);
+      allow update, delete: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+    }
+
+    // Rascunhos de publicação e parte privada do rascunho.
+    match /listingDrafts/{listingId} {
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow create: if isManager() || (isOwnerRole() && request.resource.data.ownerId == request.auth.uid);
+      allow update, delete: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+    }
+    match /listingDraftPrivate/{listingId} {
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow create: if isManager() || (isOwnerRole() && request.resource.data.ownerId == request.auth.uid);
+      allow update, delete: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+    }
+
+
+    // Kupila 1.0.139 — rascunhos de trabalho sincronizados entre dispositivos.
+    // O documento contém userId = UID do Firebase Auth e kind = PRODUCT_LISTING_DRAFT.
+    // Administradores podem gerir/remover rascunhos pela Central de Administração;
+    // o Proprietário só pode gerir os rascunhos da própria conta.
+    match /productWorkDrafts/{draftDocId} {
+      allow read: if isManager()
+        || (isOwnerRole() && resource.data.userId == request.auth.uid);
+
+      allow create: if activeUser()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.kind == 'PRODUCT_LISTING_DRAFT';
+
+      allow update: if isManager() || (
+        isOwnerRole()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.kind == 'PRODUCT_LISTING_DRAFT'
+      );
+
+      allow delete: if isManager()
+        || (isOwnerRole() && resource.data.userId == request.auth.uid);
+    }
+
+    // Reserva: Cliente cria; Cliente/Proprietário participantes acompanham; campos financeiros centrais são imutáveis por participantes.
+    match /reservations/{reservationId} {
+      allow create: if activeUser() && request.resource.data.userId == request.auth.uid;
+      allow read: if isManager()
+        || (activeUser() && (resource.data.userId == request.auth.uid || resource.data.ownerId == request.auth.uid));
+      allow update: if isManager() || (
+        activeUser()
+        && (resource.data.userId == request.auth.uid || resource.data.ownerId == request.auth.uid)
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.listingId == resource.data.listingId
+        && request.resource.data.amount == resource.data.amount
+        && request.resource.data.commissionAmount == resource.data.commissionAmount
+      );
+      allow delete: if isManager();
+    }
+
+    // Interesses qualificados: um Cliente só cria interesse em seu próprio viewerId.
+    match /productInterest/{interestId} {
+      allow create: if isClientRole()
+        && request.resource.data.viewerId == request.auth.uid
+        && request.resource.data.viewerRole == 'CLIENTE';
+      allow read: if isManager()
+        || (activeUser() && (resource.data.viewerId == request.auth.uid || resource.data.ownerId == request.auth.uid));
+      allow update, delete: if isManager();
+    }
+
+    // Alertas gerados pelo backend/Administrador e lidos pelo Proprietário.
+    match /ownerAlerts/{alertId} {
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow write: if isManager();
+    }
+
+    // Testemunhos verificados: participante cria o seu próprio testemunho; moderação é administrativa.
+    match /testimonials/{testimonialId} {
+      allow read: if activeUser() && (resource.data.status == 'APPROVED' || resource.data.authorId == request.auth.uid || isManager());
+      allow create: if activeUser()
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.status == 'PENDING'
+        && request.resource.data.verified == true;
+      allow update: if isManager() || (
+        activeUser()
+        && resource.data.authorId == request.auth.uid
+        && resource.data.status == 'PENDING'
+        && request.resource.data.authorId == resource.data.authorId
+        && request.resource.data.status == 'PENDING'
+      );
+      allow delete: if isManager() || (activeUser() && resource.data.authorId == request.auth.uid && resource.data.status == 'PENDING');
+    }
+
+    // Sessão exclusiva por conta.
+    match /activeSessions/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isManager());
+      allow create, update, delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Presença por dispositivo: o próprio utilizador escreve; Administrador lê o painel consolidado.
+    match /appPresence/{presenceId} {
+      allow create, update: if activeUser() && request.resource.data.userId == request.auth.uid;
+      allow read: if isManager() || (activeUser() && resource.data.userId == request.auth.uid);
+      allow delete: if isManager() || (activeUser() && resource.data.userId == request.auth.uid);
+    }
+
+    // Auditoria: cada utilizador pode acrescentar apenas eventos em seu actorId; leitura consolidada é administrativa.
+    match /auditLog/{auditId} {
+      allow create: if activeUser() && request.resource.data.actorId == request.auth.uid;
+      allow read: if isManager();
+      allow update, delete: if false;
+    }
+
+    // Pedidos de autorização de desanúncio/exclusão.
+    match /authorizationRequests/{requestId} {
+      allow create: if isOwnerRole() && request.resource.data.ownerId == request.auth.uid;
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow update: if isManager() || (
+        isOwnerRole()
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == resource.data.ownerId
+      );
+      allow delete: if isManager();
+    }
+
+    // Intenções de pagamento: o utilizador cria/acompanha a própria intenção.
+    // O backend (Admin SDK) pode confirmar/rejeitar sem ser limitado por estas regras.
+    match /paymentIntents/{intentId} {
+      allow create: if activeUser() && request.resource.data.userId == request.auth.uid;
+      allow read: if isManager()
+        || (activeUser() && (resource.data.userId == request.auth.uid || resource.data.ownerId == request.auth.uid));
+      allow update: if isManager() || (
+        activeUser()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.listingId == resource.data.listingId
+        && request.resource.data.amount == resource.data.amount
+        && request.resource.data.reference == resource.data.reference
+      );
+      allow delete: if isManager();
+    }
+
+    // Comprovativos de pagamento submetidos pelo próprio utilizador; validação/alteração fica no backend/Admin.
+    match /paymentSubmissions/{submissionId} {
+      allow create: if activeUser() && request.resource.data.userId == request.auth.uid;
+      allow read: if isManager() || (activeUser() && resource.data.userId == request.auth.uid);
+      allow update, delete: if isManager();
+    }
+
+    // Reembolso: Cliente solicita; Proprietário confirma a não conclusão; Administrador decide.
+    match /refundRequests/{refundId} {
+      allow create: if activeUser() && request.resource.data.clientId == request.auth.uid;
+      allow read: if isManager()
+        || (activeUser() && (resource.data.clientId == request.auth.uid || resource.data.ownerId == request.auth.uid));
+      allow update: if isManager() || (
+        activeUser()
+        && (resource.data.clientId == request.auth.uid || resource.data.ownerId == request.auth.uid)
+        && request.resource.data.clientId == resource.data.clientId
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.reservationId == resource.data.reservationId
+        && request.resource.data.refundableAmount == resource.data.refundableAmount
+        && request.resource.data.commissionAmount == resource.data.commissionAmount
+      );
+      allow delete: if isManager();
+    }
+
+    match /refundEvidence/{refundId} {
+      allow create: if activeUser() && request.resource.data.clientId == request.auth.uid;
+      allow read: if isManager()
+        || (activeUser() && (resource.data.clientId == request.auth.uid || resource.data.ownerId == request.auth.uid));
+      allow update, delete: if isManager();
+    }
+
+    // Solicitações financeiras após decisão: criadas/alteradas apenas por Administrador.
+    match /refundPayoutRequests/{id} {
+      allow read: if isManager()
+        || (activeUser() && (resource.data.clientId == request.auth.uid || resource.data.ownerId == request.auth.uid));
+      allow write: if isManager();
+    }
+
+    // Proprietário pode pedir liberação somente para si; confirmação do pagamento fica no backend/Admin.
+    match /payoutReleaseRequests/{id} {
+      allow create: if isOwnerRole()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.requestedBy == request.auth.uid;
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow update, delete: if isManager();
+    }
+
+    // Transferências e movimentos financeiros confiáveis são backend-only para escrita.
+    match /payouts/{id} {
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow write: if false;
+    }
+    match /financialTransactions/{id} {
+      allow read: if isManager() || (isOwnerRole() && resource.data.ownerId == request.auth.uid);
+      allow write: if false;
+    }
+
+    // Métricas agregadas de confiança/monitorização: leitura autenticada, escrita administrativa/backend.
+    match /platformMetrics/{id} {
+      allow read: if activeUser();
+      allow write: if isManager();
+    }
+
+    // Qualquer colecção não declarada fica bloqueada por padrão.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

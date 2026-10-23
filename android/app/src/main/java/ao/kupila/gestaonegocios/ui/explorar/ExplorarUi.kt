@@ -74,7 +74,7 @@ fun ExplorarEcra(vm: ExplorarViewModel, aoAbrir: (String) -> Unit) {
     val noFim by remember { derivedStateOf { val i = lista.layoutInfo; i.totalItemsCount > 0 && (i.visibleItemsInfo.lastOrNull()?.index ?: 0) >= i.totalItemsCount - 3 } }
     LaunchedEffect(noFim) { if (noFim && est.haMais && !offline) vm.carregarMais() }
 
-    PullToRefreshBox(isRefreshing = est.aSincronizar, onRefresh = vm::actualizar, modifier = Modifier.fillMaxSize()) {
+    PullToRefreshBox(isRefreshing = est.aSincronizar, onRefresh = { vm.actualizar() }, modifier = Modifier.fillMaxSize()) {
         LazyColumn(state = lista, modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 Column(Modifier.fillMaxWidth().background(Brush.verticalGradient(listOf(cores.pesquisaPrimaria, cores.pesquisaPrimaria.copy(alpha = 0.85f))))

@@ -18,4 +18,7 @@ class MainActivity : ComponentActivity() {
             TemaKupila(IdentidadeVisual()) { Raiz() }
         }
     }
+
+    /** Cada toque abre a janela de leitura da poupança inteligente (leituras automáticas só com interacção recente). */
+    override fun onUserInteraction() { super.onUserInteraction(); ao.kupila.gestaonegocios.dados.rede.Economia.tocou() }
 }

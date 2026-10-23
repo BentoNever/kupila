@@ -73,6 +73,31 @@ class Imagens @Inject constructor(@param:ApplicationContext private val contexto
         bytes to dHash(src)
     }
 
+    /**
+     * Foto para guardar INLINE no Firestore, como a origem (`compressListingImageForFirestore`, alvo 64 KB; 48 KB se o
+     * documento ficar grande). Reduz dimensões e qualidade progressivamente e devolve também o dHash para duplicados.
+     */
+    suspend fun fotoInline(uri: Uri, alvoBytes: Int = 64 * 1024): Pair<ByteArray, String> = withContext(Dispatchers.Default) {
+        val src = runCatching { descodificar(uri, 1600) }.getOrElse { throw ImagemInvalida("Não foi possível ler a fotografia seleccionada.") }
+        reduzir(src, alvoBytes) to dHash(src)
+    }
+
+    /** Reduz um JPEG já guardado (ex.: rascunho) para um alvo menor, mantendo proporção. */
+    suspend fun reduzirBytes(jpeg: ByteArray, alvoBytes: Int): ByteArray = withContext(Dispatchers.Default) {
+        if (jpeg.size <= alvoBytes) return@withContext jpeg
+        val b = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size) ?: return@withContext jpeg
+        reduzir(b, alvoBytes)
+    }
+
+    private fun reduzir(src: Bitmap, alvo: Int): ByteArray {
+        for (lado in listOf(1280, 1080, 960, 820, 720, 620, 520)) {
+            val f = minOf(1f, lado.toFloat() / maxOf(src.width, src.height))
+            val b = if (f < 1f) Bitmap.createScaledBitmap(src, (src.width * f).toInt().coerceAtLeast(1), (src.height * f).toInt().coerceAtLeast(1), true) else src
+            for (q in listOf(80, 70, 60, 50, 42)) { val j = jpeg(b, q); if (j.size <= alvo) return j }
+        }
+        return jpeg(Bitmap.createScaledBitmap(src, 480, (480f * src.height / src.width).toInt().coerceAtLeast(1), true), 40)
+    }
+
     /** Comprovativo (pagamento/titularidade/evidência): mantém legibilidade (lado até 2000 px). */
     suspend fun comprovativo(uri: Uri, maxBytes: Long): ByteArray = withContext(Dispatchers.Default) {
         val src = runCatching { descodificar(uri, 2000) }.getOrElse { throw ImagemInvalida("Não foi possível ler o ficheiro.") }

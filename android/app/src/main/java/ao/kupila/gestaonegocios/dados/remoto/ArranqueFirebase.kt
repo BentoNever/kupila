@@ -31,7 +31,7 @@ object ArranqueFirebase {
 
     fun iniciar(c: Context) {
         if (FirebaseApp.getApps(c).isNotEmpty()) return
-        val configurado = BuildConfig.FIREBASE_PROJECTO.isNotBlank() && BuildConfig.FIREBASE_APP_ID.isNotBlank() && BuildConfig.FIREBASE_API_KEY.isNotBlank()
+        val configurado = !BuildConfig.USAR_EMULADOR && BuildConfig.FIREBASE_PROJECTO.isNotBlank() && BuildConfig.FIREBASE_APP_ID.isNotBlank() && BuildConfig.FIREBASE_API_KEY.isNotBlank()
         when {
             configurado -> {
                 FirebaseApp.initializeApp(c, FirebaseOptions.Builder()

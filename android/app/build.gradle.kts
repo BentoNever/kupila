@@ -25,8 +25,8 @@ android {
         applicationId = "ao.kupila.gestaonegocios"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "FIREBASE_PROJECTO", fb("projectId"))
         buildConfigField("String", "FIREBASE_APP_ID", fb("applicationId"))
@@ -43,7 +43,10 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             // Emulador do Firebase no PC, alcançado por `adb reverse` (telemóvel por USB ou emulador Android) — docs/build.md.
-            buildConfigField("Boolean", "USAR_EMULADOR", (firebaseLocal.getProperty("projectId") == null).toString())
+            // ID da app Android registada para a variante .dev no projecto real.
+            buildConfigField("String", "FIREBASE_APP_ID", fb("applicationIdDev", firebaseLocal.getProperty("applicationId") ?: ""))
+            // Sem configuração ou com usarEmulador=true: Firebase Emulator (testes); caso contrário, o projecto real.
+            buildConfigField("Boolean", "USAR_EMULADOR", (firebaseLocal.getProperty("projectId") == null || firebaseLocal.getProperty("usarEmulador") == "true").toString())
             buildConfigField("String", "EMULADOR_HOST", fb("emulatorHost", "127.0.0.1"))
         }
         release {

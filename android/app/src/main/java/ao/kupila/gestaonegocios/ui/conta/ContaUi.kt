@@ -13,7 +13,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.DataSaverOn
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.SystemUpdate
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
@@ -44,6 +50,8 @@ fun ContaEcra(
     perfil: Perfil, offline: Boolean, modoLocal: ModoAparencia?, aoModo: (ModoAparencia?) -> Unit,
     aoFaq: () -> Unit, aoPoliticas: () -> Unit, aoSimulador: () -> Unit, aoSobre: () -> Unit, aoProtecao: () -> Unit,
     aoPerfilProprietario: (() -> Unit)?, aoSair: () -> Unit,
+    aoRascunhos: (() -> Unit)? = null, aoPoupanca: (() -> Unit)? = null, aoActualizacao: (() -> Unit)? = null,
+    aoMeusAnuncios: (() -> Unit)? = null, aoNotificacoes: (() -> Unit)? = null, naoLidas: Int = 0, aoAdmin: (() -> Unit)? = null,
 ) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (offline) Aviso("Sem ligação: sessão aberta em modo limitado. Confirmações, reservas e pagamentos aguardam a revalidação.", TipoAviso.AVISO)
@@ -64,6 +72,14 @@ fun ContaEcra(
             SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                 opcoes.forEachIndexed { i, (m, r) -> SegmentedButton(selected = modoLocal == m, onClick = { aoModo(m) }, shape = SegmentedButtonDefaults.itemShape(i, opcoes.size)) { Text(r) } }
             }
+        }
+        Seccao("Ferramentas") {
+            aoAdmin?.let { ItemMenu(Icons.Filled.AdminPanelSettings, "Administração", it) }
+            aoNotificacoes?.let { ItemMenu(Icons.Filled.Notifications, if (naoLidas > 0) "Notificações ($naoLidas novas)" else "Notificações", it) }
+            aoMeusAnuncios?.let { ItemMenu(Icons.Filled.Storefront, if (perfil.papel == Papel.ADMINISTRADOR) "Anúncios e autorizações" else "Meus anúncios", it) }
+            aoRascunhos?.let { ItemMenu(Icons.Filled.EditNote, "Cadastros inacabados", it) }
+            aoPoupanca?.let { ItemMenu(Icons.Filled.DataSaverOn, "Modo poupança e dados", it) }
+            aoActualizacao?.let { ItemMenu(Icons.Filled.SystemUpdate, "Actualização do app", it) }
         }
         Seccao("Ajuda") {
             ItemMenu(Icons.AutoMirrored.Filled.HelpOutline, "Perguntas frequentes", aoFaq)

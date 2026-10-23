@@ -1,6 +1,6 @@
 {
-  "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" },
-  "storage": { "rules": "storage.rules" },
+  "firestore": { "rules": "producao-actual/cloud.firestore__firestore.rules", "indexes": "firestore.indexes.json" },
+  "storage": { "rules": "proposta/storage-endurecidas.rules" },
   "functions": [{ "source": "functions", "codebase": "kupila", "runtime": "nodejs22" }],
   "emulators": {
     "auth": { "port": 9099, "host": "0.0.0.0" },

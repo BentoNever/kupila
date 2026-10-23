@@ -1,0 +1,14 @@
+Implemente o Kupila-Gestão de negócios, exclusivamente para celulares Android, seguindo o ficheiro local:
+
+Prompt_Mestre_Kupila_Gestao_de_Negocios_Android.txt
+
+A fonte funcional é o ficheiro local:
+Kupila%201.0.239.html
+
+Leia primeiro o prompt mestre. Depois analise o HTML progressivamente, por secções e funções, incluindo as correcções finais. Use pesquisas e scripts locais para mapear o conteúdo; não imprima nem carregue todo o HTML numa única resposta de ferramenta. Limite cada extracção a trechos pequenos e relevantes.
+
+Registe a matriz de funcionalidades, decisões e progresso em ficheiros do projecto, para permitir continuidade sem repetir grandes leituras.
+
+Antes de definir a arquitectura, audite o código actual do PDV Digital e do Kupila-Finanças pessoais, conforme o prompt mestre. Se os caminhos não estiverem acessíveis, solicite apenas a localização necessária.
+
+Preserve todas as funcionalidades e regras do prompt. Organize a execução em etapas, mantendo a reconstrução integral como objectivo.

@@ -53,9 +53,26 @@ data class AccoesDetalhe(val podeEditar: Boolean, val podeExcluirDirecto: Boolea
 @HiltViewModel
 class DetalheViewModel @Inject constructor(
     private val conta: ContaActiva,
-    ajustes: AjustesRepositorio,
+    private val ajustes: AjustesRepositorio,
+    private val transaccoes: ao.kupila.gestaonegocios.dados.transaccoes.TransaccoesRepositorio,
     guardado: SavedStateHandle,
 ) : ViewModel() {
+    private val _aReservar = MutableStateFlow(false)
+    val aReservar: StateFlow<Boolean> = _aReservar.asStateFlow()
+
+    /** Um toque: cria (ou reaproveita) a intenção do sinal e abre o checkout. */
+    fun reservar(aoPagar: (String) -> Unit) = viewModelScope.launch {
+        val a = anuncio.value ?: return@launch
+        val r = resumo.value ?: return@launch
+        val p = conta.recursos.value?.perfil ?: return@launch
+        if (_aReservar.value) return@launch
+        _aReservar.value = true; _erroActualizacao.value = null
+        runCatching { transaccoes.intencao("RESERVATION", p, a.id, a.donoId, r, ajustes.ajustes.value.entidadePagamento, a.titulo) }
+            .onSuccess { aoPagar(it["id"] as String) }
+            .onFailure { _erroActualizacao.value = MensagensErro.de(it) }
+        _aReservar.value = false
+    }
+
     val id: String = checkNotNull(guardado["id"])
 
     val anuncio: StateFlow<AnuncioPublico?> = conta.recursos.flatMapLatest { it?.catalogo?.observar(id) ?: flowOf(null) }
@@ -106,10 +123,7 @@ class DetalheViewModel @Inject constructor(
         if (a == null) { _privado.value = AcessoPrivado.Protegido; return }
         val dono = r.perfil.uid == a.donoId
         val admin = Permissoes.eAdministrador(r.perfil)
-        if (!dono && !admin) {
-            // Participante de reserva confirmada: dados de encontro pelo Central (detalhes.encontro) — Etapa 4.
-            _privado.value = AcessoPrivado.Protegido; return
-        }
+        if (!dono && !admin && a.estado != ao.kupila.gestaonegocios.dominio.anuncio.EstadoAnuncio.RESERVADO) { _privado.value = AcessoPrivado.Protegido; return }
         _privado.value = AcessoPrivado.ACarregar
         _privado.value = runCatching {
             val d = FirebaseFirestore.getInstance().document("productPrivate/$id").get().await()
@@ -117,7 +131,8 @@ class DetalheViewModel @Inject constructor(
             val tel = (dono2?.get("phonePrimary") as? String).orEmpty()
             val dados = DadosEncontro(d.getString("neighborhood").orEmpty(), d.getString("referencePoint").orEmpty(),
                 (dono2?.get("name") as? String).orEmpty(), if (tel.isNotBlank()) ValidacaoContacto.telefoneInternacional(tel) else "")
-            if (dono) AcessoPrivado.Titular(dados) else AcessoPrivado.Administrador(dados)
-        }.getOrElse { AcessoPrivado.Falhou(MensagensErro.de(it)) }
+            // Regras de produção: o Cliente com a reserva associada (reservedByMe) lê; mostram-se só os dados de encontro.
+            when { dono -> AcessoPrivado.Titular(dados); admin -> AcessoPrivado.Administrador(dados); else -> AcessoPrivado.ReservaConfirmada(dados) }
+        }.getOrElse { if (!dono && !admin) AcessoPrivado.Protegido else AcessoPrivado.Falhou(MensagensErro.de(it)) }
     }
 }

@@ -117,6 +117,9 @@ class SessaoRepositorio @Inject constructor(
     /** Login por e-mail e palavra-passe (secção 8). Uma tentativa de cada vez; nunca guarda a senha. */
     suspend fun entrar(email: String, senha: String): Result<Unit> = mutex.withLock {
         _estado.value = EstadoSessao.AEntrar
+        // Entrar é sempre um pedido explícito: a pausa do modo poupança não pode impedir a autenticação.
+        ao.kupila.gestaonegocios.dados.rede.Economia.permitirEntrada()
+        ao.kupila.gestaonegocios.dados.rede.RedeFirestore.primeiroPlano()
         runCatching {
             val r = auth.signInWithEmailAndPassword(email.trim(), senha).await()
             concluirEntrada(r.user!!.uid, email.trim(), sessaoActual = lerGuardada()?.takeIf { it.uid == r.user!!.uid }?.sessaoId)
@@ -179,6 +182,7 @@ class SessaoRepositorio @Inject constructor(
     // ---------------------------------------------------------------- cadastro
     /** Cadastro público: cria a conta Auth, envia a foto (Proprietário) e conclui no Central. */
     suspend fun registar(d: DadosCadastro, senha: String): Result<Unit> = mutex.withLock {
+        ao.kupila.gestaonegocios.dados.rede.Economia.permitirEntrada()
         runCatching {
             val u = auth.currentUser?.takeIf { it.email.equals(d.email.trim(), true) }
                 ?: auth.createUserWithEmailAndPassword(d.email.trim(), senha).await().user!!
@@ -214,10 +218,12 @@ class SessaoRepositorio @Inject constructor(
         batimento?.cancel()
         batimento = ambito.launch {
             while (isActive) {
-                delay(45_000)
-                if (!PrimeiroPlano.activo.value) continue
+                // 150 s: abaixo dos 180 s com que a web considera a sessão viva, com 70% menos escritas do que os 45 s da origem.
+                delay(150_000)
+                if (!PrimeiroPlano.activo.value || ao.kupila.gestaonegocios.dados.rede.Economia.emPausa) continue
                 val r = runCatching { central.actual().sinalSessao(sessaoId) }
                 if (r.getOrNull() == false) { substituida(); break }
+                (central.actual() as? ao.kupila.gestaonegocios.dados.remoto.CentralSpark)?.presenca(dispositivo.instalacaoId(), dispositivo.rotulo, sessaoId, true, "app")
             }
         }
     }

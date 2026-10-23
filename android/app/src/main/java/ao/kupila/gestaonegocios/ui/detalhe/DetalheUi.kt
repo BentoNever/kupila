@@ -108,7 +108,11 @@ fun DetalheEcra(vm: DetalheViewModel, aoVoltar: () -> Unit, aoReservar: ((String
             Column(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 16.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 when {
                     ac.podeEditar && aoEditar != null -> BotaoPrincipal("Editar anúncio", { aoEditar(vm.id) }, icone = Icons.Filled.Edit)
-                    ac.podeReservar && aoReservar != null -> BotaoPrincipal("Gerar referência do sinal", { aoReservar(vm.id) }, icone = Icons.Filled.Payments)
+                    ac.podeReservar && aoReservar != null -> {
+                        val ocupado by vm.aReservar.collectAsStateWithLifecycle()
+                        BotaoPrincipal(resumo?.let { "Reservar · sinal ${ao.kupila.gestaonegocios.dominio.financeiro.FormatoAoa.formatar(it.sinal)}" } ?: "Reservar",
+                            { vm.reservar(aoReservar) }, ocupado = ocupado, icone = Icons.Filled.Payments)
+                    }
                     ac.motivoSemReserva != null -> Text(ac.motivoSemReserva, style = MaterialTheme.typography.bodySmall)
                 }
                 if (ac.podePedirAutorizacao && aoPedirAutorizacao != null) TextButton(onClick = { aoPedirAutorizacao(vm.id) }) { Text("Pedir autorização para desanunciar ou excluir") }

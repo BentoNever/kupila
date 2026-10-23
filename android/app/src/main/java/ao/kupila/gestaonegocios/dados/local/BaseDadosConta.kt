@@ -92,6 +92,31 @@ data class NotificacaoLocal(
     val severidade: String, val accao: String, val entidadeId: String?, val criadaEm: Long, val lida: Boolean, val cta: String?,
 )
 
+/**
+ * Cache genérico das colecções de eventos (reservas, intenções, reembolsos, autorizações, utilizadores…) para mostrar offline e
+ * sincronizar só o que mudou (delta por `updatedAt`) — economia de quotas (docs/principios-produto.md).
+ */
+@Entity(tableName = "registo", primaryKeys = ["colecao", "id"], indices = [Index("colecao"), Index("actualizadoEm")])
+data class RegistoLocal(val colecao: String, val id: String, val json: String, val actualizadoEm: Long)
+
+@Dao
+interface RegistosDao {
+    @Upsert suspend fun gravar(r: List<RegistoLocal>)
+    @Query("SELECT * FROM registo WHERE colecao = :colecao ORDER BY actualizadoEm DESC") fun observar(colecao: String): Flow<List<RegistoLocal>>
+    @Query("SELECT * FROM registo WHERE colecao = :colecao AND id = :id") suspend fun obter(colecao: String, id: String): RegistoLocal?
+    @Query("DELETE FROM registo WHERE colecao = :colecao AND id IN (:ids)") suspend fun remover(colecao: String, ids: List<String>)
+    @Query("DELETE FROM registo WHERE colecao = :colecao AND id NOT IN (:manter)") suspend fun manterSo(colecao: String, manter: List<String>)
+}
+
+/** Migração 1→2: cache genérico de registos (sem perder rascunhos, fila nem notificações já guardados). */
+val MIGRACAO_1_2 = object : androidx.room.migration.Migration(1, 2) {
+    override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS `registo` (`colecao` TEXT NOT NULL, `id` TEXT NOT NULL, `json` TEXT NOT NULL, `actualizadoEm` INTEGER NOT NULL, PRIMARY KEY(`colecao`, `id`))")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_registo_colecao` ON `registo` (`colecao`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_registo_actualizadoEm` ON `registo` (`actualizadoEm`)")
+    }
+}
+
 /** Metadados de sincronização (ex.: "catálogo actualizado em"), para mostrar a idade dos dados offline. */
 @Entity(tableName = "meta")
 data class MetaLocal(@PrimaryKey val chave: String, val valor: String, val em: Long)
@@ -110,7 +135,16 @@ interface ProdutosDao {
     @Query("SELECT * FROM produto_publico WHERE donoId = :dono ORDER BY criadoEm DESC") fun doDono(dono: String): Flow<List<ProdutoPublicoLocal>>
     @Query("SELECT * FROM produto_publico ORDER BY criadoEm DESC LIMIT :limite") fun todos(limite: Int): Flow<List<ProdutoPublicoLocal>>
     @Query("SELECT COUNT(*) FROM produto_publico WHERE status IN ('ACTIVE','RESERVED')") fun totalVisivel(): Flow<Int>
+    @Query("SELECT COUNT(*) FROM produto_publico") suspend fun contar(): Int
+    @Query("SELECT MIN(criadoEm) FROM produto_publico") suspend fun maisAntigoCriadoMs(): Long?
+    @Query("SELECT id, criadoEm FROM produto_publico") suspend fun idsCriacao(): List<IdCriado>
 }
+
+data class IdCriado(val id: String, val criadoEm: Long)
+
+/** Pares (id, criadoEm) e ISO do mais antigo, para paginação e detecção de remoções. */
+suspend fun ProdutosDao.todosIds(): List<Pair<String, Long>> = idsCriacao().map { it.id to it.criadoEm }
+suspend fun ProdutosDao.maisAntigoCriado(): String? = maisAntigoCriadoMs()?.takeIf { it > 0 }?.let { java.time.Instant.ofEpochMilli(it).toString() }
 
 @Dao
 interface PrivadosDao {
@@ -152,18 +186,21 @@ interface NotificacoesDao {
     fun observar(categoria: String?): Flow<List<NotificacaoLocal>>
     @Query("SELECT COUNT(*) FROM notificacao WHERE lida = 0") fun naoLidas(): Flow<Int>
     @Query("UPDATE notificacao SET lida = 1 WHERE id IN (:ids)") suspend fun marcarLidas(ids: List<String>)
+    @Query("UPDATE notificacao SET lida = 1") suspend fun marcarTodasLidas()
+    @Query("SELECT * FROM notificacao WHERE id = :id") suspend fun obter(id: String): NotificacaoLocal?
 }
 
 @Dao
 interface MetaDao {
     @Upsert suspend fun gravar(m: MetaLocal)
     @Query("SELECT * FROM meta WHERE chave = :chave") fun observar(chave: String): Flow<MetaLocal?>
+    @Query("SELECT * FROM meta WHERE chave = :chave") suspend fun obter(chave: String): MetaLocal?
 }
 
 @Database(
     entities = [ProdutoPublicoLocal::class, ProdutoPrivadoLocal::class, RascunhoLocal::class, AnexoLocal::class,
-        OperacaoLocal::class, NotificacaoLocal::class, MetaLocal::class],
-    version = 1, exportSchema = true,
+        OperacaoLocal::class, NotificacaoLocal::class, MetaLocal::class, RegistoLocal::class],
+    version = 2, exportSchema = true,
 )
 abstract class BaseDadosConta : RoomDatabase() {
     abstract fun produtos(): ProdutosDao
@@ -172,6 +209,7 @@ abstract class BaseDadosConta : RoomDatabase() {
     abstract fun operacoes(): OperacoesDao
     abstract fun notificacoes(): NotificacoesDao
     abstract fun meta(): MetaDao
+    abstract fun registos(): RegistosDao
 }
 
 /**
@@ -188,7 +226,7 @@ class GestorBases @Inject constructor(@param:ApplicationContext private val cont
         if (uid == uidActual) base?.let { return it }
         base?.close()
         val nome = "kupila-" + IdentidadeBem.sha256("conta:$uid").take(20) + ".db"
-        return Room.databaseBuilder(contexto, BaseDadosConta::class.java, nome).build().also { base = it; uidActual = uid }
+        return Room.databaseBuilder(contexto, BaseDadosConta::class.java, nome).addMigrations(MIGRACAO_1_2).build().also { base = it; uidActual = uid }
     }
 
     @Synchronized
