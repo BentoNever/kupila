@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Família visual Kupila (HTML: visualPrimary #16a34a, visualAccent #facc15). -->
+    <color name="kupila_verde">#FF16A34A</color>
+    <color name="kupila_amarelo">#FFFACC15</color>
+    <color name="kupila_fundo_icone">#FF0F5132</color>
+</resources>

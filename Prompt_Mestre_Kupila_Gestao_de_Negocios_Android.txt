@@ -1,0 +1,528 @@
+PROMPT MESTRE — KUPILA-GESTÃO DE NEGÓCIOS PARA ANDROID
+Mesmas funcionalidades, propósito e objectivos do HTML; base tecnológica actual do PDV Digital e do Kupila-Finanças pessoais
+Versão 1.1 | 22/10/2026 | Destino: Codex / Claude Code no ambiente de desenvolvimento
+
+COMO UTILIZAR
+Disponibilizar ao agente o ficheiro Kupila%201.0.239.html e acesso de leitura aos projectos actuais PDV Digital e Kupila-Finanças pessoais. Colar este prompt na sessão do projecto destinado ao Kupila-Gestão de negócios Android. O agente deve localizar os caminhos acessíveis; perguntar pela localização apenas se não conseguir encontrá-los com os recursos autorizados. Este documento solicita a implementação integral, não apenas um plano ou uma proposta visual.
+
+BASE E LIMITES DESTA ESPECIFICAÇÃO
+Este prompt foi preparado mediante inspecção estática do HTML anexado Kupila%201.0.239.html e leitura do Prompt_Mestre_Kupila_Financas_Pessoais_Android.txt, versão 3.0. O HTML analisado tem SHA-256 dde34687864cd869be95a17fd3fbdc608677f975db459143ce150d1a4830bf7c. Não foi executado um teste funcional do HTML nem verificado o backend operacional. Os repositórios Android actuais não foram auditados durante a preparação deste documento: essa auditoria é uma etapa obrigatória da execução abaixo. Presença de código, texto ou configuração não comprova que um serviço esteja operacional.
+
+0. ORDEM PRINCIPAL
+Actue como arquitecto de software, engenheiro Android, analista de produto, especialista em integridade transaccional e responsável pela qualidade. Reconstrua integralmente o Kupila do HTML com o nome oficial Kupila-Gestão de negócios, como uma aplicação profissional exclusivamente para celulares Android, preservando o domínio, os fluxos, as funcionalidades, o propósito comercial e os objectivos da plataforma.
+
+O nome oficial do produto é Kupila-Gestão de negócios: marketplace angolano de anúncio, descoberta, compra, aluguer, reserva e intermediação de bens. Kupila, Kupila.ao e Kupila AO são designações históricas da aplicação de origem. O produto Kupila-Finanças pessoais permanece uma aplicação distinta e mantém o seu nome. Este último e o PDV Digital são referências de tecnologias, arquitectura e componentes, não fontes para substituir o domínio do marketplace.
+
+Aplicar exactamente o nome Kupila-Gestão de negócios no nome apresentado pelo Android/launcher, instalação, splash, login, cabeçalhos, Sobre, notificações, ajuda, manual, simulador, recibos, fichas e documentos gerados, bem como na documentação de entrega. Adaptar a composição tipográfica para caber no celular sem cortar ou reduzir excessivamente o texto. A mudança de nome não acrescenta módulos genéricos de gestão empresarial nem elimina o marketplace. Conservar nomes históricos apenas ao identificar fontes, funções/contratos legados, documentos históricos ou referências técnicas necessárias. Não alterar applicationId, IDs, domínios, contas, dados ou contratos já existentes apenas para mudar a designação visível; qualquer migração técnica necessária deve ser justificada e preservar compatibilidade.
+
+O utilizador deve poder anunciar e encontrar bens, reservar mediante sinal verificado, acompanhar a vistoria e o resultado do negócio, receber ou solicitar reembolso conforme as regras, consultar comprovativos e resolver pendências pelo celular. O Administrador também deve gerir toda a plataforma pelo Android.
+
+Entregue um produto funcional, persistente e testável. Não entregue apenas interfaces, botões sem efeito, simulações apresentadas como integração, dados inventados ou um subconjunto denominado "app completo". Pode organizar a execução em incrementos, mas a conclusão exige a paridade de todos os módulos identificados.
+
+1. RESTRIÇÕES INEGOCIÁVEIS
+1.1 Apenas aplicação para celulares Android, com interface e navegação nativas. Entregar APK; AAB quando aplicável à distribuição.
+1.2 Não entregar website, PWA, versão desktop, versão iOS ou HTML dentro de WebView/Capacitor/Cordova como substituto da reconstrução nativa. Um fluxo externo exigido por um provedor, como autenticação ou pagamento, pode usar o mecanismo seguro apropriado, sem transformar o app numa aplicação web.
+1.3 Não criar painel web obrigatório para administração. Backend, API, armazenamento, processamento e tarefas de servidor são infraestrutura interna; a operação dos perfis acontece no celular.
+1.4 Toda regra de negócio existente deve ter um destino explícito. Retirar defeitos, remendos e adaptações de navegador não significa retirar funcionalidades.
+1.5 Usar o nome oficial Kupila-Gestão de negócios e preservar a família visual Kupila encontrada no HTML, incluindo personalização administrativa, logótipo e temas; actualizar as designações visíveis nos materiais do novo app. Não impor automaticamente a marca Spotec ou a paleta do Kupila-Finanças pessoais.
+1.6 O PDV Digital, o Kupila-Finanças pessoais e o HTML original devem permanecer protegidos. Trabalhar num projecto/branch/directório próprio, sem sobrescrever aplicações ou dados existentes.
+
+2. FONTES, PRECEDÊNCIA E RASTREABILIDADE
+Aplicar esta ordem por assunto:
+• Plataforma e objectivo: este pedido explícito do utilizador — reconstrução integral do marketplace para Android.
+• Funcionalidades: HTML anexado integral, incluindo scripts finais e correcções realmente activas, seguido do manual/políticas e dados contratuais verificáveis.
+• Tecnologias: código e configuração actuais dos dois projectos Android de referência, observando a conciliação da secção 4.
+• Obrigações já assumidas: snapshots válidos de anúncios, cobranças, reservas e políticas aceites; uma actualização não pode reescrever contratos históricos.
+• Integridade: não transportar vulnerabilidades, confirmações financeiras fictícias, fuga de dados ou corrupção de saldos para preservar uma implementação defeituosa.
+
+Não resolver conflitos apenas pela última string de versão, pelo nome de uma função ou por um comentário. O HTML contém sucessivas redefinições e identificadores de versões antigas. Rastrear definição, substituições, ordem de carregamento, chamada efectiva e persistência. Distinguir comportamento observado, intenção documentada, serviço externo e hipótese.
+
+Se houver conflito de política comercial que as fontes não resolvam, documentar alternativas e impacto e pedir a decisão específica necessária antes de activar cobranças reais afectadas. Prosseguir com o trabalho independente. Não converter esta regra num pedido genérico de aprovação a cada etapa.
+
+3. AUDITORIA OBRIGATÓRIA DO HTML
+Leia o HTML integral, não apenas o aspecto visual ou o primeiro script. Extraia:
+• Ecrãs, modais, navegação, formulários e campos condicionais; perfis, permissões, acções e estados.
+• Categorias/subcategorias, filtros, pesquisa, ordenação, vitrines, características e informações privadas.
+• Contas, sessões, rascunhos, preferências, cache, ficheiros, filas, notificações e recuperação.
+• Fórmulas, isenções, configurações, snapshots, pagamentos, sinais, comissão, custódia, OTP, reembolsos e liquidação.
+• Administração, utilizadores, autorizações, presença, indicadores, campanhas, testemunhos, exportações, manual e políticas.
+• Dependências, serviços remotos, contratos de dados, colecções, limites e mecanismos de falha.
+
+Crie docs/paridade-html-android.md com uma linha por capacidade/fluxo: identificador; origem no HTML com função/elemento/intervalo de linhas; perfil; comportamento esperado; dados/efeitos; destino Android/backend; teste; estado; limitação. Cobrir também acções de ícones, menus contextuais e funções acrescentadas no fim do ficheiro.
+
+Classifique cada item: funcionalidade a preservar, adaptação de navegador substituída por equivalente Android, defeito corrigido, integração por verificar ou decisão comercial pendente. Nenhuma capacidade pode desaparecer silenciosamente.
+
+A inspecção inicial reconheceu HTML/CSS/JavaScript, carregamento de Firebase Web compat 8.10.1, Authentication, Firestore e Storage, persistência local/IndexedDB, Tesseract.js e código de geração de imagens via AI Horde. Isso descreve a origem web, não a stack do novo Android nem prova de disponibilidade desses serviços.
+
+4. AUDITORIA ACTUAL DO PDV DIGITAL E DO KUPILA-FINANÇAS PESSOAIS
+Execute antes de fechar a arquitectura ou começar a implementação técnica definitiva. "Actual" significa o dia de execução deste prompt, mesmo depois da data deste documento.
+
+4.1 Leia AGENTS.md e instruções de cada repositório. Identifique o módulo Android real, backend e serviços, sem confundir PDV Pro web com PDV Digital APK ou marketplace com finanças pessoais.
+4.2 Registe data/hora/fuso, caminho, repositório, branch, commit/HEAD, alterações locais, versão/build e relação com a versão publicada quando verificável. Não apague nem esconda mudanças locais. Se não puder confirmar o remoto, escreva "estado actual da cópia acessível".
+4.3 Inspeccione configurações de build, manifestos, catálogos de versões, dependências resolvidas e caminhos activos. Confirme linguagem, UI, arquitectura, navegação, estado, concorrência, injecção de dependências, persistência, sincronização, rede, autenticação, segurança, push, OCR, imagens, documentos, testes, SDK/JDK/Gradle/AGP e serviços do backend.
+4.4 Siga fluxos reais: login → identidade/permissões → dados locais → fila → serviço central → validação → confirmação → actualização dos ecrãs. Verifique recuperação, quota, rede fraca, revogação, conflitos, duplicados, tarefas em segundo plano e anexos.
+4.5 Produza docs/auditoria-stack.md: componente | PDV Digital actual e evidência | Kupila-Finanças pessoais actual e evidência | convergência/divergência | tecnologia escolhida e versão | reutilização/adaptação | motivo.
+4.6 Use a base comum efectivamente vigente. Quando houver divergência, prefira o componente Android actual do PDV Digital que o projecto de finanças adoptou como referência, se compatível e sólido. Melhorias verificadas do Kupila-Finanças pessoais podem ser incorporadas com justificação. Não misture dois motores de navegação, duas fontes locais concorrentes ou padrões incompatíveis apenas para dizer que utilizou ambos.
+4.7 Um prompt de criação não comprova implementação. Se Kupila-Finanças pessoais ainda só existir como especificação, registe essa condição e use a implementação actual comprovada do PDV Digital como referência, respeitando os princípios aplicáveis do prompt financeiro.
+4.8 A referência histórica é Kotlin, Jetpack Compose, Material 3, MVVM/Clean Architecture, ViewModel, StateFlow, Coroutines/Flow, Room, WorkManager, Retrofit/OkHttp, Hilt, DataStore, Keystore e Navigation Compose. Não afirmar que é a stack actual sem verificar. Herdar substitutas actuais compatíveis em vez de reinstalar bibliotecas antigas por fidelidade ao texto.
+4.9 Se a referência actual não for nativa Android ou contrariar a restrição explícita, exponha o conflito. Reaproveite serviços e contratos compatíveis; não entregue um wrapper HTML para contornar o requisito. Uma mudança substancial de stack sem solução comprovada exige a decisão concreta do utilizador.
+4.10 Na ausência de código essencial, identifique a dependência exacta e solicite caminho/acesso. Continue matriz funcional, modelos de domínio e critérios de aceitação. Não declare auditoria concluída nem escolha a stack definitiva por suposição.
+
+Concluída a auditoria sem conflito bloqueante, apresente resumo curto e prossiga directamente. Não parar num plano à espera de confirmação de rotina. Não fazer pull/reset/checkout, upgrades, deploy ou alterações nos projectos de referência como parte desta auditoria.
+
+5. ARQUITECTURA, ISOLAMENTO E REUTILIZAÇÃO
+Adopte a arquitectura Android comprovada na auditoria. Separar apresentação, domínio, persistência local, serviços remotos, segurança, sincronização e ficheiros. Reutilizar componentes maduros, não copiar formulários de turnos, inventário, salário ou carteira financeira que não pertencem ao marketplace.
+
+O app deve ter applicationId/namespace, nome, ícone, configuração e permissões próprios. Não sobrescrever os APKs existentes. Usar ambientes de desenvolvimento/teste separados de produção e interfaces substituíveis para serviços ainda indisponíveis.
+
+Padrão esperado, se confirmado: UI observa persistência local; ViewModel/estado invoca casos de uso; repositórios coordenam base local e API/serviços autorizados. Não executar cálculo pesado, compressão, OCR ou rede na thread da UI. Não fazer alterações financeiras directamente pelo ecrã.
+
+O servidor deve ser a autoridade de acesso, identidade, disponibilidade final, pagamentos, reservas, OTP, reembolsos, liberação, configurações oficiais e auditoria. SDK directo só onde a arquitectura verificada e regras de segurança permitirem. Alterações financeiras e segredos de provedor precisam de endpoints/funções confiáveis; não reimplementar autoridade central no APK.
+
+Descobrir backend, armazenamento e contratos reais. Não prescrever Node, Python, Firebase Functions ou outro fornecedor como se já estivesse implementado. Se um serviço novo for indispensável, usar a tecnologia coerente com a infraestrutura verificada e documentar a decisão.
+
+Reutilizar identidade comum apenas se existir mecanismo real autorizado; partilha de infraestrutura não concede acesso aos dados do PDV ou às finanças pessoais. Não copiar configurações de produção, chaves privadas, tokens ou contas administrativas para o código novo.
+
+6. IDENTIDADE E EXPERIÊNCIA MOBILE
+Nome visível oficial: Kupila-Gestão de negócios. Preservar o posicionamento de intermediação e reservas protegidas e a identidade gráfica da família Kupila, actualizando a apresentação do nome. Kupila.ao pode permanecer como referência histórica ou domínio configurado existente, sem substituir o nome oficial do app. Manter a família visual da origem: verde #16A34A, amarelo #FACC15 e personalizações existentes, adaptando contraste e legibilidade. Temas Kupila, Oceano, Violeta, Pôr-do-sol e cor personalizada; paletas da pesquisa/vitrine Aurora, Safira, Luxo e Coral; claro, escuro e automático; logo configurável pelo Administrador.
+
+As configurações confirmadas devem aplicar-se também ao login e ao estado offline desde a primeira apresentação, sem flash de tema errado. Preservar última configuração local autorizada, com versão e sincronização, sem conceder ao cliente permissão administrativa.
+
+Usar componentes nativos, cartões legíveis, hierarquia clara, formatos AOA e português de Angola; fuso Africa/Luanda. Não reproduzir fontes minúsculas do HTML. Alvos de toque acessíveis, TalkBack, texto aumentado, teclado adequado e feedback de validação que conserva os dados.
+
+Preservar o acesso à Home, Anunciar, área do Proprietário e área administrativa por perfil; distribuir reservas, alertas, perfil, ajuda e configurações sem esconder funcionalidades. Não impor cinco destinos fictícios se não corresponderem à navegação real. Uma mão, celulares pequenos e Samsung Galaxy A54 são referências de utilização.
+
+Adaptar as folhas/modais da origem à navegação Android: Voltar regressa ao contexto anterior com filtros e scroll preservados; folhas filhas regressam ao pai correcto; não criar sobreposições órfãs ou ciclos. Ecrã de detalhes tem cabeçalho e acção acessíveis, conteúdo rolável entre ambos e nenhuma cobertura por barra de navegação/teclado.
+
+Galerias têm swipe, miniaturas, contador, zoom e navegação previsível. Gestos de carrossel não abrem o anúncio por acidente. Respeitar redução de movimento. Rotação, retorno do background e recriação do processo não perdem formulários.
+
+Operações demoradas mostram estado contextual, erro recuperável e acção seguinte. Não congelar todo o app enquanto um serviço responde. Não apresentar dados de outra conta nem detalhes transitórios do produto anterior durante carregamento.
+
+7. PERFIS E PERMISSÕES
+Cliente: pesquisa, consulta detalhes públicos, reserva, acompanha reservas, acede aos dados estritamente autorizados após confirmação, solicita reembolso elegível, recebe alertas e avalia negócios em que participou.
+Proprietário: todas as capacidades de Cliente e gestão do próprio perfil, anúncios, recebimentos, preferências, vistorias e pedidos de autorização. Não gere bens alheios nem parâmetros globais.
+Administrador: gestão autorizada de plataforma, utilizadores, equipa administrativa, catálogo, autorizações, processos, configurações, monetização, monitoramento, testemunhos, campanhas e auditoria. Não existe criação pública de Administrador.
+
+Validar no servidor papel, estado da conta, identidade do titular e permissão da operação para cada leitura/escrita, pesquisa, anexo e exportação. Esconder botão não substitui autorização. Preservar as regras de edição por autoria das contas descritas na secção 26.
+
+8. CONTA, LOGIN E RECUPERAÇÃO
+Preservar login por e-mail e palavra-passe do HTML. A stack dos apps de referência não autoriza trocar o identificador por NIP ou copiar o formulário do PDV. Contas reconhecidas no dispositivo podem ter cartões de reinício rápido, limitados à identidade mínima e sem guardar palavra-passe.
+
+Preservar a assistência de entrada automática ao concluir credenciais válidas, com debounce, apenas uma tentativa em curso e sem sucessão de tentativas em cada tecla. Botão Entrar permanece disponível; falha ou retorno não inicia loop. Não abrir área autenticada com simples existência de cache local.
+
+Cadastro público: Cliente ou Proprietário; nome, e-mail, contactos, localização, palavra-passe/confirmar e aceite das políticas; fotografia obrigatória no fluxo do Proprietário. Reproduzir os campos condicionais efectivos da origem e as validações. Prefixo +244 sem duplicação; não presumir que um formato local comprova posse do número.
+
+O perfil do Proprietário exige fotografia optimizada, nome, e-mail funcional, residência (província, município, bairro), telefone principal, alternativo opcional e canal de alertas. Reutilizar dados conhecidos em vez de os pedir a cada anúncio.
+
+Recuperar por mecanismo oficial de redefinição da autenticação. Não revelar palavra-passe nem confirmar publicamente se um e-mail existe. Não guardar credenciais em logs, preferências ou rascunhos. Mostrar erro compreensível, preservando campos permitidos.
+
+Restaurar sessão ainda válida e contexto seguro; distinguir bloqueio local, logout, expiração e revogação. A recuperação de checkout consulta estado oficial e pede acção consciente antes de novo passo financeiro.
+
+9. SESSÃO ÚNICA, INACTIVIDADE E TROCA DE CONTA
+Preservar uma sessão activa por conta, com identificação segura de instalação/sessão no backend. Ao detectar conflito, apresentar dispositivo/sessão de forma limitada e permitir "Encerrar sessão anterior e continuar". A tomada de sessão deve ser atómica, auditada e revogar a anterior, sem dois dispositivos manterem poder de mutação.
+
+Aplicar timeout de inactividade configurável, aviso e opções continuar/sair. Verificar tempo decorrido ao retomar o app; não depender de um temporizador que pára em background. Preservar rascunhos seguros. Revalidar permissões no servidor em operações sensíveis.
+
+Sem rede não é possível provar imediatamente revogação remota. Limitar acesso offline à política local segura e bloquear confirmações sensíveis até revalidação. Não prometer exclusividade global instantânea entre dispositivos desconectados.
+
+Troca de conta e logout removem subscrições e contexto privado da sessão anterior; dados locais privados ficam isolados/protegidos e inacessíveis ao novo utilizador. Fila de uma conta não é enviada em nome de outra.
+
+10. CATÁLOGO, PESQUISA E DESCOBERTA
+Preservar categorias Imóveis, Terrenos, Viaturas, Motorizadas e Outros Produtos, respectivas subcategorias e campos específicos; modalidades Tudo, Comprar/Venda definitiva e Alugar/Arrendamento.
+
+Pesquisa e filtros combináveis por texto, categoria/subcategoria, província, modalidade e demais critérios realmente existentes. Restaurar pesquisa, filtros e posição. Dados geográficos da origem são ponto de partida, incluindo 21 províncias; usar catálogo versionado e actualizável. Não renomear silenciosamente localização histórica nem assumir que uma lista embutida será sempre actual.
+
+Vitrines: Destaques, Recentes, Em Alta, Mais Procurados e Patrocinados. Reproduzir regras identificadas; definir métricas verificáveis quando a implementação for incompleta. Conteúdo pago sempre identificado. Não fabricar procura, visitas, popularidade ou disponibilidade. Deduplicar eventos e impedir que auto-visualizações produzam interesse fictício.
+
+Catálogo paginado/incremental, imagens optimizadas, estados vazio/erro/cache antigo e actualização por eventos. Preservar ordenação e acesso por carrossel, adaptados ao toque; paginação visual do HTML não deve limitar indevidamente o catálogo.
+
+Anúncios de demonstração da origem, como KPL-001/KPL-002/KPL-003, não entram nos dados reais. Se houver modo demonstração, isolá-lo e identificá-lo explicitamente.
+
+11. DETALHES DO ANÚNCIO E PRIVACIDADE
+Mostrar ID, título, categoria/subcategoria, modalidade, disponibilidade, preço e unidade, província/município, fotografias, características, diferenciais e resumo financeiro explicável. Manter todas as informações técnicas preenchidas, inclusive campos acrescentados por correcções finais.
+
+Bairro, ponto de referência, identidade/contactos do Proprietário e informações de encontro não são públicos. Revelar ao titular, Administrador competente e participante da reserva financeiramente confirmada conforme o estado/autorização. Outros Proprietários têm a mesma restrição de um Cliente não autorizado.
+
+Documentos de titularidade, IBAN e dados financeiros não se tornam automaticamente visíveis ao Cliente porque a reserva foi paga. Expor apenas os dados necessários ao encontro; manter documentos e dados de recebimento sob permissões específicas.
+
+Separar projecção pública de dados privados no servidor, nas consultas, no cache e nos ficheiros. Não enviar dados privados para depois os esconder na UI. Limpar caches legados que tenham misturado estes campos, mediante migração controlada.
+
+Ao seleccionar anúncios rapidamente, respostas atrasadas não podem preencher o produto seguinte. Cache público e privado possuem chaves/versões/âmbitos próprios. Falha de leitura privada não deixa a ficha em branco nem remove as características públicas válidas.
+
+CRUD contextual Novo/Ver/Editar/Excluir respeita titularidade e estado. Apresentar leitura quando não houver permissão, sem atalhos para contornar autorização.
+
+12. ANUNCIAR E EDITAR BENS
+Implementar fluxo completo e campos condicionais:
+• Comuns: categoria/subcategoria, venda ou aluguer, título, preço AOA, localização, bairro, ponto de referência, diferenciais, fotos, referência/documentos de titularidade, meio de recebimento, alertas, promoções e aceite.
+• Imóvel: compartimentos, estado/reparos, mosaicada, pintada, climatizada, mobilada e observações.
+• Terreno: área m², finalidade residencial/comercial/agrícola/industrial/mista, topografia, acesso e infraestruturas.
+• Viatura: marca, modelo, ano, quilometragem, combustível, transmissão e estado.
+• Motorizada: marca, modelo, ano, cilindrada, quilometragem e estado.
+• Outros: subcategoria, condição, quantidade, marca, modelo/referência e descrição técnica.
+• Diferenciais: perfil de localização/zona, condomínio/referência comercial e qualidades reais do bem.
+• Aluguer: unidade de preço, duração mínima e campos personalizados, conforme a secção 17.
+
+Campos administrativos de percentagem do sinal e meses de sinal são consultáveis pelo Proprietário, não editáveis por ele. Meio de recebimento: IBAN ou número Multicaixa Express, segundo integração efectiva.
+
+Edição hidrata todos os campos, documentos, fotos, condições e snapshots autorizados; não substituir dado ausente por um vazio que apague informação remota. Validar versão antes de gravar; conflito oferece comparação e preserva rascunho.
+
+Uma alteração de rótulo/categoria não pode manter campos ocultos inconsistentes. Descrever antes de confirmar quando uma mudança elimina informação incompatível. Não publicar ficheiros incompletos nem tratar o simples fim do formulário como confirmação financeira.
+
+13. RASCUNHOS, CONTINUIDADE E LIXEIRA
+Preservar até cinco cadastros inacabados por utilizador, escolha para continuar, remoção, novo anúncio, selecção em lote e exportação onde presentes. Rascunhos de edição são distintos do anúncio publicado. Campos dinâmicos, selecções, aceites válidos, fotos e documentos sobrevivem a falhas/recriação do processo.
+
+Autosave local imediato e sincronização autorizada entre dispositivos. Restaurar progresso e anexos sem refazer trabalho. Distinguir ficha vazia de rascunho útil; não abrir falsas pendências a cada visita.
+
+Ao exceder cinco, preservar o comportamento de substituição do mais antigo com informação clara. Nunca eliminar evidências, pagamento em curso, contrato ou histórico porque o rascunho saiu da lista. Manter referências necessárias até terminar/reconciliar operações associadas.
+
+Respeitar descarte confirmado e a lixeira administrativa existente: não recriar um item apagado por sincronização tardia. Tombstones/versões e política de retenção impedem ressurreição. Lixeira de pendências não equivale a estorno, exclusão do livro ou eliminação de comprovativos.
+
+Não restaurar automaticamente um checkout como ordem para pagar. Restaurar a consulta do seu estado oficial e encaminhar à próxima acção útil.
+
+14. FOTOGRAFIAS, DOCUMENTOS E ASSISTENTE DE IA
+Preservar selecção por câmara, galeria/ficheiros e fontes oferecidas na origem, com progresso, miniaturas, ordem, capa, remoção, contador e retorno ao cadastro/edição correcto. Processamento assíncrono não pode apagar selecções.
+
+Limites iniciais da origem: cinco fotos por produto, até 1,20 MB cada; dez comprovativos de titularidade JPG/PDF, até 2 MB cada; comprovativo de pagamento JPG/PNG/WebP até 4 MB; evidência de reembolso imagem/PDF até 600 KB. Validar unidades e limites reais do servidor; mostrar os mesmos limites no app. Compressão conserva legibilidade, não converte um ficheiro ilegível em prova válida.
+
+Originais necessários à prova têm integridade e retenção adequadas; derivações para miniatura/OCR são separadas. Validar conteúdo/MIME, dimensões, acesso, upload interrompido e limpeza de temporários. Não guardar anexos sensíveis em armazenamento público.
+
+Preservar assistência de geração de imagens presente na origem: contexto por categoria/subcategoria/características, vistas interior/exterior, selecção de perspectivas, conjunto de até oito propostas antes da selecção final limitada, "Novas", progresso, minimizar tarefa, voltar a editar e recuperação do resultado. Seleccionar proposta não reinicia a geração nem perde a galeria.
+
+Fornecedor de IA é adaptador configurado após auditoria; não presumir que a rota histórica anónima estará disponível. Ausência do serviço não bloqueia câmara/galeria nem elimina a capacidade do produto: documentar a dependência e integrar quando configurada. Não enviar documentos/identidades a gerador de imagens.
+
+Imagens sintéticas são identificadas como ilustração gerada. Não comprovar titularidade/estado físico por IA nem apresentar uma imagem inventada como fotografia real. Preservar assistência criativa sem permitir que substitua a evidência real necessária à verificação do bem.
+
+15. TITULARIDADE E PREVENÇÃO DE DUPLICADOS
+Preservar comparação de referência documental, hashes de comprovativos, imagens exactas/perceptuais e descritores do bem. Normalizar texto e distinguir duplicação comprovada de semelhança provável. Duas viaturas semelhantes ou dois apartamentos no mesmo prédio podem ser bens distintos.
+
+Checagem local serve para antecipar feedback; garantia final de unicidade/claims é validada centralmente e de forma concorrente. Não permitir duas publicações porque ambos passaram na verificação local. Claims não podem ser apropriados por clientes arbitrários nem ficar presos indefinidamente a rascunhos abandonados.
+
+Preservar revisão de casos ambíguos, contestação e rastreio. Erro/permissão negada num serviço auxiliar não apaga dados nem provoca retries infinitos. Indicar verificação pendente; não anunciar "protecção completa" se a checagem essencial não ocorreu.
+
+16. MOTOR FINANCEIRO ÚNICO
+Implementar regras em domínio com representação decimal exacta para dinheiro e validação central equivalente. Não usar Double/Float como base de contabilização, arredondamentos diferentes por ecrã ou fórmulas repetidas em UI, simulador e backend.
+
+Definir Money, moeda, percentagem, unidade, escala, precisão interna e ponto de arredondamento. Preço total, preço por unidade, base mínima do contrato, sinal, comissão, líquido, taxa de anúncio, promoções, saldo do preço e reembolso são conceitos distintos.
+
+O mesmo motor gera prévia do cadastro, detalhes, checkout, simulador, recibo, painel do Proprietário e resumo administrativo. A confirmação central devolve os valores oficiais e o snapshot aplicável. Separar configuração vigente, snapshot do anúncio e snapshot da transacção; explicitar a regra de aplicação em edições futuras.
+
+VENDA — regra identificada:
+P = preço do bem; s = percentagem do sinal; c = comissão sobre o sinal; t = taxa de anúncio.
+Sinal D = P × s/100.
+Comissão C = D × c/100, salvo isenção administrativa autorizada.
+Líquido em custódia N = D − C.
+Saldo do preço fora do sinal R = P − D.
+Taxa de anúncio T = P × t/100, conforme isenção.
+Promoção j = P × percentagem_j/100, se contratada e não isenta.
+Publicação Q = T + soma das promoções aplicáveis.
+Receita contratual estimada da plataforma = C + Q; receita financeira confirmada depende dos eventos efectivamente confirmados, sem somar previsões a recebimentos.
+Total líquido previsto ao Proprietário = N + R − Q, quando todos esses custos forem suportados por ele; explicar que Q já foi pago separadamente e não descontá-lo duas vezes no saldo a transferir.
+Reembolso elegível inicial = N, sujeito ao fluxo da secção 23.
+
+O saldo restante do preço não é automaticamente pago dentro da plataforma. Não acrescentar pagamento integral do bem sem contrato/serviço que o suporte. Não chamar ao principal retido "lucro da plataforma".
+
+17. ALUGUER: UNIDADES, CONTRATO MÍNIMO E SINAL
+Preservar preço por dia, semana, quinzena, mês, ano e unidade personalizada; duração mínima de três meses, seis meses, anual ou período personalizado válido.
+
+Base mínima B = preço por unidade × número de unidades de cobrança necessárias para cobrir a duração mínima. Validar unidade e arredondamento. A origem usa convenções comerciais de 1/7/15/30/360 dias para estas unidades e arredondamento para cima em determinadas conversões; equivalência mensal do sinal tem implementação própria. Auditar essas diferenças, documentar convenção e unificar o comportamento, sem tratar aproximação de 30 dias como calendário civil exacto.
+
+Regra operacional de sinal identificada em correcções do HTML: m meses de sinal definidos globalmente pelo Administrador (inicialmente 1; intervalo existente 1 a 12). D = preço mensal equivalente × m, usando o snapshot aplicável. Comissão C = B × c/100. N = D − C; saldo restante = B − D. Taxa de anúncio e promoções incidem sobre o preço por unidade informado, conforme regra encontrada, não automaticamente sobre B.
+
+Para unidade personalizada sem equivalência mensal conhecida, não presumir que uma unidade equivale a mês. Exigir equivalência contratual explícita ou encaminhar configuração para revisão; não inventar conversão. Simulador deve permitir meses de sinal no modo correspondente, embora exista fórmula antiga por percentagem no HTML.
+
+Validar D > 0, D ≤ B e 0 ≤ C ≤ D. Não esconder configuração inválida com max(0, ...), não aumentar cobrança para cobrir comissão e não deixar o Proprietário alterar regra global. Encaminhar ao Administrador e preservar o cadastro.
+
+O motor deve distinguir inequivocamente venda de aluguer. Uma mesma percentagem de comissão tem base diferente conforme a modalidade. Mostrar "sobre o sinal" ou "sobre o contrato mínimo" no resumo.
+
+18. AJUSTES, ISENÇÕES E SNAPSHOTS
+Preservar configurações: sinal de venda, meses de sinal de aluguer, comissão, prazo da reserva, inactividade, taxa de anúncio, entidade/meios de pagamento, percentagens/duração de promoções, alertas por reserva/interesse, limiares/janela/cooldown, e-mail/SMS, identidade visual e campanhas.
+
+Valores iniciais encontrados no HTML, apenas como fallback versionado para ambiente novo: sinal de venda 5%; meses de sinal 1; comissão 15%; anúncio 1%; reserva 1440 minutos; inactividade 10 minutos; interesse de 3 clientes distintos em 24 horas, cooldown de 12 horas; promoções 0,25% / 0,50% / 0,35%, duração 7 dias. Estes valores não substituem configurações actuais válidas do servidor.
+
+Preservar isenção de publicação do Administrador, incluindo o caminho que não gera cobrança/referência. A origem também contém isenção de comissão para anúncio publicado por Administrador. Inventariar isenção de comissão, taxa e promoções separadamente, confirmar a política efectiva com backend e registar no snapshot/recibo. Não transformar "admin isento" em dispensa automática de pagamento do sinal por qualquer Cliente.
+
+Somente Administrador autorizado altera ajustes. Servidor valida intervalos e consistência entre os parâmetros. Alterações têm versão, autor e data oficial; restaurar cores ou padrões não apaga operações. Uma configuração nova não recalcula reservas pagas, recibos ou taxas históricas.
+
+19. PAGAMENTO PARA PUBLICAR
+Fluxo do Proprietário: formulário válido → rascunho privado → resumo da taxa e promoções → aceite → cobrança única correspondente → pagamento → comprovativo/OCR quando requerido → confirmação financeira central → publicação autorizada.
+
+Somente os anúncios elegíveis entram no catálogo. Gerar referência, carregar imagem, reconhecer texto ou escrever "pago" no cliente não publica. Falha/timeout conserva rascunho e consulta a intenção já criada antes de emitir outra cobrança.
+
+Administrador isento publica pelo fluxo autorizado sem cobrança artificial. Guardar motivo/competência/snapshot da isenção. Não falsificar pagamento zero como se o provedor tivesse recebido dinheiro.
+
+Não cobrar novamente o mesmo serviço por retry ou abertura do checkout. Edições e alterações de preço/promoção respeitam uma política explícita: não cobrar nova publicação silenciosamente nem alterar retroactivamente o que já foi contratado. Toda cobrança adicional exige resumo e acção consciente do pagador.
+
+20. CHECKOUT, PROVEDOR E VALIDAÇÃO FINANCEIRA
+Preservar pagamento por entidade/referência e Multicaixa Express quando contratado/suportado, contactos e submissão do comprovativo. Referência válida é emitida/reconhecida pelo serviço autorizado; números locais aleatórios não constituem instrução real de pagamento.
+
+Preservar experiência em duas etapas: dados para pagar → "Já paguei"/comprovativo → extracção da referência → confirmação pelo backend de referência, entidade, moeda, montante integral, pagador/destino e estado apropriados. Campo manual aparece apenas se a leitura não resolver a referência.
+
+OCR prepara evidência e reduz digitação; não confirma crédito. Resultado parcial, valor incorrecto, referência de outra intenção, comprovativo reutilizado e pagamento ainda não confirmado mantêm estado explicável. Cliente não pode escrever COMPLETED/PUBLISHED/PAID nem escolher montante oficial.
+
+Backend valida autenticidade e replays de callbacks, idempotência e reconciliação com o provedor. Guardar IDs externos, eventos e vínculo à intenção. Segredos ficam no servidor. Falha de retorno ao APK não desfaz um pagamento já aceite: consultar estado oficial antes de repetir.
+
+Se faltar configuração/provedor, mostrar indisponibilidade específica e conservar trabalho. Não gerar entidade fictícia, sucesso local ou teste com dinheiro real. Contratos e simuladores ficam isolados do ambiente real e identificados como tal.
+
+Timeout significa resultado ainda desconhecido quando a requisição pode ter sido aceite. Não afirmar "nenhuma cobrança foi criada" sem evidência. Usar consulta/reconciliação pelo identificador idempotente antes de tentar novamente.
+
+21. RESERVA, DISPONIBILIDADE E CONCORRÊNCIA
+Fluxo: Cliente escolhe bem disponível → vê condições/snapshot → cria intenção → paga sinal → validação financeira central → aquisição atómica da disponibilidade → reserva confirmada → acesso aos dados necessários → prazo e OTP.
+
+Gerar referência não reserva nem inicia o prazo da reserva. Se houver lock técnico temporário para coordenar pagamentos, distinguir desse estado comercial e documentar duração/liberação. O prazo da reserva começa na confirmação oficial, com timestamp do servidor.
+
+Não permitir duas reservas activas exclusivas para o mesmo bem. Dois pagamentos concorrentes exigem decisão atómica de disponibilidade e encaminhamento explícito do pagamento excedente para resolução financeira; nunca uma segunda reserva silenciosa nem dinheiro órfão. Em bens de quantidade >1, auditar semântica existente e controlar unidades/reservas sem overselling.
+
+Estados de anúncio, intenção, reserva e pagamento são separados. Reserva expirada não significa dinheiro reembolsado, negócio concluído ou comissão duplicada. Tarefas de expiração pertencem à autoridade central; contador Android é apresentação, com indicação de última confirmação quando offline.
+
+Guardar histórico, consulta de reservas, reabertura do comprovativo e notificações por evento. Cancelamento, expiração e indisponibilidade têm mensagens e consequências próprias.
+
+22. CUSTÓDIA, VISTORIA, OTP E LIBERAÇÃO
+Preservar a finalidade do fluxo protegido: sinal confirmado é separado em comissão e líquido em custódia; o líquido só entra no fluxo de liberação após decisão válida da vistoria. Não afirmar que há custódia real sem suporte contratual/financeiro verificável do provedor e ledger correspondente.
+
+OTP é gerado/verificado centralmente, associado à reserva/participantes/finalidade/validade, com protecção contra tentativa excessiva, reuso e exposição. Não gerar com Math.random no APK nem publicar no catálogo. Titular/Administrador competente confirma apenas reserva autorizada.
+
+Confirmação positiva do negócio e início de liberação são eventos distintos da confirmação financeira do pagamento ao Proprietário. Estados mínimos: custódia, decisão positiva, liberação solicitada, processamento, liberado confirmado ou falha/pendência. O painel só aumenta "recebido" após fonte financeira confirmar.
+
+Usar valores do snapshot aprovado, inclusive comissão de aluguer/isenções. Não recalcular líquido por uma percentagem genérica sobre o sinal. Validação repetida do OTP não conclui ou transfere outra vez.
+
+OTP demonstra uso de um código no fluxo, não prova sozinho presença física, qualidade, titularidade ou consentimento absoluto. Preservar confirmação/evidências apropriadas e rastreio sem alegações de segurança impossíveis.
+
+Concluir o negócio não implica que todo o preço do bem foi liquidado pela plataforma. Mostrar exactamente o que foi confirmado e o saldo restante que pertence ao acordo entre as partes.
+
+23. REEMBOLSO E CONTESTAÇÃO
+Preservar pedido pelo Cliente ligado à reserva paga: código/identificação da vistoria, motivo, descrição, declaração e evidência; Proprietário confirma ou contesta; Administrador analisa autorização/integridade; provedor processa; confirmação financeira encerra como reembolsado.
+
+Motivos existentes incluem diferença face ao anúncio, condição insatisfatória, problema documental, ausência do Proprietário e outro motivo comprovável. O HTML contém uma contradição: permite ausência do Proprietário mas exige declaração de vistoria presencial em todos os casos. Adaptar declaração/evidência ao motivo para não obrigar a uma afirmação falsa. Preservar revisão de excepções e a decisão competente, sem aprovação automática por simples alegação.
+
+Comissão retida e reembolso do líquido seguem snapshot/política aceite. Taxa de anúncio e promoções não se tornam reembolsáveis por expiração ou cancelamento apenas porque o app foi refeito. Não alterar política comercial retroactivamente; eventuais exigências legais/contratuais são verificadas antes de activação comercial.
+
+Evidência protegida com hash, versão, origem, autor e controlo de acesso. Administrador abre/verifica integridade antes da decisão. Aprovar pedido cria obrigação/solicitação; não marca transferência como paga. Falha no provedor conserva pendência, histórico e permite retry idempotente.
+
+Reembolso e liberação disputam o mesmo saldo em custódia. Transacção central impede pagar a ambos ou reembolsar após já ter transferido sem tratamento financeiro explícito. Contestação, ausência de confirmação ou saldo insuficiente não são escondidos como "resolvido".
+
+24. RECIBOS, FICHAS E DOCUMENTOS
+Preservar comprovativo/recibo da reserva em JPG e PDF, ficha de utilizador em JPG/PDF e cópia de evidência apenas a quem possui permissão. Gerar/partilhar pelo Android com mecanismo seguro, sem expor ficheiros privados publicamente.
+
+Documentos mostram ID, participantes permitidos, bem, moeda, valores, referência, datas/fuso, estado real e versão aplicável. Recibo de sinal não comprova pagamento integral do bem, liberação ou reembolso se esses eventos não ocorreram.
+
+OTP e dados privados só aparecem na cópia autorizada em que sejam necessários. Não exportar tokens, credenciais ou documentos de titularidade por acidente. Regenerar documento pelo mesmo snapshot não modifica os valores históricos.
+
+25. PAINEL DO PROPRIETÁRIO
+Preservar perfil/cadastro, próprios anúncios e estados, consulta/edição/autorizações, reservas activas, validação de vistoria, pedidos de reembolso, recebimento e saldos.
+
+Distinguir sinal confirmado, comissão, líquido em custódia, liberação em processamento, efectivamente recebido e reembolso pendente/confirmado. Indicadores são derivados de eventos oficiais, não de somas locais mutáveis. Cada número abre a origem e o negócio correspondente.
+
+Preferências por produto: alertar por reserva, interesse e canal herdado do perfil ou e-mail/SMS/ambos. Não revelar informação privada de quem apenas navegou além da finalidade autorizada.
+
+26. CENTRO ADMINISTRATIVO E UTILIZADORES
+Implementar no celular as áreas Utilizadores, Catálogo, Monitoramento e Administração, com ferramentas coerentes com a origem:
+• Clientes e Proprietários: pesquisa, filtros de perfil/estado, fichas, totais, criação autorizada, activar/desactivar/suspender/arquivar e acções existentes.
+• Administradores: directório e ficha da equipa autorizada; criação/concessão de privilégios fora do cadastro público e validada no servidor.
+• Contas criadas publicamente: Administrador consulta e altera estado dentro da competência; não edita arbitrariamente os dados pessoais.
+• Dados pessoais editáveis administrativamente apenas quando a conta tiver sido criada pelo Administrador actual, conforme regra da origem; autorias e excepções verificadas centralmente.
+• Palavra-passe nunca é lida/exibida; alterações usam fluxo seguro de autenticação. Criação de outro utilizador não troca acidentalmente a sessão administrativa corrente.
+• Catálogo: consulta, detalhes, gestão autorizada e preservação dos mesmos campos do anúncio; carrosséis/listas utilizáveis no celular.
+• Reservas e liquidação: sinais confirmados, custódia, libertações e reembolsos, com vínculo a transacções e filtros úteis.
+• Histórico de operações e monetização: origem, autor, acção, entidade, estado, montante, datas e navegação para o detalhe autorizado.
+
+Operações destrutivas sobre conta/bem respeitam reservas, valores, retenção e histórico. Arquivar/desactivar não pode apagar obrigações financeiras. Não conceder privilégios porque uma função JavaScript antiga se chamava isManager.
+
+27. AUTORIZAÇÕES PARA DESANÚNCIO E EXCLUSÃO
+Preservar solicitação do Proprietário, análise administrativa, emissão e uso de autorização/código, validade, motivo e histórico. Vincular autorização a utilizador, bem, acção e versão; limitar a um uso e não aceitar código de outro produto.
+
+Produto reservado/concluído ou associado a pagamento tem regras de bloqueio/arquivamento próprias. Desanunciar/excluir não reembolsa automaticamente taxas, comissão ou sinais. Não permitir que remoção visual elimine prova de negócio.
+
+Administrador tem as acções correspondentes à sua competência, com auditoria. Código de autorização e OTP de vistoria são conceitos independentes, com finalidades e permissões distintas.
+
+28. PROCESSOS PENDENTES E LIXEIRA ADMINISTRATIVA
+Central única reúne processos activos com autor, tipo, estado, motivo, data e contexto. Oferecer continuar do último ponto, tentar novamente, abrir relacionado, manter pendente e descartar da central onde permitido.
+
+Concluído/cancelado/expirado deixa a fila activa sem apagar histórico. "Descartar da central" não cancela cobrança nem resolve obrigação. Retry consulta estado remoto e não duplica pagamentos/publicações. A lixeira suporta as acções existentes, incluindo selecção em lote quando aplicável, sem excluir eventos financeiros imutáveis.
+
+Encaminhar próxima acção ao responsável correcto. Esperar por Cliente, Proprietário, Administrador ou provedor não bloqueia a navegação nem obriga outro perfil a resolver uma decisão que não lhe pertence.
+
+29. MONITORAMENTO E INDICADORES
+Preservar centro administrativo: acesso/presença por dispositivo e perfil, sessões activas, acessos autenticados, crescimento em 7/14/30 dias, comparação ao período anterior equivalente, produtos por tipo/modalidade/estado, reservas e resumo de saldos. Detalhe deve reconciliar com o total.
+
+Presença usa heartbeat de primeiro plano com janela/TTL explícita; não significa que a pessoa está a trabalhar, fisicamente presente ou a olhar para o app. Sessão válida, dispositivo online e interacção recente são métricas diferentes. Respeitar privacidade e finalidade administrativa; não adicionar vigilância secreta.
+
+Saldos: sinais confirmados, comissão, taxas, promoções, custódia, liberação/reembolso pendentes e confirmados. Não somar stock financeiro de custódia com receita como se fossem a mesma coisa. Excluir demonstração/duplicados e identificar a última actualização.
+
+Sem denominador ou dados suficientes, mostrar ausência de base em vez de percentagem infinita/zero enganoso. Sem acesso não há crescimento percentual válido sobre base zero; apresentar variação absoluta e contexto.
+
+30. NOTIFICAÇÕES, INTERESSE E CAMPANHAS
+Preservar sino, contador de não lidas, categorias Todas/Reservas/Monetização/Interesse/Administração/Novidades, marcar lidas e acção contextual. Cada evento tem chave idempotente, destinatário e permissão.
+
+Proprietários recebem alertas por reserva e interesse relevante segundo clientes distintos, janela e cooldown configurados. E-mail/SMS respeitam contactos/preferências e disponibilidade do serviço. Push Android segue o mecanismo actual verificado nos apps de referência.
+
+Modos Automático, Som, Vibração, Som+Vibração e Silencioso; opção de notificação do sistema, feedback háptico e teste no dispositivo. Respeitar permissões, canais, preferências do Android, modo não incomodar e limitações de entrega. Não prometer som/vibração instantâneos em qualquer condição ou force-stop.
+
+Notificação em ecrã bloqueado tem conteúdo discreto; abrir exige autenticação e permissão actual. Não incluir OTP, conta bancária ou localização privada no payload público. Servidor mantém estado mesmo que push falhe.
+
+Campanhas: criar, listar, activar/desactivar e excluir conforme a origem; público Todos/Clientes/Proprietários, prioridade, início/fim e botão para explorar, reservas ou anúncios. Entregar apenas durante vigência e ao público autorizado, com limite de repetição por utilizador/campanha. Não usar campanhas como notificações urgentes financeiras.
+
+31. TESTEMUNHOS E CREDIBILIDADE
+Preservar métricas de negócios concluídos, testemunhos e média, composição opcional após experiência elegível, participantes, consentimento, moderação, aprovação/publicação e selo de negócio verificado.
+
+Servidor verifica vínculo a transacção concluída e controla duplicações. Recomendação de testemunho não obriga o utilizador nem publica automaticamente. Reserva gerada/paga sem conclusão não recebe selo de negócio concluído. Não fabricar testemunhos ou misturar demonstração com métricas reais.
+
+32. SIMULADOR, AJUDA, MANUAL E POLÍTICAS
+Simulador completo, apenas reserva e apenas publicação; venda/aluguer, unidades, prazo mínimo, sinal, comissão, taxa e promoções, com resultados instantâneos e fórmulas explicáveis. Usar percentagens actuais é uma acção clara; cenário guardado automaticamente e limpar cenário permanecem disponíveis.
+
+Simular é local e informativo: não cria pagamento, reserva, anúncio, transferência ou alteração de ajuste global. Mesmos inputs/snapshot/regime produzem os mesmos resultados do motor real. Não manter a fórmula antiga por percentagem de sinal no aluguer se o regime efectivo for meses.
+
+Preservar FAQ com expansão individual e Ver mais/menos, manual por perfil, políticas/intermediação, protecção de reserva e informação sobre o app. Explicar publicação, sinal, comissão, custódia, vistoria, reembolso e limites.
+
+Aceites de conta e anúncio guardam versão, autor, finalidade e data/hora; reabrir e concluir leitura permanece possível. Não inferir compreensão jurídica apenas por scroll. Mudança material pode exigir novo aceite no fluxo pertinente, sem invalidar arbitrariamente contratos antigos.
+
+Sobre: nome oficial Kupila-Gestão de negócios, versão/build efectiva, propósito e crédito de desenvolvimento encontrado na origem: Sousa B.Morais, com ano actualizado. Manual, termos, mensagens e recibos usam as mesmas regras do produto. Não apresentar a especificação como parecer jurídico ou autorização regulatória; antes de produção, verificar contratos/políticas aplicáveis quando necessário.
+
+33. OFFLINE, SINCRONIZAÇÃO E SEGUNDO PLANO
+Preservar leitura de catálogo/cache autorizado, rascunhos, fotos, progresso e preferências sem rede. Consulta offline mostra idade/estado dos dados. Autenticação inicial, disponibilidade final, publicação paga, confirmação de pagamento, OTP, reembolso e liberação exigem autoridade central; offline salva pedido/rascunho, não um sucesso fictício.
+
+Fila persistente por utilizador/ambiente, ID idempotente, entidade, dependências, payload versionado, tentativas, timestamps, próximo retry e motivo. Usar o mecanismo Android comprovado na auditoria; nada de depender de setInterval, service worker ou app aberto.
+
+Trabalhos têm backoff, constraints, progresso e cancelamento apropriados. Recuperar tarefa presa em "a enviar", crash entre envio/ack, anexos incompletos e resultados de IA. Timeout local não implica que o servidor cancelou. Trabalhos persistentes respeitam Doze, quotas e limitações do Android; usar foreground service apenas quando justificado e com notificação exigida.
+
+Sincronização por mudanças e listeners/subscrições autorizados, ligados ao ciclo de vida. Não polling agressivo, listeners duplicados, leitura integral repetida ou retries infinitos por permissão negada. Erro de uma colecção auxiliar não derruba o catálogo inteiro.
+
+Conflitos usam versões e validação central. Exclusões têm tombstones. Conta suspensa/revogada não consegue enviar uma mutação pendente apenas porque foi criada antes. Revalidar e apresentar a resolução ao responsável.
+
+34. SEGURANÇA, TEMPO E AUDITORIA
+Proteger credenciais/chaves pela solução Android actual, Keystore quando aplicável, armazenamento privado e tráfego seguro. Não guardar tokens/senhas/OTP em logs, analytics, ficheiros exportados ou preferências desprotegidas. Biometria local opcional não substitui autenticação/autorização central.
+
+Regras de servidor cobrem colecções/endpoints e armazenamento de anexos. Dados públicos e privados têm contratos separados. Cliente não decide funções administrativas nem escreve estados financeiros finais. Reduzir permissões Android e usar selectores modernos de ficheiros/fotos sempre que aplicável.
+
+Ledger de eventos financeiros preserva origem, moeda, montante, intenção, reserva, serviço externo, actor e timestamps. Correcções são ajustes/reversões vinculados, não sobrescrita de prova histórica. Definir invariantes de conservação para valores em custódia, comissões, devoluções e transferências.
+
+Tempo oficial de cobrança, confirmação, validade, OTP e decisão vem do servidor. Guardar UTC e apresentar Africa/Luanda. Mudar hora no celular não estende reserva nem cria ordem cronológica oficial falsa.
+
+Auditoria permite rastrear antes/depois, actor, permissão, entidade, versão, motivo e resultado, sem expor segredos. Eventos técnicos não equivalem a decisão financeira e não podem conter documentos pessoais completos por conveniência.
+
+35. MIGRAÇÃO E COMPATIBILIDADE COM O LEGADO
+Não assumir que o HTML contém todos os dados do utilizador. Dados reais podem residir no Firestore/Storage e parte dos rascunhos no navegador. Cache no navegador de outro dispositivo não é acessível ao APK por simples instalação.
+
+Produzir plano de migração: inventário real, backup/exportação autorizado, esquema de origem/destino, IDs, perfis, titulares, estados, versões, moeda, datas, anexos, aceites e relações. Reconciliar contagens e saldos; manter fallback/rollback sem apagar a origem.
+
+Reutilizar serviços/dados quando verificados e seguros. Caso exijam adaptação, implementar camada de compatibilidade ou migração versionada. Não migrar dados de produção nem alterar regras globais como efeito colateral de compilar o app. Ensaiar com fixtures/cópia de teste; execução real segue autorização específica existente ou decisão final informada.
+
+Cobranças/reservas antigas mantêm snapshots e IDs do provedor. Não gerar novas referências ou recalcular comissão ao importar. Dados incompletos vão para pendência de revisão; não inventar estado "pago", OTP ou titular ausente.
+
+Importação de rascunhos/exportações, quando necessária, valida titularidade, integridade, tamanho e duplicados. Histórico financeiro e identidade de utilizadores não são importados livremente de JSON editável como factos oficiais.
+
+36. INCONSISTÊNCIAS JÁ IDENTIFICADAS A RESOLVER
+A. Liberação: há texto no painel que sugere encaminhamento automático do líquido após pagar; manual/checkout/código de intenção descrevem holdOwnerPayout e decisão por vistoria. Adoptar custódia até decisão como regra da reconstrução, conciliada com backend/contratos; não repetir o texto antigo nem libertar pelo simples upload do comprovativo.
+B. Aluguer: função inicial do simulador calcula sinal por percentagem; correcções posteriores usam meses administrados e preço mensal equivalente. Rastrear caminho activo, padronizar motor/cadastro/simulador/checkout e preservar snapshots antigos.
+C. OTP: uma implementação local marca conclusão/recebimento e usa fórmula genérica que pode errar a comissão do aluguer. Substituir por comando central atómico, snapshot correcto e confirmação financeira separada; não declarar que a transferência ocorreu porque o OTP foi aceite.
+D. Isenções: cobrança de publicação e comissão têm mecanismos distintos para anúncios administrativos. Explicitar cada isenção e validar a aplicação, sem uma flag vaga que isente tudo.
+E. Reembolso: ausência do Proprietário não combina com declaração obrigatória de vistoria presencial; adaptar prova/declaração ao motivo com revisão adequada.
+F. Dados privados: vários patches retiram campos sensíveis do cache público. Garantir separação no contrato do servidor e no cache Android, incluindo migração de cache, em vez de uma lista de campos escondidos visualmente.
+G. Versões: o HTML possui múltiplas strings antigas redefinidas. Usar versão/build únicas na aplicação; preservá-las separadamente da versão do esquema, política e regra financeira.
+H. Serviço financeiro: criação de intenção/referência no JavaScript não comprova integração bancária operacional. Não transportar geração aleatória como pagamento real nem assumir que colecções de pedidos executam transferências por si só.
+
+Documente outras divergências descobertas. Corrigir comportamento inseguro com rastreabilidade não autoriza mudar preços, retenções ou direitos de transacções já contratadas.
+
+37. CASOS FINANCEIROS DE REFERÊNCIA PARA TESTES
+Casos sintéticos: não são dados actuais do utilizador nem comprovação de política legal.
+
+Venda: P=1.000.000 AOA; s=5%; c=15%; t=1%; sem promoções/isenção.
+D=50.000; C=7.500; N=42.500; R=950.000; T=10.000. Cliente paga 50.000 de sinal; plataforma regista 7.500 de comissão e 10.000 de publicação quando confirmados; 42.500 permanecem em custódia até decisão. Líquido total previsto do Proprietário=982.500, se o restante preço for efectivamente pago e não houver outros custos. Reembolso elegível, se aprovado e confirmado=42.500, sem dedução duplicada da comissão.
+
+Aluguer mensal: preço=100.000 AOA/mês; mínimo=3 meses; m=1; c=15%; t=1%.
+B=300.000; D=100.000; C=45.000; N=55.000; R=200.000; T=1.000. Reembolso elegível=55.000. Não calcular C=15.000 por aplicar comissão apenas ao sinal.
+
+Promoções de venda: sobre P=1.000.000, destaque 0,25%, top 0,50%, prioridade 0,35%, todas seleccionadas: 2.500+5.000+3.500=11.000; com anúncio de 10.000, Q=21.000. Não confundir percentagem com factor decimal 0,25 nem duplicar cobrança ao repetir submissão.
+
+Inválido: no aluguer anterior, c=40% produz C=120.000>D=100.000. Bloquear checkout/publicação afectada e encaminhar ajuste; não zerar o negativo nem alterar o sinal unilateralmente.
+
+Regra de conservação: para um sinal confirmado, o somatório das parcelas monetárias finais/movimentos reconciliados corresponde ao montante recebido, considerando comissão e a destinação do líquido. Não adicionar ao mesmo tempo todo o líquido "em custódia", "pago ao proprietário" e "reembolsado" como saldos independentes positivos.
+
+38. TESTES E ACEITAÇÃO FUNCIONAL
+Implementar e executar testes de domínio, contratos/segurança, persistência, concorrência e UI dos fluxos críticos. Não é suficiente testar que um botão existe. A matriz de paridade deve referenciar evidência real de verificação.
+
+Casos obrigatórios:
+01. Cliente/Proprietário cadastram, aceitam política versionada e entram; Administrador não nasce no cadastro público; recuperação não revela credenciais.
+02. Cadastro de outro utilizador pelo Administrador não troca a sua sessão; contas de autoria alheia respeitam restrições de edição.
+03. Duas instalações disputam a sessão; takeover revoga a anterior e mutação com sessão antiga é negada centralmente.
+04. Inactividade em primeiro/segundo plano bloqueia conforme regra; retoma guarda rascunho; offline não inventa validação remota.
+05. Filtros combinados, pesquisa, vitrines e navegação restauram contexto; dados demonstrativos não contaminam catálogo real.
+06. Cada categoria/subcategoria permite criar, editar e recuperar todos os seus campos e características.
+07. Fotos/documentos no limite, acima do limite, ilegíveis e upload interrompido produzem resultado claro sem apagar formulário.
+08. IA contextual gera/recupera propostas; seleccionar não regenera; erro do serviço mantém câmara/galeria; ilustração é identificada.
+09. Cinco rascunhos, novo rascunho, descarte, exclusão em lote e sincronização tardia mantêm a política sem perder cobrança/evidência nem ressuscitar excluído.
+10. Duplicado comprovado é tratado; bem semelhante legítimo não é bloqueado cegamente; publicação concorrente não contorna claim central.
+11. Catálogo/cache não contêm campos privados; Cliente não autorizado não obtém dados por API, URI ou troca de ID.
+12. Alternar rapidamente anúncios e contas não mistura detalhe, fotos, documentos ou permissões; Voltar regressa ao contexto correcto.
+13. Fórmulas de venda, aluguer, unidades, meses de sinal, promoções e isenções coincidem em todos os ecrãs/servidor.
+14. Ajuste global novo não altera reserva/recibo antigo; configuração inválida impede só a operação afectada e encaminha ao responsável.
+15. Proprietário só publica após pagamento confirmado; Administrador isento não recebe referência artificial; retry não duplica taxa.
+16. Gerar referência, OCR confiante e comprovativo falso/repetido não bastam para reservar; montante parcial/errado mantém pendência.
+17. Callback repetido, fora de ordem ou forjado não duplica nem confirma pagamento indevido; crash após aceite reconcilia pelo mesmo ID.
+18. Dois Clientes pagam pelo mesmo bem: no máximo uma reserva exclusiva; pagamento excedente tem tratamento rastreado e não desaparece.
+19. Pagamento confirmado inicia prazo oficial; mudar relógio/fechar app não estende validade; expiração não dispara estorno automático.
+20. OTP errado/expirado/repetido ou de outro bem é negado; OTP válido cria uma decisão e, quando cabível, uma solicitação de liberação.
+21. Falha na liberação não marca "recebido" nem cobra novamente Cliente; confirmação real actualiza painel e livro uma única vez.
+22. Reembolso percorre prova, confirmação/contestação, análise e confirmação financeira; ausência de Proprietário não força declaração falsa.
+23. Liberação e reembolso simultâneos não gastam o mesmo saldo; alteração de evidência é detectada pelo hash/versionamento.
+24. Autorizar exclusão usa código vinculado, prazo e uso único; desanúncio não apaga dívida/custódia nem gera reembolso automático.
+25. Central/lixeira não confundem esconder pendência com resolver obrigação; continuar/tentar novamente abre a etapa correcta.
+26. Indicadores reconciliam com eventos; custódia não é receita; presença recente não é assiduidade; base zero não produz percentagem falsa.
+27. Notificações/campanhas respeitam destinatário, validade, cooldown, privacidade e permissões do Android; push perdido não altera estado.
+28. Testemunho depende de negócio concluído, participante e consentimento/moderação; nenhuma publicação fabricada.
+29. Recibos JPG/PDF e fichas abrem no Android, mantêm versão/valores e não expõem segredos; recibo de sinal não prova preço integral.
+30. Simulador nunca grava pagamento/ajuste global e reproduz o motor vigente, inclusive meses de sinal no aluguer.
+31. Sem rede, quota, timeout e morte do processo preservam rascunhos/fila; retorno da rede retoma idempotentemente; conta suspensa não envia operação antes autorizada.
+32. Nome oficial Kupila-Gestão de negócios é consistente no launcher, login, cabeçalhos, Sobre, notificações e documentos; tema/logótipo persistem no login e offline; claro/escuro, teclado, safe areas, texto aumentado, TalkBack e celular pequeno continuam utilizáveis.
+33. Migração em teste conserva IDs, snapshots, relações, anexos e saldos, com comparação antes/depois e rollback; não reexecuta cobranças.
+34. Stack histórica divergente do código actual é correctamente detectada e documentada; referência inacessível não recebe selo de auditada.
+
+Acrescentar casos encontrados na auditoria. Executar lint, testes e build pertinentes. Diferenciar fixtures, sandbox do provedor, emulador e dispositivo real. Não afirmar testes em Galaxy A54, produção, push bloqueado ou pagamentos reais sem evidência da execução correspondente.
+
+39. EXECUÇÃO POR ETAPAS, SEM PERDER O ESCOPO
+Etapa 1: auditoria do HTML e dos dois projectos; matriz de paridade, divergências e stack comprovada.
+Etapa 2: domínio, contratos, estados, segurança, migrações e motor financeiro; infra Android coerente com a arquitectura final.
+Etapa 3: autenticação/perfis/sessões, catálogo/detalhes, cadastro/edição, anexos, rascunhos e personalização.
+Etapa 4: publicação paga, reservas, comprovativos/OCR, disponibilidade, custódia, OTP, liberação e reembolsos.
+Etapa 5: administração completa, autorizações, processos/lixeira, monitoramento, monetização, alertas, campanhas e testemunhos.
+Etapa 6: simulador, documentos, manual/políticas, sincronização/recuperação, migração ensaiada, validação e APK.
+
+Esta sequência pode ser ajustada às dependências reais. Não tratar as etapas finais como extras opcionais nem entregar um MVP reduzido como cumprimento integral. Construir incrementos verticais com persistência e critérios de aceitação, sem arquitectura descartável.
+
+Automatizar preenchimento contextual, cálculo, validação, compressão, recuperação, encaminhamento e sincronização. Exigir intervenção humana para informação desconhecida, pagamento consciente, aceite, ambiguidade relevante e decisão que possui responsável. Não automatizar consentimento, vistoria, aprovação controversa ou sucesso financeiro inexistente.
+
+40. ENTREGÁVEIS E DEFINIÇÃO DE CONCLUÍDO
+Entregar no projecto:
+• Código Android completo e organizado; backend/adaptadores/contratos necessários; configurações sem segredos e migrações versionadas.
+• Auditoria da stack actual de ambos os projectos e matriz de paridade integral com evidências.
+• Documento das regras financeiras/estados/isenções, decisões sobre inconsistências, contratos e convenções de unidades.
+• Testes e resultados efectivamente executados; evidências dos fluxos e limitações reais.
+• Plano de migração/rollback e instruções de build, configuração, instalação, recuperação e operação pelo celular.
+• APK compilado quando o ambiente/toolchain permitir; AAB quando aplicável; variante, versão, applicationId e caminho reais. Debug não equivale a release pronta; assinatura e segredos de produção seguem gestão segura.
+
+Se faltar SDK, serviço, credencial, política ou acesso, indicar dependência exacta e o que permanece por verificar. Concluir o trabalho independente; não inventar APK, testes aprovados, integração concluída ou backend operacional. Não publicar, efectuar cobrança real ou migrar produção sem a autorização correspondente.
+
+No relatório final, explicar o que foi reconstruído, qual código actual fundamentou a stack, como os fluxos foram verificados, limitações restantes e como instalar/testar. Não declarar "tudo concluído" enquanto existir funcionalidade sem destino ou integração simulada apresentada como real.
+
+Critério de produto: Cliente, Proprietário e Administrador conseguem realizar as respectivas operações do marketplace exclusivamente no celular Android. Anunciar → pagar/publicar quando aplicável → descobrir → reservar com pagamento validado → consultar dados autorizados → decidir vistoria → liberar ou reembolsar por confirmação financeira → consultar documentos e histórico funciona com persistência, permissões e rastreabilidade. Os módulos de gestão, criatividade, comunicação e ajuda também têm paridade demonstrada.
+
+ANEXO — ÂNCORAS PARA A AUDITORIA DO HTML ANEXADO
+Estas referências auxiliam a localização; não substituem a leitura integral nem comprovam backend operacional. Linhas correspondem ao ficheiro anexado com o hash indicado no início.
+• Configuração/inicialização Firebase: cerca da linha 2914; origem web compat, autenticação e persistência.
+• Núcleo de funcionalidades: grande script iniciado cerca da linha 8472; há muitas correcções posteriores que substituem funções.
+• calculateIntermediationSimulation: cerca da linha 9065; fórmula inicial do simulador que precisa de conciliação.
+• appSettings: cerca da linha 9087; valores iniciais, alertas e identidade visual.
+• RENTAL_PRICE_UNIT_DAYS / getListingCommissionAmount: cerca das linhas 12448–12470; unidades e base da comissão/isenção.
+• validateOTP: cerca da linha 14473; verificar correcções e substituir autoridade financeira local pelo serviço central.
+• submitRefundRequest / decideRefundRequest: cerca das linhas 14954–14958; prova, confirmação, decisão e pedido ao provedor.
+• createPaymentIntent / KupilaPaymentBridge / paymentCompleted: cerca das linhas 15897–15922; contratos e estados; não prova de pagamento bancário.
+• rentalDepositMonths / rentalDepositAmountFromTerms: cerca das linhas 16702–16708 e wrappers seguintes; sinal em meses.
+• Motor offline/continuidade: script iniciado cerca da linha 17315 e correcções posteriores.
+• Selecção de imagens/assistente IA: script iniciado cerca da linha 19123; kupilaAiBuildShotPlan cerca da linha 19389.
+• FACTORY de ajustes/restauro: cerca da linha 23840; padrões, promoções e tema.
+• Checkout corrigido: cerca da linha 27543 em diante; referências à ponte, holdOwnerPayout e INSPECTION_DECISION.
+• Projecções públicas, cache, detalhes e navegação: múltiplas correcções finais entre aproximadamente 24785 e o fim, incluindo 1.0.239; não ignorar.
+
+Colecções referenciadas na origem, a verificar quanto a existência, regras, responsabilidade e uso activo: users, activeSessions, appPresence, auditLog, products, productPrivate, productFiles, productIdentityClaims, productInterest, productWorkDrafts, listingDrafts, listingDraftPrivate, authorizationRequests, reservations, paymentIntents, paymentSubmissions, financialTransactions, payoutReleaseRequests, payouts, refundRequests, refundEvidence, refundPayoutRequests, ownerAlerts, platformMetrics, settings e testimonials. A existência de nomes de colecções no cliente não comprova serviços financeiros, permissões ou implementação de servidor. Não transportar colecções de probe/teste para o domínio de produção.
+
+REGRA FINAL
+Use o nome oficial Kupila-Gestão de negócios e preserve o que o Kupila de origem faz e para que existe. Use as tecnologias actuais comprovadas dos projectos de referência, com Android nativo como restrição explícita. Simplifique o esforço do utilizador e mantenha a complexidade sob controlo no sistema. Toda confirmação deve ter uma fonte, todo valor deve ter uma origem e toda funcionalidade deve ter implementação e evidência de validação.

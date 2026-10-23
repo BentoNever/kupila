@@ -1,0 +1,11 @@
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+.kotlin/
+captures/
+# Configuração Firebase local (nunca no repositório).
+kupila-firebase.properties
+google-services.json

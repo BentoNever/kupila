@@ -1,0 +1,21 @@
+{
+  "name": "kupila-central",
+  "description": "Kupila-Gestão de negócios — Central (Cloud Functions). Versões iguais às do PDV Digital auditado (firebase-functions 4.9.0, firebase-admin 12.7.0).",
+  "private": true,
+  "main": "src/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "test:emulador": "firebase emulators:exec --only auth,firestore --project demo-kupila \"node --test --test-concurrency=1 test/integracao/*.test.js\""
+  },
+  "dependencies": {
+    "firebase-admin": "12.7.0",
+    "firebase-functions": "4.9.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "firebase": "^11.10.0"
+  }
+}

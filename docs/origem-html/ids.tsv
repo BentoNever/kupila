@@ -1,0 +1,669 @@
+linha	tag	id	classe
+6410	div	kupila-loading-overlay	hidden fixed inset-0 z-[250] bg-slate-950/35 flex items-cent
+6411	div	kupila-loading-card	w-full max-w-[280px] bg-white rounded-2xl shadow-2xl border 
+6412	div	kupila-loading-spinner	mx-auto
+6413	p	kupila-loading-text	mt-3 text-xs font-bold text-gray-800
+6418	div	kupila-alert-overlay	hidden fixed inset-0 z-[300] bg-black/55 flex items-end sm:i
+6421	div	kupila-alert-icon-wrap	w-9 h-9 rounded-xl bg-white/10 flex items-center justify-cen
+6421	i	kupila-alert-icon	fa-solid fa-circle-info text-yellow-300
+6422	h3	kupila-alert-title	text-sm font-bold
+6425	p	kupila-alert-message	text-xs leading-relaxed text-gray-700
+6426	button	kupila-alert-ok	mt-4 w-full bg-brand-600 hover:bg-brand-700 text-white font-
+6432	div	kupila-confirm-overlay	hidden fixed inset-0 z-[305] bg-black/60 flex items-end sm:i
+6436	h3	kupila-confirm-title	text-sm font-bold
+6439	p	kupila-confirm-message	text-xs leading-relaxed text-gray-700 whitespace-pre-line
+6441	button	kupila-confirm-cancel	border border-gray-200 bg-white text-gray-700 font-bold py-3
+6442	button	kupila-confirm-ok	bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 ro
+6450	div	kupila-inactivity-overlay	hidden fixed inset-0 z-[315] bg-slate-950/65 flex items-end 
+6459	h3	kupila-inactivity-title	text-sm font-bold
+6467	p	kupila-inactivity-countdown	text-xl font-black text-amber-800 tabular-nums
+6471	button	kupila-inactivity-logout	border border-gray-200 bg-white text-gray-700 font-bold py-3
+6472	button	kupila-inactivity-continue	bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 ro
+6479	div	modal-single-session-conflict	hidden fixed inset-0 z-[260] bg-slate-950/70 backdrop-blur-[
+6483	h3	single-session-title	font-bold text-sm
+6488	p	single-session-device	text-[10px] text-amber-800 mt-1
+6488	p	single-session-last-seen	text-[8px] text-amber-700 mt-1
+6491	button	single-session-takeover-button	w-full bg-brand-700 hover:bg-brand-800 text-white rounded-xl
+6492	button	single-session-cancel-button	w-full bg-white border border-gray-200 text-gray-600 rounded
+6498	div	login-screen	fixed inset-0 z-[100] bg-slate-100 flex items-center justify
+6501	button	login-fullscreen-toggle	absolute top-3 right-3 w-10 h-10 rounded-xl bg-white/10 hove
+6507	div	known-device-accounts	hidden space-y-2
+6513	span	known-device-count	text-[8px] font-bold bg-brand-50 text-brand-700 px-2 py-1 ro
+6515	div	known-device-account-list	kupila-horizontal-drag no-scrollbar
+6521	input	login-identifier	w-full bg-white border border-gray-300 rounded-xl p-3 text-x
+6526	input	login-password	w-full bg-white border border-gray-300 rounded-xl p-3 pr-10 
+6527	i	login-password-icon	fa-regular fa-eye
+6534	p	login-error	hidden bg-red-50 border border-red-100 text-red-700 rounded-
+6535	p	login-auto-status	text-[8px] text-emerald-700 text-center leading-relaxed
+6536	button	login-submit-button	w-full bg-brand-600 hover:bg-brand-700 text-white font-bold 
+6544	div	register-screen	fixed inset-0 z-[101] bg-slate-100 items-center justify-cent
+6548	h2	register-title	font-bold text-base
+6548	p	register-subtitle	text-[10px] text-brand-100
+6550	form	register-form	p-5 space-y-3
+6553	select	register-role	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6557	input	register-name	w-full border border-gray-300 rounded-xl p-2.5 text-xs outli
+6558	input	register-email	w-full border border-gray-300 rounded-xl p-2.5 text-xs outli
+6558	p	register-email-lock-hint	hidden text-[9px] text-brand-700 mt-1
+6559	input	register-phone	w-full pl-14 pr-3 py-2.5 border border-gray-300 rounded-xl t
+6560	div	register-owner-fields	hidden space-y-3 border-t pt-3
+6561	span	register-photo-preview	text-gray-400
+6561	input	register-photo	hidden
+6562	select	register-province	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6562	select	register-municipality	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6563	input	register-neighborhood	w-full border border-gray-300 rounded-xl p-2.5 text-xs
+6564	input	register-phone-alt	w-full pl-14 pr-3 py-2.5 border border-gray-300 rounded-xl t
+6565	select	register-alert-channel	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6567	div	register-password-fields	grid grid-cols-2 gap-2
+6567	input	register-password	w-full border border-gray-300 rounded-xl p-2.5 text-xs
+6567	input	register-password-confirm	w-full border border-gray-300 rounded-xl p-2.5 text-xs
+6571	input	register-policy-accept	mt-0.5 rounded text-brand-600
+6572	p	register-policy-status	text-[8px] text-amber-700
+6574	p	register-progress	hidden bg-amber-50 border border-amber-200 text-amber-800 ro
+6574	span	register-progress-text	
+6575	p	register-error	hidden bg-red-50 border border-red-100 text-red-700 rounded-
+6576	p	register-success	hidden bg-emerald-50 border border-emerald-200 text-emerald-
+6577	button	register-submit	w-full bg-brand-600 hover:bg-brand-700 text-white font-bold 
+6584	div	modal-credential-recovery	fixed inset-0 z-[180] bg-black/55 flex items-end sm:items-ce
+6592	div	recovery-known-accounts	hidden space-y-2
+6592	div	recovery-known-account-list	flex gap-2 overflow-x-auto no-scrollbar
+6593	input	recovery-email	w-full border border-gray-300 rounded-xl p-3 text-xs outline
+6594	p	recovery-feedback	hidden rounded-xl p-2.5 text-[10px]
+6595	button	recovery-submit	w-full bg-brand-600 hover:bg-brand-700 text-white py-3 round
+6603	div	app-container	w-full max-w-md h-full min-h-screen bg-white shadow-2xl flex
+6605	div	kupila-autosave-indicator	
+6605	span	kupila-autosave-text	
+6607	div	kupila-pull-indicator	bg-white border border-brand-100 shadow-lg rounded-full px-3
+6608	span	kupila-pull-text	
+6612	header	app-header	bg-brand-700 text-white px-4 pt-4 pb-3 flex justify-between 
+6622	button	header-nav-back	p-2 rounded-full transition opacity-35 cursor-not-allowed
+6623	button	header-nav-forward	p-2 rounded-full transition opacity-35 cursor-not-allowed
+6624	button	header-sync-queue-button	relative p-2 rounded-full hover:bg-brand-600 transition
+6624	i	header-sync-queue-icon	fa-solid fa-arrows-rotate text-lg
+6624	span	header-sync-queue-badge	hidden absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px
+6625	button	header-owner-button	relative p-2 rounded-full hover:bg-brand-600 transition
+6627	span	my-listings-badge	hidden absolute top-1 right-1 w-2.5 h-2.5 bg-yellow-400 roun
+6629	button	header-admin-pending-button	hidden relative p-2 rounded-full hover:bg-brand-600 transiti
+6631	span	admin-pending-badge	hidden admin-pending-pulse absolute -top-0.5 -right-0.5 min-
+6633	button	header-settings-button	p-2 rounded-full hover:bg-brand-600 transition
+6636	button	header-faq-button	p-2 rounded-full hover:bg-brand-600 transition
+6639	button	header-simulator-button	p-2 rounded-full hover:bg-brand-600 transition
+6642	button	header-about-button	p-2 rounded-full hover:bg-brand-600 transition
+6647	span	current-role-dot	absolute bottom-1 right-1 w-2 h-2 bg-yellow-400 rounded-full
+6649	button	header-notification-button	p-2 rounded-full hover:bg-brand-600 transition relative
+6651	span	notification-badge	hidden absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px
+6657	div	home-location-bar	text-brand-100 flex justify-between items-center shadow-inne
+6660	span	active-user-label	home-user-name truncate
+6667	select	province-filter	bg-white text-brand-900 font-semibold text-xs rounded border
+6694	main	main-content	flex-1 overflow-y-auto no-scrollbar bg-slate-50 pb-20 relati
+6696	section	tab-explore	kupila-home flex flex-col
+6698	div	home-discovery-panel	space-y-2.5
+6699	div	home-search-wrap	
+6701	input	search-input	
+6702	button	home-search-clear	
+6704	div	category-carousel	kupila-horizontal-drag flex overflow-x-auto no-scrollbar scr
+6705	button	cat-btn-all	kupila-filter-chip active
+6706	button	cat-btn-imovel	kupila-filter-chip
+6707	button	cat-btn-terreno	kupila-filter-chip
+6708	button	cat-btn-viatura	kupila-filter-chip
+6709	button	cat-btn-motorizada	kupila-filter-chip
+6710	button	cat-btn-outro	kupila-filter-chip
+6712	div	home-intent-switch	
+6713	button	intent-btn-all	active
+6714	button	intent-btn-venda	
+6715	button	intent-btn-arrenda	
+6720	div	home-showcase	space-y-2.5
+6725	h2	featured-showcase-title	font-black text-slate-900 truncate
+6728	p	featured-showcase-subtitle	text-slate-400 mt-0.5
+6731	span	main-carousel-page-indicator	
+6734	div	featured-mode-carousel	kupila-horizontal-drag
+6735	button	featured-mode-FEATURED	kupila-feature-mode active
+6736	button	featured-mode-RECENT	kupila-feature-mode
+6737	button	featured-mode-TRENDING	kupila-feature-mode
+6738	button	featured-mode-POPULAR	kupila-feature-mode
+6739	button	featured-mode-SPONSORED	kupila-feature-mode
+6742	button	main-carousel-prev	kupila-carousel-scroll-button kupila-carousel-scroll-prev
+6743	div	main-products-carousel	kupila-horizontal-drag no-scrollbar
+6746	button	main-carousel-next	kupila-carousel-scroll-button kupila-carousel-scroll-next
+6753	div	my-reservations-section	hidden space-y-2
+6761	div	my-reservations-list	space-y-2
+6765	div	home-catalog	space-y-2 hidden
+6768	h2	home-catalog-title	font-black text-slate-900
+6771	span	home-results-count	
+6773	div	listings-container	
+6776	div	catalog-pagination	hidden
+6777	button	catalog-prev	
+6778	span	catalog-page-label	
+6779	button	catalog-next	
+6785	section	tab-publish	p-4 space-y-4 hidden
+6787	h2	publish-heading	font-bold text-gray-800 text-lg
+6788	p	publish-subtitle	text-xs text-gray-500
+6791	form	publish-form	space-y-4
+6798	input	pub-type-imovel	text-brand-600
+6799	input	pub-type-terreno	text-brand-600
+6800	input	pub-type-viatura	text-brand-600
+6801	input	pub-type-motorizada	text-brand-600
+6802	input	pub-type-outro	text-brand-600
+6808	select	pub-subcategory	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6814	select	pub-intent	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6823	input	pub-title	w-full border border-gray-300 rounded-xl p-2.5 text-xs outli
+6827	div	rental-terms-card	hidden bg-sky-50 border border-sky-200 rounded-2xl p-3 space
+6830	select	pub-rental-price-unit	w-full bg-white border border-sky-200 rounded-xl p-2.5 text-
+6831	select	pub-rental-period	w-full bg-white border border-sky-200 rounded-xl p-2.5 text-
+6833	div	rental-custom-duration-wrapper	hidden grid grid-cols-2 gap-2
+6834	input	pub-rental-min-count	w-full bg-white border border-sky-200 rounded-xl p-2.5 text-
+6835	select	pub-rental-min-unit	w-full bg-white border border-sky-200 rounded-xl p-2.5 text-
+6837	div	rental-other-price-unit-wrapper	hidden
+6837	input	pub-rental-other-unit	w-full bg-white border border-sky-200 rounded-xl p-2.5 text-
+6838	div	rental-deposit-months-admin-card	bg-white border border-sky-100 rounded-xl p-2.5 space-y-1.5
+6841	input	pub-rental-deposit-months	w-full bg-slate-100 border border-sky-200 rounded-xl py-2 px
+6843	p	pub-rental-deposit-months-help	text-[8px] text-slate-500 leading-relaxed
+6845	div	rental-terms-summary	bg-white border border-sky-100 rounded-xl p-2.5 text-[9px] t
+6849	div	property-fields	bg-brand-50 border border-brand-100 rounded-2xl p-3 space-y-
+6860	input	pub-compartments	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6864	select	pub-repair-status	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6898	textarea	pub-property-notes	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6904	div	land-fields	hidden bg-emerald-50 border border-emerald-100 rounded-2xl p
+6907	input	pub-land-area	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6908	select	pub-land-purpose	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6910	select	pub-land-topography	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6910	select	pub-land-access	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6911	textarea	pub-land-notes	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+6915	div	vehicle-fields	hidden bg-blue-50 border border-blue-100 rounded-2xl p-3 spa
+6917	input	pub-vehicle-brand	w-full bg-white border rounded-xl p-2.5 text-xs
+6917	input	pub-vehicle-model	w-full bg-white border rounded-xl p-2.5 text-xs
+6918	input	pub-vehicle-year	w-full bg-white border rounded-xl p-2.5 text-xs
+6918	input	pub-vehicle-mileage	w-full bg-white border rounded-xl p-2.5 text-xs
+6919	select	pub-vehicle-fuel	w-full bg-white border rounded-xl p-2.5 text-xs
+6919	select	pub-vehicle-transmission	w-full bg-white border rounded-xl p-2.5 text-xs
+6920	textarea	pub-vehicle-notes	w-full bg-white border rounded-xl p-2.5 text-xs resize-none
+6924	div	motorbike-fields	hidden bg-amber-50 border border-amber-100 rounded-2xl p-3 s
+6926	input	pub-moto-brand	w-full bg-white border rounded-xl p-2.5 text-xs
+6926	input	pub-moto-model	w-full bg-white border rounded-xl p-2.5 text-xs
+6927	input	pub-moto-year	w-full bg-white border rounded-xl p-2.5 text-xs
+6927	input	pub-moto-cc	w-full bg-white border rounded-xl p-2.5 text-xs
+6927	input	pub-moto-mileage	w-full bg-white border rounded-xl p-2.5 text-xs
+6928	textarea	pub-moto-notes	w-full bg-white border rounded-xl p-2.5 text-xs resize-none
+6932	div	other-product-fields	hidden bg-violet-50 border border-violet-100 rounded-2xl p-3
+6934	select	pub-other-condition	w-full bg-white border rounded-xl p-2.5 text-xs
+6934	input	pub-other-quantity	w-full bg-white border rounded-xl p-2.5 text-xs
+6935	input	pub-other-brand	w-full bg-white border rounded-xl p-2.5 text-xs
+6935	input	pub-other-model	w-full bg-white border rounded-xl p-2.5 text-xs
+6936	textarea	pub-other-notes	w-full bg-white border rounded-xl p-2.5 text-xs resize-none
+6940	div	pub-attractiveness-card	bg-violet-50 border border-violet-100 rounded-2xl p-3 space-
+6942	div	pub-location-profile-wrapper	grid grid-cols-1 sm:grid-cols-2 gap-2
+6943	select	pub-location-profile	w-full bg-white border border-violet-100 rounded-xl p-2.5 te
+6944	input	pub-condominium-name	w-full bg-white border border-violet-100 rounded-xl p-2.5 te
+6946	textarea	pub-interest-highlights	w-full bg-white border border-violet-100 rounded-xl p-2.5 te
+6953	select	pub-province	w-full bg-white text-gray-900 border border-gray-300 rounded
+6979	select	pub-location	w-full bg-white text-gray-900 border border-gray-300 rounded
+6989	input	pub-neighborhood	w-full bg-white text-gray-900 border border-gray-300 rounded
+6993	input	pub-reference-point	w-full bg-white text-gray-900 border border-gray-300 rounded
+7004	label	pub-price-label	block text-xs font-semibold text-gray-700 mb-1
+7005	input	pub-price	w-full border border-gray-300 rounded-xl p-2.5 text-xs font-
+7006	p	pub-price-help	text-[8px] text-gray-500 mt-1
+7009	div	pub-sale-deposit-percent-row	flex items-center justify-between gap-3
+7009	input	pub-deposit-percent	w-full bg-slate-100 border border-brand-200 rounded-xl py-2 
+7017	span	deposit-label	
+7018	span	sim-deposit	font-semibold text-gray-800
+7021	span	commission-label	
+7022	span	sim-commission	font-semibold text-red-600
+7025	span	listing-fee-label	
+7026	span	sim-listing-fee	font-semibold text-amber-700
+7030	span	sim-net	text-brand-600
+7039	span	image-counter	text-[9px] font-semibold text-gray-400
+7047	input	pub-images	hidden
+7049	div	image-previews	flex space-x-2 overflow-x-auto no-scrollbar pb-1
+7059	input	pub-doc	w-full border border-gray-300 rounded-xl p-2.5 text-xs outli
+7064	span	ownership-doc-counter	text-[9px] font-semibold text-gray-400
+7070	input	pub-ownership-docs	hidden
+7072	div	ownership-doc-previews	mt-2 space-y-1.5
+7075	div	duplicate-check-panel	bg-slate-50 border border-slate-200 rounded-xl p-3 flex item
+7076	span	duplicate-check-icon	w-8 h-8 rounded-lg bg-white border border-slate-200 flex ite
+7077	p	duplicate-check-title	text-[10px] font-bold text-slate-700
+7077	span	duplicate-check-badge	text-[7px] px-1.5 py-0.5 rounded-full bg-slate-200 text-slat
+7077	p	duplicate-check-text	text-[9px] text-slate-500 mt-1 leading-relaxed
+7085	select	pub-payout-method	w-full bg-white border border-gray-300 rounded-xl p-2.5 text
+7090	div	pub-payout-iban-wrapper	
+7092	input	pub-iban	w-full border border-gray-300 rounded-xl p-2.5 text-xs font-
+7094	div	pub-payout-express-wrapper	hidden
+7096	input	pub-payout-express-phone	w-full pl-14 pr-3 py-2.5 border border-gray-300 rounded-xl t
+7102	div	pub-owner-alerts-card	border-t pt-3
+7106	input	pub-alert-enabled	w-4 h-4 accent-emerald-600 mt-0.5 flex-shrink-0
+7108	div	pub-alert-options	space-y-2
+7110	input	pub-alert-reservation	w-4 h-4 accent-emerald-600
+7111	input	pub-alert-interest	w-4 h-4 accent-emerald-600
+7113	select	pub-alert-channel	w-full bg-white border border-emerald-100 rounded-xl p-2.5 t
+7122	input	publish-policy-accept	mt-0.5 rounded text-brand-600
+7123	p	publish-policy-status	text-[8px] text-amber-700
+7127	div	publish-promotion-services	border-t pt-3 space-y-2
+7129	input	pub-promo-featured	mt-0.5 accent-violet-600
+7129	strong	promo-featured-price	text-[9px] text-violet-700
+7130	input	pub-promo-top	mt-0.5 accent-amber-600
+7130	strong	promo-top-price	text-[9px] text-amber-700
+7131	input	pub-promo-priority	mt-0.5 accent-sky-600
+7131	strong	promo-priority-price	text-[9px] text-sky-700
+7132	b	publish-total-fees	text-xs text-yellow-300
+7136	section	publish-financial-summary	bg-white border border-emerald-200 rounded-2xl p-3.5 shadow-
+7138	p	publish-fin-mode	text-[8px] text-slate-500 mt-1
+7140	button	publish-fin-summary-info-btn	w-7 h-7 rounded-full bg-white border border-emerald-200 text
+7144	div	publish-fin-summary-info	hidden rounded-xl border border-emerald-100 bg-emerald-50/60
+7145	div	publish-fin-global-chips	grid grid-cols-2 sm:grid-cols-4 gap-1.5
+7149	b	publish-fin-base	
+7149	b	publish-fin-client-now	text-blue-800
+7149	b	publish-fin-client-balance	
+7153	b	publish-fin-owner-signal	
+7153	b	publish-fin-owner-later	
+7153	b	publish-fin-owner-total	text-emerald-800
+7157	b	publish-fin-platform-commission	
+7157	b	publish-fin-platform-publication	
+7157	b	publish-fin-platform-total	text-violet-800
+7160	div	publish-fin-explanation	rounded-xl bg-slate-50 border border-slate-100 p-2.5 text-[8
+7163	p	publish-progress	hidden bg-amber-50 border border-amber-200 text-amber-800 ro
+7164	span	publish-progress-text	
+7166	button	publish-submit-button	w-full bg-brand-600 hover:bg-brand-700 text-white font-bold 
+7167	i	publish-submit-icon	fa-solid fa-cloud-arrow-up
+7168	span	publish-submit-label	
+7170	button	publish-cancel-button	w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold
+7171	button	cancel-edit-button	hidden w-full bg-white hover:bg-gray-50 text-gray-600 font-s
+7178	section	tab-my-listings	p-4 space-y-4 hidden
+7181	h2	owner-panel-title	font-bold text-gray-800 text-lg
+7182	p	owner-panel-subtitle	text-xs text-gray-500
+7187	div	owner-profile-card	bg-white border border-gray-200 rounded-2xl p-3 flex items-c
+7190	p	owner-profile-summary	text-[10px] text-gray-500 truncate mt-0.5
+7196	div	admin-panel-intro	hidden rounded-2xl p-3 text-white
+7212	div	admin-governance-section-label	hidden admin-panel-section-label
+7218	div	manager-tools-card	hidden
+7239	div	admin-finance-section-label	hidden admin-panel-section-label
+7245	div	admin-finance-card	bg-slate-900 text-white rounded-2xl p-4 space-y-3 shadow-lg
+7250	p	owner-pending-balance	text-2xl font-bold font-mono text-yellow-400
+7253	span	owner-total-received	font-bold text-emerald-400
+7257	div	admin-catalog-section-label	hidden admin-panel-section-label
+7263	div	admin-products-showcase	space-y-2
+7269	span	admin-products-page-indicator	text-[7px] font-extrabold text-slate-500 bg-slate-100 border
+7272	button	admin-products-prev	kupila-carousel-scroll-button kupila-carousel-scroll-prev
+7273	div	products-carousel	kupila-admin-products-carousel
+7274	button	admin-products-next	kupila-carousel-scroll-button kupila-carousel-scroll-next
+7278	div	admin-operation-section-label	hidden admin-panel-section-label
+7284	div	admin-otp-card	bg-amber-50 border border-amber-200 rounded-2xl p-3.5 space-
+7291	input	otp-input	flex-1 bg-white border border-amber-300 rounded-xl px-3 py-2
+7296	div	admin-listings-section-label	hidden admin-panel-section-label
+7302	div	admin-listings-section	space-y-2
+7304	div	my-listings-container	space-y-3
+7313	div	modal-details	fixed inset-0 bg-slate-950/75 z-50 flex items-end md:items-c
+7317	div	modal-gallery-stage	kupila-detail-hero relative h-40 sm:h-44 md:h-48 bg-slate-95
+7318	img	modal-img	relative z-[1] w-full h-full object-contain object-center cu
+7321	span	modal-image-counter	hidden kupila-detail-top-badge kupila-detail-glass bg-slate-
+7327	button	modal-image-prev	hidden z-[4] absolute left-3 top-1/2 -translate-y-1/2 w-10 h
+7328	button	modal-image-next	hidden z-[4] absolute right-3 top-1/2 -translate-y-1/2 w-10 
+7333	div	modal-detail-tags	bg-white border-b border-slate-100 px-3 py-2 flex flex-wrap 
+7334	span	modal-category-badge	kupila-detail-tag bg-brand-50 border border-brand-100 text-b
+7335	span	modal-intent-badge	kupila-detail-tag bg-amber-50 border border-amber-100 text-a
+7336	span	modal-availability-badge	kupila-detail-tag bg-emerald-50 border border-emerald-100 te
+7340	div	modal-image-thumbnails-wrap	kupila-detail-thumbs-wrap hidden bg-white border-b border-sl
+7341	div	modal-image-thumbnails	hidden flex gap-1.5 overflow-x-auto no-scrollbar scroll-smoo
+7349	p	modal-product-id	text-[8px] uppercase tracking-[.14em] text-slate-400 font-ex
+7350	h3	modal-title	font-black text-slate-900 text-xl sm:text-2xl leading-tight 
+7354	p	modal-location	text-[11px] text-slate-500 flex items-center
+7358	section	modal-summary-section	bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm
+7362	span	modal-price	block mt-0.5 text-xl font-black text-brand-800
+7364	span	modal-deposit-label	block text-[8px] uppercase font-bold text-slate-500
+7364	span	modal-deposit	block mt-1 text-sm font-black text-slate-900
+7368	button	modal-commission-info-btn	kupila-commission-info-btn
+7370	span	modal-commission	block mt-1 text-sm font-black text-slate-900
+7371	div	modal-commission-info	kupila-commission-info hidden
+7374	div	modal-owner-summary-card	mt-2 border border-emerald-100 bg-emerald-50/70 rounded-xl p
+7380	b	modal-owner-signal-net	
+7381	b	modal-owner-closing-balance	
+7383	b	modal-owner-total-net	
+7385	b	modal-owner-net	
+7389	section	modal-financial-summary-section	bg-white border border-emerald-200 rounded-2xl p-3.5 shadow-
+7390	p	details-fin-mode	text-[8px] text-slate-500 mt-1
+7391	div	details-fin-global-chips	grid grid-cols-2 sm:grid-cols-4 gap-1.5
+7393	b	details-fin-base	
+7393	b	details-fin-client-now	text-blue-800
+7393	b	details-fin-client-balance	
+7394	b	details-fin-owner-signal	
+7394	b	details-fin-owner-later	
+7394	b	details-fin-owner-total	text-emerald-800
+7395	b	details-fin-platform-commission	
+7395	b	details-fin-platform-publication	
+7395	b	details-fin-platform-total	text-violet-800
+7397	div	details-fin-explanation	rounded-xl bg-slate-50 border border-slate-100 p-2.5 text-[8
+7401	section	modal-crud-section	hidden bg-white border border-slate-200 rounded-2xl p-2.5 sh
+7403	p	modal-crud-subtitle	text-[7px] text-slate-400 mt-0.5
+7404	span	modal-crud-state	text-[6px] font-black px-1.5 py-0.5 rounded-full bg-slate-10
+7407	button	modal-crud-create	
+7408	button	modal-crud-read	
+7409	button	modal-crud-update	
+7410	button	modal-crud-delete	danger
+7415	section	modal-reservation-section	bg-slate-950 text-white rounded-2xl p-4 shadow-sm
+7425	div	modal-private-location-status	bg-amber-50 border border-amber-200 rounded-2xl p-3 text-[10
+7426	i	modal-private-location-icon	fa-solid fa-shield-halved mt-0.5 mr-2
+7427	span	modal-private-location-message	
+7429	div	modal-private-location-details	hidden mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2
+7430	span	modal-neighborhood	block mt-1 text-xs font-bold text-slate-800
+7431	span	modal-reference-point	block mt-1 text-xs font-bold text-slate-800
+7432	span	modal-owner-name	block mt-1 text-xs font-bold text-slate-800
+7433	span	modal-owner-contact	block mt-1 text-xs font-bold text-slate-800
+7438	div	modal-property-section	hidden border border-brand-100 bg-brand-50 rounded-2xl p-3.5
+7439	i	modal-category-details-icon	fa-solid fa-list-check mr-1.5
+7439	span	modal-category-details-title	
+7440	div	modal-property-details	space-y-2
+7447	span	modal-doc	font-semibold text-slate-800 text-[10px] break-words
+7452	div	details-reservation-validity	bg-amber-50 border border-amber-200 rounded-2xl p-3 text-[10
+7452	p	details-reservation-validity-text	mt-1
+7457	button	details-primary-action	w-full bg-brand-600 hover:bg-brand-700 active:scale-[.99] te
+7458	p	details-action-note	text-center text-[8px] text-slate-400 mt-1.5
+7464	div	modal-checkout	fixed inset-0 bg-black/70 z-50 flex items-end md:items-cente
+7467	h3	checkout-title	font-bold text-sm truncate
+7472	span	checkout-amount-label	text-[9px] text-gray-500 uppercase font-semibold
+7472	p	checkout-amount	text-xl font-black text-brand-700
+7473	span	checkout-payment-badge	bg-blue-100 text-blue-800 text-[9px] font-bold px-2 py-1 rou
+7475	div	checkout-deposit-explanation	bg-brand-50 border border-brand-100 rounded-xl p-3 text-[10p
+7478	section	payment-step-1	space-y-3
+7481	button	pay-method-ref	border-2 border-brand-600 bg-brand-50 p-3 rounded-xl text-le
+7482	button	pay-method-express	border-2 border-gray-200 p-3 rounded-xl text-left
+7485	span	payment-entity	font-bold
+7486	span	ref-code	font-black text-yellow-300 tracking-wider
+7487	span	ref-amount	font-bold
+7489	div	express-phone-wrapper	hidden
+7489	input	express-phone	w-full pl-14 pr-3 py-2.5 border rounded-xl text-xs font-mono
+7493	section	payment-step-2	hidden space-y-3
+7495	input	payment-receipt-file	hidden
+7496	div	payment-receipt-preview	hidden bg-gray-50 border rounded-xl p-2
+7497	div	payment-ocr-status	bg-slate-50 border rounded-xl p-3 text-[9px] text-slate-600
+7498	div	payment-manual-ref-wrapper	hidden
+7498	input	payment-manual-reference	w-full border rounded-xl p-2.5 text-xs font-mono font-bold
+7499	p	payment-processing-status	hidden bg-blue-50 border border-blue-100 text-blue-800 round
+7500	button	payment-submit-button	w-full bg-brand-600 disabled:bg-gray-300 text-white py-3 rou
+7503	div	checkout-reservation-validity	bg-amber-50 border border-amber-100 rounded-xl p-3 text-[9px
+7509	div	modal-receipt	fixed inset-0 bg-black/80 z-50 flex items-center justify-cen
+7519	p	receipt-number	text-[9px] text-gray-400 mt-1 font-mono
+7525	p	receipt-otp	text-3xl font-mono font-extrabold tracking-widest text-amber
+7532	span	receipt-reservation-status	text-[9px] bg-yellow-500/20 text-yellow-300 px-2 py-0.5 roun
+7534	p	receipt-countdown	text-xl font-mono font-bold text-yellow-300
+7535	span	receipt-expires-at	font-semibold text-white
+7541	span	receipt-owner-phone	font-semibold text-gray-800 text-right
+7545	span	receipt-location	font-semibold text-gray-800 text-right
+7549	span	receipt-neighborhood	font-semibold text-gray-800 text-right
+7553	span	receipt-reference	font-semibold text-gray-800 text-right
+7565	div	receipt-refund-actions	space-y-2
+7573	div	modal-refund-request	fixed inset-0 z-[191] bg-black/70 flex items-end md:items-ce
+7577	b	refund-request-paid	text-[11px] text-slate-900
+7577	b	refund-request-refundable	text-[11px] text-violet-900
+7578	p	refund-request-deduction	bg-amber-50 border border-amber-100 rounded-xl p-2.5 text-[8
+7579	input	refund-request-otp	w-full bg-white border border-slate-200 rounded-xl p-2.5 tex
+7580	select	refund-request-reason	w-full bg-white border border-slate-200 rounded-xl p-2.5 tex
+7581	textarea	refund-request-description	w-full bg-white border border-slate-200 rounded-xl p-2.5 tex
+7582	input	refund-evidence-file	hidden
+7582	p	refund-evidence-status	text-[8px] text-slate-400 mt-1
+7583	input	refund-request-declaration	mt-0.5 accent-violet-600
+7585	button	refund-request-submit	w-full bg-violet-700 text-white rounded-xl py-3 text-[10px] 
+7591	div	modal-refund-evidence	fixed inset-0 z-[192] bg-black/75 flex items-end md:items-ce
+7595	div	refund-evidence-integrity	bg-white/10 border border-white/10 rounded-xl p-3 text-[8px]
+7596	div	refund-evidence-preview	min-h-56 bg-white rounded-2xl overflow-hidden flex items-cen
+7603	div	modal-notifications	fixed inset-0 bg-black/55 z-50 flex items-end md:items-cente
+7607	span	notification-unread-label	text-[8px] bg-red-500/15 text-red-300 px-2 py-1 rounded-full
+7610	button	notification-filter-ALL	px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-slate-900 t
+7611	button	notification-filter-RESERVATION	px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-gray-100 te
+7612	button	notification-filter-MONETIZATION	px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-gray-100 te
+7613	button	notification-filter-INTEREST	px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-gray-100 te
+7614	button	notification-filter-ADMIN	px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-gray-100 te
+7615	button	notification-filter-MARKETING	px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-gray-100 te
+7616	button	notification-mark-all	ml-auto px-2.5 py-1.5 rounded-lg text-[9px] font-bold text-b
+7618	div	notifications-list	flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 space-
+7623	div	modal-testimonials	fixed inset-0 bg-black/65 z-[58] flex items-end md:items-cen
+7629	div	testimonials-scroll-area	flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-
+7631	p	trust-completed-count	text-lg font-black text-slate-900
+7632	p	trust-testimonial-count	text-lg font-black text-slate-900
+7633	p	trust-rating-average	text-lg font-black text-amber-600
+7636	section	testimonial-eligible-section	hidden space-y-2
+7636	div	testimonial-eligible-list	space-y-2
+7636	div	testimonial-composer	hidden
+7637	section	testimonial-admin-section	hidden space-y-2
+7637	span	testimonial-pending-count	text-[8px] bg-amber-100 text-amber-700 px-2 py-1 rounded-ful
+7637	div	testimonial-pending-list	space-y-2
+7638	span	testimonial-approved-label	text-[8px] text-emerald-700 font-bold
+7638	div	testimonial-public-list	space-y-2
+7644	div	modal-owner-registration	fixed inset-0 bg-black/60 z-50 flex items-end md:items-cente
+7658	div	owner-photo-preview	w-16 h-16 rounded-2xl bg-brand-100 text-brand-700 flex items
+7663	input	owner-photo	hidden
+7670	input	owner-name	w-full border border-gray-300 rounded-xl p-2.5 text-xs outli
+7674	input	owner-email	w-full border border-gray-300 rounded-xl p-2.5 text-xs outli
+7680	select	owner-province	w-full bg-white text-gray-900 border border-gray-300 rounded
+7684	select	owner-municipality	w-full bg-white text-gray-900 border border-gray-300 rounded
+7689	input	owner-neighborhood	w-full border border-gray-300 rounded-xl p-2.5 text-xs outli
+7694	input	owner-phone-primary	w-full border border-gray-300 rounded-xl p-2.5 text-xs font-
+7698	input	owner-phone-alt	w-full border border-gray-300 rounded-xl p-2.5 text-xs font-
+7703	select	owner-alert-channel	w-full bg-white border border-amber-200 rounded-xl p-2.5 tex
+7713	div	modal-platform-monitor	fixed inset-0 bg-black/65 z-50 flex items-end md:items-cente
+7719	p	monitor-last-update	text-[8px] text-slate-400 mt-0.5
+7726	div	monitor-scroll-area	flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 md:p-4
+7728	span	monitor-presence-state	text-[8px] px-2 py-1 rounded-full bg-emerald-50 text-emerald
+7729	div	monitor-access-kpis	grid grid-cols-2 md:grid-cols-4 gap-2
+7731	span	monitor-online-count-badge	text-[8px] bg-emerald-50 text-emerald-700 rounded-full px-2 
+7731	div	monitor-live-sessions	space-y-2 max-h-56 overflow-y-auto no-scrollbar
+7732	div	monitor-access-roles	space-y-2
+7737	button	monitor-days-7	px-2.5 py-1.5 rounded-lg text-[9px] font-bold
+7737	button	monitor-days-14	px-2.5 py-1.5 rounded-lg text-[9px] font-bold
+7737	button	monitor-days-30	px-2.5 py-1.5 rounded-lg text-[9px] font-bold
+7738	div	monitor-growth-scores	grid grid-cols-2 md:grid-cols-5 gap-2 mb-3
+7740	span	monitor-chart-total	text-[9px] text-emerald-300 font-bold
+7741	div	monitor-usage-chart	w-full min-h-[190px]
+7747	div	monitor-products-summary	space-y-2
+7752	div	monitor-reservations-summary	space-y-2
+7757	div	monitor-balance-consolidated	grid grid-cols-2 md:grid-cols-4 gap-2 mb-3
+7758	div	monitor-balances-summary	space-y-2
+7766	div	modal-monitor-detail	fixed inset-0 bg-black/65 z-50 flex items-center justify-cen
+7769	h3	monitor-detail-title	font-bold text-sm truncate
+7769	p	monitor-detail-subtitle	text-[8px] text-slate-400 mt-0.5
+7772	div	monitor-detail-content	flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 md:p-4
+7777	div	modal-monetization-history	fixed inset-0 bg-black/60 z-50 flex items-end md:items-cente
+7784	div	finance-history-summary	bg-brand-50 border border-brand-100 rounded-xl p-3 text-xs
+7785	div	financial-history-list	space-y-2
+7791	div	modal-settings	fixed inset-0 bg-black/60 z-50 flex items-end md:items-cente
+7802	div	settings-scroll-area	p-4 space-y-4 overflow-y-auto overscroll-contain flex-1 min-
+7804	p	settings-realtime-status	text-[8px] text-emerald-700 bg-emerald-50 border border-emer
+7808	input	setting-deposit-percent	w-full bg-white border border-gray-300 rounded-xl p-2.5 pr-9
+7814	input	setting-rental-deposit-months	w-full bg-white border border-sky-200 rounded-xl p-2.5 pr-20
+7820	input	setting-commission-percent	w-full bg-white border border-gray-300 rounded-xl p-2.5 pr-9
+7827	input	setting-reservation-hours	w-full bg-white border border-gray-300 rounded-xl p-2.5 pr-1
+7835	input	setting-session-timeout-minutes	w-full bg-white border border-gray-300 rounded-xl p-2.5 pr-1
+7843	input	setting-listing-fee-percent	w-full bg-white border border-gray-300 rounded-xl p-2.5 pr-9
+7847	div	setting-manager-fee-policy	flex items-start gap-2 bg-emerald-50 border border-emerald-1
+7853	input	setting-payment-entity	w-full bg-white border border-violet-100 rounded-xl p-2 text
+7855	input	setting-promo-featured-percent	w-full border rounded-lg p-2 pr-6 text-[10px]
+7856	input	setting-promo-top-percent	w-full border rounded-lg p-2 pr-6 text-[10px]
+7857	input	setting-promo-priority-percent	w-full border rounded-lg p-2 pr-6 text-[10px]
+7859	input	setting-promo-duration-days	w-full border rounded-xl p-2 text-xs
+7863	input	setting-owner-alert-reservation	w-4 h-4 accent-emerald-600
+7864	input	setting-owner-alert-interest	w-4 h-4 accent-emerald-600
+7866	input	setting-owner-interest-threshold	w-full bg-white border border-amber-100 rounded-xl p-2 text-
+7867	input	setting-owner-interest-window	w-full bg-white border border-amber-100 rounded-xl p-2 text-
+7868	input	setting-owner-interest-cooldown	w-full bg-white border border-amber-100 rounded-xl p-2 text-
+7871	input	setting-owner-alert-email	w-4 h-4 accent-emerald-600
+7872	input	setting-owner-alert-sms	w-4 h-4 accent-emerald-600
+7875	section	settings-visual-identity	rounded-2xl border border-emerald-100 bg-gradient-to-br from
+7878	span	visual-identity-live-badge	shrink-0 rounded-full bg-emerald-100 text-emerald-800 px-2 p
+7882	div	setting-theme-presets	grid grid-cols-4 gap-2
+7889	input	setting-theme-primary	w-10 h-9 rounded-lg border border-slate-200 bg-white p-1 cur
+7889	input	setting-theme-accent	w-10 h-9 rounded-lg border border-slate-200 bg-white p-1 cur
+7892	div	settings-home-visual	border-t border-emerald-100 pt-3 space-y-3
+7895	span	setting-home-visual-status	rounded-full border border-slate-200 bg-white px-2 py-1 text
+7897	div	setting-home-visual-presets	grid grid-cols-4 gap-2
+7904	input	setting-home-search-primary	w-10 h-9 rounded-lg border border-slate-200 bg-white p-1
+7904	input	setting-home-search-accent	w-10 h-9 rounded-lg border border-slate-200 bg-white p-1
+7905	input	setting-home-showcase-primary	w-10 h-9 rounded-lg border border-slate-200 bg-white p-1
+7905	input	setting-home-showcase-accent	w-10 h-9 rounded-lg border border-slate-200 bg-white p-1
+7907	button	setting-home-visual-reset	w-full rounded-xl border border-slate-200 bg-white py-2 text
+7909	div	settings-appearance-mode	border-t border-emerald-100 pt-3 space-y-2
+7912	span	setting-appearance-status	rounded-full border border-slate-200 bg-white px-2 py-1 text
+7923	div	setting-logo-preview	w-16 h-16 shrink-0 rounded-2xl bg-white border border-emeral
+7925	input	setting-app-logo-file	hidden
+7926	button	setting-logo-remove	rounded-xl border border-slate-200 bg-white py-2 text-[8px] 
+7926	button	setting-visual-reset	rounded-xl border border-slate-200 bg-white py-2 text-[8px] 
+7929	p	setting-logo-help	mt-2 text-[7px] leading-relaxed text-slate-500
+7934	button	setting-restore-default-colors	rounded-xl border border-emerald-200 bg-white py-2.5 px-2 te
+7935	button	setting-restore-default-settings	rounded-xl border border-amber-200 bg-amber-50 py-2.5 px-2 t
+7937	p	setting-restore-status	hidden text-[7px] rounded-lg px-2 py-1.5 border
+7940	section	settings-alerts-marketing	rounded-2xl border border-indigo-100 bg-indigo-50/70 p-3 spa
+7943	span	setting-alert-capability	shrink-0 rounded-full bg-white border border-indigo-100 px-2
+7946	select	setting-alert-mode	w-full rounded-xl border border-indigo-100 bg-white p-2.5 te
+7947	input	setting-alert-system	w-4 h-4 accent-indigo-600
+7948	input	setting-haptic-buttons	w-4 h-4 accent-indigo-600
+7952	section	settings-marketing	rounded-2xl border border-rose-100 bg-rose-50/70 p-3 space-y
+7953	span	marketing-active-count	shrink-0 rounded-full bg-white border border-rose-100 px-2 p
+7955	input	marketing-title	w-full rounded-xl border border-slate-200 p-2.5 text-[10px] 
+7956	textarea	marketing-message	w-full resize-none rounded-xl border border-slate-200 p-2.5 
+7957	select	marketing-audience	w-full rounded-xl border border-slate-200 p-2 text-[9px] fon
+7957	select	marketing-priority	w-full rounded-xl border border-slate-200 p-2 text-[9px] fon
+7958	input	marketing-start	w-full rounded-xl border border-slate-200 p-2 text-[8px]
+7958	input	marketing-end	w-full rounded-xl border border-slate-200 p-2 text-[8px]
+7959	select	marketing-action	w-full rounded-xl border border-slate-200 p-2 text-[9px] fon
+7959	input	marketing-cta	w-full rounded-xl border border-slate-200 p-2 text-[9px]
+7962	div	marketing-campaign-list	space-y-2 max-h-48 overflow-y-auto
+7970	p	finance-ad-fees	text-[10px] font-bold text-yellow-300
+7971	p	finance-commissions	text-[10px] font-bold text-emerald-300
+7972	p	finance-balance	text-[10px] font-bold text-white
+7991	div	modal-session	fixed inset-0 bg-black/60 z-50 flex items-center justify-cen
+7996	button	session-admin-directory-button	hidden w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 te
+8000	div	session-scroll-area	flex-1 min-h-0 p-4 overflow-y-auto overscroll-contain space-
+8001	div	session-current-user	bg-slate-900 text-white rounded-2xl p-3
+8002	div	session-owner-actions	hidden grid grid-cols-2 gap-2
+8008	div	session-permissions-list	p-3 space-y-2
+8023	div	modal-user-management	fixed inset-0 bg-black/60 z-50 flex items-end md:items-cente
+8030	div	managed-user-filter-bar	grid grid-cols-3 gap-2 text-center
+8031	button	users-filter-client	kupila-user-filter bg-brand-50 rounded-xl p-2 transition
+8031	p	users-client-count	font-bold text-brand-700 text-sm
+8032	button	users-filter-owner	kupila-user-filter bg-brand-50 rounded-xl p-2 transition
+8032	p	users-owner-count	font-bold text-brand-700 text-sm
+8033	button	users-filter-active	kupila-user-filter bg-brand-50 rounded-xl p-2 transition
+8033	p	users-active-count	font-bold text-brand-700 text-sm
+8035	div	managed-user-filter-status	hidden text-[9px] font-semibold text-brand-700 bg-brand-50 b
+8035	button	managed-user-filter-clear	font-bold underline underline-offset-2
+8038	div	user-editor	hidden bg-gray-50 border border-gray-200 rounded-2xl p-3 spa
+8039	p	user-editor-title	text-xs font-bold text-gray-800
+8041	div	managed-user-photo-preview	w-14 h-14 rounded-xl bg-brand-100 text-brand-700 flex items-
+8042	input	managed-user-photo	hidden
+8045	select	managed-user-role	w-full bg-white border rounded-xl p-2 text-xs
+8046	select	managed-user-status	w-full bg-white border rounded-xl p-2 text-xs
+8048	input	managed-user-name	w-full border rounded-xl p-2 text-xs
+8049	span	managed-email-required-label	
+8049	input	managed-user-email	w-full border rounded-xl p-2 text-xs
+8050	span	managed-password-required-label	
+8050	input	managed-user-password	w-full border rounded-xl p-2 text-xs
+8051	input	managed-user-phone	w-full border rounded-xl p-2 text-xs
+8051	input	managed-user-phone-alt	w-full border rounded-xl p-2 text-xs
+8052	div	managed-owner-address	space-y-2
+8053	select	managed-user-province	w-full bg-white border rounded-xl p-2 text-xs
+8053	select	managed-user-municipality	w-full bg-white border rounded-xl p-2 text-xs
+8054	input	managed-user-neighborhood	w-full border rounded-xl p-2 text-xs
+8058	div	managed-users-list	space-y-2
+8065	div	modal-admin-directory	fixed inset-0 bg-black/65 z-50 flex items-center justify-cen
+8068	p	admin-directory-subtitle	text-[8px] text-slate-400 mt-0.5
+8071	div	admin-directory-list	flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-
+8078	div	modal-admin-pending	fixed inset-0 bg-black/65 z-[56] flex items-end md:items-cen
+8081	p	admin-pending-subtitle	text-[8px] text-slate-400 mt-0.5
+8086	button	admin-pending-refresh	shrink-0 text-[9px] font-bold text-brand-700 bg-brand-50 bor
+8088	div	admin-pending-list	flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-
+8094	div	modal-admin-pending-action	fixed inset-0 bg-black/70 z-[214] flex items-end md:items-ce
+8099	h3	admin-pending-action-title	font-bold text-sm truncate
+8100	p	admin-pending-action-subtitle	text-[8px] text-slate-400 mt-0.5
+8104	div	admin-pending-action-content	flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-
+8106	button	admin-pending-continue	col-span-2 rounded-xl bg-brand-700 text-white py-3 text-[10p
+8107	button	admin-pending-retry	rounded-xl border border-sky-200 bg-sky-50 text-sky-800 py-2
+8108	button	admin-pending-open-related	rounded-xl border border-slate-200 bg-white text-slate-700 p
+8109	button	admin-pending-discard	rounded-xl border border-red-200 bg-red-50 text-red-700 py-2
+8116	div	modal-user-record	fixed inset-0 bg-black/60 z-[55] flex items-end md:items-cen
+8121	h3	user-record-header-name	font-bold text-sm truncate
+8125	div	user-record-content	flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-
+8126	div	user-record-export	bg-white border-t border-gray-100 px-3 pt-2.5 pb-1.5 grid gr
+8130	div	user-record-actions	bg-white border-t border-gray-200 p-3 grid grid-cols-2 gap-2
+8135	div	modal-operation-history	fixed inset-0 bg-black/60 z-50 flex items-end md:items-cente
+8141	div	operation-history-list	space-y-2
+8146	div	modal-listing-authorizations	fixed inset-0 bg-black/60 z-50 flex items-end md:items-cente
+8149	p	authorization-modal-subtitle	text-[9px] text-slate-400 mt-0.5
+8154	div	authorization-list	space-y-2
+8160	nav	app-bottom-nav	bg-white border-t border-gray-200 px-6 py-2 flex justify-bet
+8161	button	nav-explore	flex flex-col items-center text-brand-600 transition
+8166	button	nav-publish	flex flex-col items-center text-gray-400 hover:text-brand-60
+8173	button	nav-my-listings	flex flex-col items-center text-gray-400 hover:text-brand-60
+8184	div	modal-reservation-protection	fixed inset-0 z-[187] bg-black/60 flex items-end md:items-ce
+8190	p	reservation-protection-product	text-[8px] text-slate-400 mt-0.5 truncate
+8192	button	reservation-protection-close	w-9 h-9 rounded-full bg-white/10 text-white flex items-cente
+8194	div	reservation-protection-scroll	flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-
+8204	p	reservation-protection-validity	text-[10px] text-slate-900 font-black mt-0.5
+8212	div	modal-kupila-faq	fixed inset-0 z-[188] bg-black/60 flex items-end md:items-ce
+8220	button	faq-close-button	w-9 h-9 rounded-full bg-white/10 text-white flex items-cente
+8223	p	faq-summary-label	text-[9px] text-slate-500
+8224	button	faq-toggle-all	text-[9px] font-bold text-brand-700 whitespace-nowrap
+8226	div	kupila-faq-list	flex-1 min-h-0 overflow-y-auto p-4 space-y-2 overscroll-cont
+8235	div	modal-product-drafts	fixed inset-0 z-[189] bg-black/65 flex items-end md:items-ce
+8238	p	product-drafts-summary	text-[8px] text-slate-300 mt-0.5
+8244	div	product-drafts-list	flex-1 min-h-0 overflow-y-auto p-4 space-y-2 overscroll-cont
+8253	div	modal-intermediation-simulator	fixed inset-0 z-[189] bg-black/65 flex items-end md:items-ce
+8262	select	sim-intermediation-mode	w-full bg-white border border-slate-200 rounded-xl p-2.5 tex
+8263	select	sim-business-intent	w-full bg-white border border-slate-200 rounded-xl p-2.5 tex
+8265	label	sim-product-price-label	block text-[8px] uppercase font-bold text-slate-500 mb-1
+8265	input	sim-product-price	w-full border border-slate-200 rounded-xl p-2.5 text-xs font
+8266	div	sim-rental-terms	hidden bg-sky-50 border border-sky-100 rounded-xl p-2.5 spac
+8267	select	sim-rental-price-unit	w-full bg-white border border-sky-200 rounded-lg p-2 text-[9
+8267	select	sim-rental-period	w-full bg-white border border-sky-200 rounded-lg p-2 text-[9
+8268	div	sim-rental-custom	hidden grid grid-cols-2 gap-2
+8268	input	sim-rental-min-count	w-full bg-white border border-sky-200 rounded-lg p-2 text-[9
+8268	select	sim-rental-min-unit	w-full bg-white border border-sky-200 rounded-lg p-2 text-[9
+8269	input	sim-rental-other-unit	hidden w-full bg-white border border-sky-200 rounded-lg p-2 
+8270	p	sim-rental-summary	text-[8px] text-sky-900 leading-relaxed
+8273	input	sim-deposit-percent	w-full border rounded-lg p-2 text-[10px]
+8274	input	sim-commission-percent	w-full border rounded-lg p-2 text-[10px]
+8275	input	sim-listing-percent	w-full border rounded-lg p-2 text-[10px]
+8277	button	btn-sim-sync-current-percentages	w-full bg-brand-50 border border-brand-100 text-brand-800 ro
+8278	div	sim-persistence-bar	flex items-center justify-between gap-2 rounded-xl bg-slate-
+8279	span	sim-persistence-status	text-[8px] text-slate-500 truncate
+8280	button	btn-sim-reset-scenario	shrink-0 text-[8px] font-bold text-slate-600 hover:text-rose
+8284	section	sim-reservation-section	bg-white border border-slate-200 rounded-2xl p-3.5 space-y-3
+8287	b	sim-result-contract-base	block text-sm text-sky-900 mt-1
+8288	b	sim-result-deposit	block text-sm text-brand-900 mt-1
+8289	b	sim-result-commission	block text-sm text-amber-900 mt-1
+8290	b	sim-result-owner-net	block text-sm text-emerald-900 mt-1
+8291	b	sim-result-balance	block text-sm text-slate-900 mt-1
+8292	b	sim-result-refundable	block text-sm text-violet-900 mt-1
+8294	p	sim-reservation-formula	text-[8px] text-slate-500 leading-relaxed
+8298	section	sim-listing-section	bg-white border border-slate-200 rounded-2xl p-3.5 space-y-3
+8300	b	sim-result-listing-fee	text-[10px] text-slate-900
+8302	input	sim-promo-featured-enabled	accent-violet-600
+8302	input	sim-promo-featured-percent	w-16 border rounded-lg p-1.5 text-[9px] text-right
+8302	b	sim-result-promo-featured	w-24 text-right text-[9px] text-violet-800
+8303	input	sim-promo-top-enabled	accent-amber-600
+8303	input	sim-promo-top-percent	w-16 border rounded-lg p-1.5 text-[9px] text-right
+8303	b	sim-result-promo-top	w-24 text-right text-[9px] text-amber-800
+8304	input	sim-promo-priority-enabled	accent-sky-600
+8304	input	sim-promo-priority-percent	w-16 border rounded-lg p-1.5 text-[9px] text-right
+8304	b	sim-result-promo-priority	w-24 text-right text-[9px] text-sky-800
+8306	b	sim-result-publication-total	text-sm text-yellow-300 whitespace-nowrap
+8309	section	sim-platform-section	bg-gradient-to-br from-brand-900 to-slate-950 text-white rou
+8312	b	sim-summary-client	block text-sm mt-1
+8313	b	sim-summary-owner	block text-sm mt-1
+8314	b	sim-summary-publish	block text-sm mt-1
+8315	b	sim-summary-platform	block text-sm mt-1 text-yellow-300
+8324	div	modal-kupila-policies	fixed inset-0 z-[190] bg-black/65 flex items-end md:items-ce
+8327	span	policy-version-label	
+8330	div	policy-content-scroll	flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-[10px] tex
+8336	section	policy-manual-start	bg-slate-950 text-white rounded-2xl p-4
+8364	div	policy-rules-start	border-t border-slate-200 pt-4
+8385	span	about-current-year	
+8390	p	policy-read-hint	text-[8px] text-amber-700 text-center
+8391	button	policy-ack-button	w-full bg-slate-300 text-slate-500 py-3 rounded-xl text-xs f
+8397	div	modal-product-photo-viewer	fixed inset-0 z-[210] bg-black/95 hidden flex-col items-cent
+8399	button	photo-viewer-prev	absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-f
+8400	img	photo-viewer-img	max-w-full max-h-[82dvh] object-contain select-none
+8401	button	photo-viewer-next	absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-
+8402	div	photo-viewer-counter	mt-3 bg-white/10 text-white text-[10px] font-bold px-3 py-1.
+17296	div	modal-offline-sync	fixed inset-0 z-[214] bg-black/65 flex items-end md:items-ce
+17299	p	offline-center-subtitle	text-[8px] text-slate-400 mt-0.5
+17303	div	offline-center-state	min-w-0 flex-1 rounded-xl border border-emerald-100 bg-emera
+17304	button	offline-sync-now	px-3 py-2 rounded-xl bg-brand-600 text-white text-[9px] font
+17306	div	kupila-background-capability	px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items
+17307	p	kupila-background-capability-text	text-[7px] text-slate-500 mt-0.5 leading-relaxed
+17308	button	kupila-background-alert-button	shrink-0 px-2.5 py-2 rounded-xl border border-brand-200 bg-w
+17311	div	offline-sync-list	flex-1 min-h-0 overflow-y-auto p-3 space-y-2

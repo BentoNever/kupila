@@ -1,0 +1,56 @@
+rules_version = '2';
+// Ficheiros: o APK só envia para a área de transferência do próprio utilizador (uploads/{uid}/…), com limites
+// de tipo e tamanho da origem. O Central valida conteúdo/MIME/hash e move para o destino definitivo.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function autenticado() { return request.auth != null; }
+    // Modo Spark (D-27): papel e estado lidos de users/{uid} no Firestore.
+    function perfil() { return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data; }
+    function activo() { return autenticado() && perfil().status == 'ACTIVE'; }
+    function admin() { return activo() && perfil().role == 'GESTOR'; }
+    function imagem() { return request.resource.contentType.matches('image/(jpeg|png|webp)'); }
+    function pdf() { return request.resource.contentType == 'application/pdf'; }
+
+    // Transferência temporária, privada ao autor. Tipos: foto (≤1,20 MB), titularidade JPG/PDF (≤2 MB),
+    // comprovativo de pagamento (≤4 MB), evidência de reembolso (≤600 KB), foto de perfil (≤2 MB).
+    match /uploads/{u}/{tipo}/{ficheiro} {
+      allow read, delete: if autenticado() && request.auth.uid == u;
+      allow create: if autenticado() && request.auth.uid == u && (
+        (tipo == 'foto' && imagem() && request.resource.size <= 1258291) ||
+        (tipo == 'titularidade' && (pdf() || request.resource.contentType == 'image/jpeg') && request.resource.size <= 2 * 1024 * 1024) ||
+        (tipo == 'comprovativo' && imagem() && request.resource.size <= 4 * 1024 * 1024) ||
+        (tipo == 'evidencia' && (imagem() || pdf()) && request.resource.size <= 600 * 1024) ||
+        (tipo == 'perfil' && imagem() && request.resource.size <= 2 * 1024 * 1024));
+      allow update: if false;
+    }
+
+    // Fotografias públicas dos anúncios e logótipo/identidade.
+    match /publico/{caminho=**} { allow read: if true; allow write: if false; }
+
+    // Titularidade: titular e Administrador (verificado no Firestore).
+    match /privado/anuncios/{id}/{f=**} {
+      allow read: if autenticado() && (admin() || firestore.get(/databases/(default)/documents/productPrivate/$(id)).data.ownerId == request.auth.uid);
+      allow write: if false;
+    }
+    match /privado/reembolsos/{reqId}/{f=**} {
+      allow read: if autenticado() && (admin() ||
+        firestore.get(/databases/(default)/documents/refundRequests/$(reqId)).data.clientId == request.auth.uid ||
+        firestore.get(/databases/(default)/documents/refundRequests/$(reqId)).data.ownerId == request.auth.uid);
+      allow write: if false;
+    }
+    match /privado/pagamentos/{intentId}/{f=**} {
+      allow read: if autenticado() && (admin() || firestore.get(/databases/(default)/documents/paymentIntents/$(intentId)).data.userId == request.auth.uid);
+      allow write: if false;
+    }
+    match /privado/perfis/{u}/{f=**} {
+      allow read: if autenticado() && (request.auth.uid == u || admin());
+      allow write: if false;
+    }
+    // Spark: o titular envia a própria foto de perfil directamente (imagem até 2 MB); no Blaze o Central move-a de uploads/.
+    match /privado/perfis/{u}/foto.jpg {
+      allow read: if autenticado() && (request.auth.uid == u || admin());
+      allow write: if autenticado() && request.auth.uid == u && request.resource.contentType == 'image/jpeg' && request.resource.size <= 2 * 1024 * 1024;
+    }
+    match /{tudo=**} { allow read, write: if false; }
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- O tema real é Compose (Material 3); este cobre só o arranque da Activity. -->
+    <style name="Theme.Kupila" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/kupila_fundo_icone</item>
+    </style>
+</resources>

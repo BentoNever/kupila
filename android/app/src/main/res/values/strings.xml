@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nome oficial (secção 0). -->
+    <string name="app_name">Kupila-Gestão de negócios</string>
+    <string name="app_slogan">Anúncio, descoberta, compra, aluguer e reserva protegida de bens em Angola</string>
+    <string name="credito_desenvolvimento">Desenvolvido por Sousa B.Morais</string>
+</resources>

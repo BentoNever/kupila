@@ -1,0 +1,288 @@
+{
+ "versao": "faq-v1",
+ "fonte": "Kupila 1.0.239 · KUPILA_FAQ_ITEMS (linha 8976) e PUBLIC_FAQ (linha 17936)",
+ "administrador": [
+  {
+   "pergunta": "O que é o Kupila?",
+   "resposta": "O Kupila é uma plataforma digital de anúncios, descoberta, reserva e intermediação de produtos em Angola. O app aproxima Clientes e Proprietários, organiza pagamentos de sinal, intermediação, publicação e serviços de destaque, mas não se torna proprietário dos bens anunciados."
+  },
+  {
+   "pergunta": "Que tipos de conta existem?",
+   "resposta": "O cadastro público permite Cliente e Proprietário. O Cliente pesquisa e reserva produtos. O Proprietário também pode anunciar e gerir os seus próprios produtos. O Administrador/Gestor possui permissões de gestão, monitoramento, moderação, auditoria e acesso integral conforme as regras da plataforma."
+  },
+  {
+   "pergunta": "Que categorias de produtos podem ser anunciadas?",
+   "resposta": "O Kupila suporta Imóveis, Terrenos, Viaturas, Motorizadas e Outros Produtos. Cada categoria possui subcategorias e campos técnicos próprios para tornar os anúncios comparáveis e bem classificados."
+  },
+  {
+   "pergunta": "Como funcionam Província e Município?",
+   "resposta": "O app utiliza a divisão administrativa de Angola com 21 províncias. Ao seleccionar uma Província, a lista de Municípios é actualizada para mostrar apenas os municípios correspondentes."
+  },
+  {
+   "pergunta": "Como encontro um produto?",
+   "resposta": "Use pesquisa, Província, categoria e modalidade, além das vitrines Mais Destacados, Mais Recentes, Em Alta, Mais Procurados e Patrocinados. Ao tocar no card ou no carrossel, o modal Detalhes do Produto é aberto."
+  },
+  {
+   "pergunta": "O que significam Novo, Em Alta e Mais Procurado?",
+   "resposta": "São rótulos orgânicos calculados a partir de recência e sinais reais de interesse, como visualizações qualificadas, procura e reservas. Um anúncio pago não recebe artificialmente o rótulo Mais Procurado ou Em Alta."
+  },
+  {
+   "pergunta": "O que significa Patrocinado?",
+   "resposta": "Significa que o Proprietário contratou um serviço de promoção paga. O anúncio continua sujeito às mesmas regras de segurança e é identificado claramente como publicidade/promovido."
+  },
+  {
+   "pergunta": "Como anunciar um produto?",
+   "resposta": "O Proprietário completa o perfil, escolhe categoria/subcategoria, informa preço e localização, adiciona fotografias e documentos, consulta o sinal definido pelo Administrador, informa o meio de recebimento, alertas e promoções opcionais, lê/aceita as políticas e paga a taxa calculada. Em aluguer/renda também define a unidade do preço e o tempo mínimo. O anúncio só entra no catálogo após confirmação financeira."
+  },
+  {
+   "pergunta": "O que acontece se eu sair ou ocorrer um erro durante o cadastro?",
+   "resposta": "O Kupila guarda automaticamente o trabalho inacabado como rascunho, inclusive quando a validação ou o envio falha. Na próxima tentativa de cadastrar, lembra que existem trabalhos pendentes e mostra a lista para continuar, apagar ou iniciar um anúncio novo."
+  },
+  {
+   "pergunta": "Quantos rascunhos de produto posso guardar?",
+   "resposta": "Até 5 rascunhos por utilizador. A lista mostra título, progresso e última actualização. Se iniciar um sexto trabalho, o rascunho mais antigo é substituído para manter o limite; um anúncio só deixa de ser rascunho quando a publicação é concluída."
+  },
+  {
+   "pergunta": "Quantas fotografias posso adicionar?",
+   "resposta": "O cadastro aceita até 5 fotografias do produto. No modal de detalhes elas podem ser vistas pelo mini carrossel, swipe, setas, miniaturas e visualizador ampliado."
+  },
+  {
+   "pergunta": "Como funcionam os documentos de titularidade?",
+   "resposta": "O Proprietário pode anexar até 10 documentos JPG ou PDF, com até 2 MB por ficheiro, para comprovar a tutela/titularidade do bem. Esses documentos são tratados como informação privada e não são expostos aos Clientes."
+  },
+  {
+   "pergunta": "Como o Kupila evita anúncios duplicados ou fraudulentos?",
+   "resposta": "O app compara referência documental, conteúdo dos comprovativos, assinaturas visuais das fotografias, localização e características do produto. Se houver correspondência forte, a publicação é bloqueada e o alerta explica claramente quais sinais coincidiram, sem expor dados privados do outro Proprietário."
+  },
+  {
+   "pergunta": "O Proprietário pode escolher como receber?",
+   "resposta": "Sim. O anúncio exige um meio de recebimento suportado pelo fluxo, como IBAN ou Multicaixa Express. Esses dados permanecem privados e são usados no processo de payout."
+  },
+  {
+   "pergunta": "Como definir preço e tempo mínimo numa renda ou aluguer?",
+   "resposta": "O Proprietário informa se o preço é diário, semanal, quinzenal, mensal, anual ou de outra unidade e escolhe o tempo mínimo de 3 meses, 6 meses, anual ou personalizado. O app converte o tempo em unidades cobradas e mostra a base mínima do negócio antes de publicar."
+  },
+  {
+   "pergunta": "Como é calculada a comissão de uma renda ou aluguer?",
+   "resposta": "Comissão = Preço da unidade × Quantidade de unidades mínimas exigidas × Percentagem da comissão. Exemplo: 100 000 AOA por mês, mínimo de 6 meses e comissão de 15% resulta em 100 000 × 6 × 15% = 90 000 AOA. O sinal configurado deve ser suficiente para cobrir a comissão."
+  },
+  {
+   "pergunta": "Quem define o sinal de reserva?",
+   "resposta": "O Administrador define globalmente o sinal nos Ajustes da Plataforma. Na venda, define a percentagem; no aluguer/renda, define quantos meses de sinal são exigidos. O Proprietário visualiza estas condições no cadastro/edição, mas não pode alterá-las. Quando a reserva é confirmada, condições e valores ficam congelados para aquele negócio."
+  },
+  {
+   "pergunta": "Como faço uma reserva?",
+   "resposta": "Abra o produto e toque em “Gerar referência do sinal”. Pague exactamente o montante indicado e, depois, submeta o comprovativo. O app lê a referência e o backend confirma referência e montante no provedor financeiro. Só depois o produto passa para Reservado."
+  },
+  {
+   "pergunta": "Gerar uma referência já reserva o produto?",
+   "resposta": "Não. A referência apenas inicia o pagamento. O produto continua disponível até o backend confirmar o pagamento integral do sinal."
+  },
+  {
+   "pergunta": "Submeter o comprovativo já reserva o produto?",
+   "resposta": "Não. O comprovativo é analisado para identificar a referência, mas a reserva só nasce depois da autenticação financeira de referência + montante integral junto do provedor."
+  },
+  {
+   "pergunta": "O que acontece se a referência for lida automaticamente?",
+   "resposta": "Quando a leitura encontra exactamente a referência esperada, o app inicia a submissão para validação financeira automaticamente, reduzindo cliques. Se a leitura não for segura, aparece um pequeno campo para confirmação manual."
+  },
+  {
+   "pergunta": "Como funciona a comissão de intermediação?",
+   "resposta": "Na venda, a comissão do Kupila é calculada sobre o sinal. Na renda/aluguer, é calculada sobre preço da unidade × unidades mínimas exigidas. O Cliente e o Proprietário veem a fórmula e os valores antes do pagamento; as condições ficam congeladas na reserva."
+  },
+  {
+   "pergunta": "Quando o Proprietário recebe o dinheiro?",
+   "resposta": "Depois da confirmação financeira do sinal, o líquido fica em custódia. O Proprietário só pode solicitar a liberação depois de a vistoria resultar em negócio fechado e o OTP ser validado. Se o provedor estiver indisponível, a liberação fica pendente sem nova cobrança ao Cliente."
+  },
+  {
+   "pergunta": "Quando vejo Bairro, Ponto de Referência, Proprietário e Contacto?",
+   "resposta": "Para Cliente e Proprietário não titular, esses dados ficam protegidos até a confirmação financeira da reserva. O Proprietário titular e o Administrador podem consultar os dados conforme as suas permissões."
+  },
+  {
+   "pergunta": "O que é o OTP de vistoria?",
+   "resposta": "É um código que comprova o encontro presencial. Se o Cliente aceitar o produto, entrega o OTP ao Proprietário para confirmar o negócio. Se não aceitar, usa o OTP na solicitação de reembolso; o mesmo código não deve concluir simultaneamente o negócio e o reembolso."
+  },
+  {
+   "pergunta": "Posso pedir reembolso se não gostar do produto na vistoria?",
+   "resposta": "Sim, desde que o negócio não tenha sido fechado. Numa reserva activa ou já expirada, abra o comprovativo, toque em Solicitar reembolso e informe OTP, motivo, descrição, declaração e uma evidência JPG/PDF. O valor elegível é o sinal pago menos a comissão da plataforma."
+  },
+  {
+   "pergunta": "Quando o reembolso é realmente pago?",
+   "resposta": "Primeiro o Proprietário deve confirmar no app que houve vistoria e que o negócio não foi fechado. Depois o Administrador analisa os dados e a evidência e encaminha o valor ao provedor financeiro. Só o retorno confirmado do provedor muda o estado para Reembolsado; contestação ou prova insuficiente não permite aprovação automática."
+  },
+  {
+   "pergunta": "O que acontece depois de um negócio concluído?",
+   "resposta": "O Cliente recebe uma sugestão opcional para enviar um testemunho verificado. O convite é associado à reserva concluída e não deve ser repetido depois de o testemunho já ter sido tratado."
+  },
+  {
+   "pergunta": "Os testemunhos são reais?",
+   "resposta": "O Centro de Credibilidade aceita testemunhos vinculados a negócios concluídos. Eles exigem consentimento, possuem selo de negócio verificado e passam por moderação antes de serem exibidos publicamente."
+  },
+  {
+   "pergunta": "Como funciona a avaliação dos testemunhos?",
+   "resposta": "O participante elegível pode atribuir de 1 a 5 estrelas, escrever a experiência e escolher a forma pública de identificação. Contactos, documentos e outros dados privados não são publicados."
+  },
+  {
+   "pergunta": "Que serviços de promoção existem?",
+   "resposta": "Existem Destaque Premium, Top Patrocinados e Prioridade na Vitrine. São opcionais e calculados por percentagem sobre o preço do produto."
+  },
+  {
+   "pergunta": "Como são calculadas as promoções?",
+   "resposta": "Valor da promoção = Preço do Produto × Percentagem configurada para o serviço. O app apresenta simultaneamente a percentagem e o valor exacto em AOA antes do pagamento e guarda um snapshot para auditoria."
+  },
+  {
+   "pergunta": "O que é o Simulador de Intermediação?",
+   "resposta": "É uma calculadora em tempo real que lista os serviços do Kupila e estima sinal, comissão, líquido do Proprietário, saldo restante, taxa de anúncio, promoções, custo de publicação e receita potencial da plataforma. Serviços operacionais incluídos aparecem como 0 AOA."
+  },
+  {
+   "pergunta": "A simulação cria uma cobrança?",
+   "resposta": "Não. O Simulador é informativo, não reserva, não publica, não transfere dinheiro e não altera os Ajustes. A operação real usa as condições congeladas no anúncio e no checkout."
+  },
+  {
+   "pergunta": "Que alertas o Proprietário pode receber?",
+   "resposta": "O Proprietário pode activar alertas por produto para reservas e interesse relevante. O alerta dentro do app permanece associado ao anúncio; e-mail/SMS dependem dos contactos cadastrados, preferência escolhida e disponibilidade do canal/backend."
+  },
+  {
+   "pergunta": "Para que serve o sino de notificações?",
+   "resposta": "Centraliza eventos como reservas, interesses, operações concluídas, convites para testemunho e outros avisos relevantes ao perfil. Algumas notificações possuem acção directa para abrir o produto, reserva, testemunho ou área correspondente."
+  },
+  {
+   "pergunta": "Como funciona a sessão única?",
+   "resposta": "Uma conta mantém apenas uma sessão activa. Se o utilizador decidir continuar noutro dispositivo, pode encerrar a sessão anterior e assumir a conta no novo aparelho. O app verifica o servidor antes de revogar uma sessão para reduzir falsos bloqueios."
+  },
+  {
+   "pergunta": "O app mantém a sessão depois de recarregar?",
+   "resposta": "Sim. A autenticação usa persistência local do Firebase e o Kupila guarda o último estado seguro da interface. Depois de confirmar o mesmo utilizador, restaura aba, filtros, pesquisa, scroll e modal elegível. Pagamentos interrompidos não são retomados automaticamente por segurança."
+  },
+  {
+   "pergunta": "O que é o acesso rápido?",
+   "resposta": "No Android, a credencial de acesso rápido pode ser protegida pelo Android Keystore e armazenamento cifrado. No standalone/web, o segredo não é gravado permanentemente pelo Kupila. O utilizador pode esquecer uma conta conhecida no dispositivo."
+  },
+  {
+   "pergunta": "Por que o app termina uma sessão por inactividade?",
+   "resposta": "Existe um tempo de inactividade configurável para proteger a conta quando o dispositivo fica abandonado. O app avisa antes do bloqueio quando aplicável e exige nova autenticação depois do encerramento por segurança."
+  },
+  {
+   "pergunta": "O que acontece se a reserva expirar?",
+   "resposta": "Quando o prazo termina, o produto pode voltar ao catálogo. Movimentos financeiros já processados seguem as condições apresentadas no checkout e nas Políticas; a expiração não cria automaticamente uma nova cobrança, transferência ou estorno."
+  },
+  {
+   "pergunta": "Posso desanunciar ou eliminar um produto?",
+   "resposta": "O Proprietário pode solicitar a operação, mas o fluxo exige autorização/código do Administrador. Produtos reservados ou concluídos possuem restrições adicionais, e taxas/comissões já processadas seguem as regras de não reembolso apresentadas pela plataforma."
+  },
+  {
+   "pergunta": "O app emite comprovativos/recibos?",
+   "resposta": "Sim. O fluxo de reserva possui recibo/comprovativo associado à transacção, com opção de geração e salvamento conforme o ambiente do app. Os registros financeiros ficam associados à origem e ao produto para rastreabilidade."
+  },
+  {
+   "pergunta": "O Administrador consegue monitorar a plataforma?",
+   "resposta": "Sim. O perfil Gestor possui áreas de utilizadores, produtos, reservas, presença, auditoria, histórico financeiro, autorizações, testemunhos e indicadores. O acesso administrativo é mais amplo que o de Cliente e Proprietário."
+  },
+  {
+   "pergunta": "Como funcionam os Ajustes do app?",
+   "resposta": "O Administrador configura percentagens e parâmetros operacionais, como comissão, taxa de anúncio, promoções, duração dos destaques, prazo de reserva e inactividade. Operações já confirmadas preservam os snapshots vigentes no momento do negócio."
+  },
+  {
+   "pergunta": "A mensagem de boas-vindas aparece sempre?",
+   "resposta": "Não. A saudação de boas-vindas é marcada na própria conta e deve ser exibida somente uma única vez, independentemente de novos logins, reabertura ou troca de dispositivo."
+  },
+  {
+   "pergunta": "Como funciona o login automático?",
+   "resposta": "Ao inserir um e-mail válido e uma palavra-passe completa, o Kupila aguarda um breve instante para terminar a digitação e valida as credenciais automaticamente. Se forem aceitas, a sessão inicia sem tocar no botão Entrar. O botão permanece como alternativa manual."
+  },
+  {
+   "pergunta": "Como sair da conta de forma segura?",
+   "resposta": "Use Sair ou Terminar Sessão. O Kupila encerra presença, sessão exclusiva e Firebase Auth mesmo se algum serviço auxiliar estiver temporariamente indisponível, limpa os estados sensíveis e volta à tela de login."
+  },
+  {
+   "pergunta": "Como voltar à tela anterior ou avançar novamente?",
+   "resposta": "Use as setas ← e → no cabeçalho. O histórico interno acompanha abas, detalhes de produtos e modais. No Android, o botão/gesto Voltar do aparelho tenta primeiro regressar dentro do Kupila antes de sair do app. Alt+← e Alt+→ também funcionam no desktop."
+  },
+  {
+   "pergunta": "Os dados actualizam em tempo real em outros dispositivos?",
+   "resposta": "Sim. Depois de autenticado, o Kupila mantém listeners do Firestore para os dados permitidos ao perfil. Alterações de produtos, reservas, perfis, ajustes, testemunhos, autorizações, movimentos financeiros, alertas, pagamentos e payouts são reflectidas automaticamente nas telas e modais afectados, sem recarregar manualmente."
+  },
+  {
+   "pergunta": "Preciso fechar e abrir um modal para ver uma alteração nova?",
+   "resposta": "Não. Os modais ligados a dados vivos são re-renderizados automaticamente. O app agrupa alterações muito próximas numa única actualização visual para evitar piscar, perder scroll ou apagar campos enquanto o utilizador está a escrever."
+  },
+  {
+   "pergunta": "O que acontece com a actualização em tempo real sem Internet?",
+   "resposta": "O Kupila mantém os últimos dados disponíveis no cache e identifica o estado offline. Quando a ligação regressa, o Firestore reconcilia as alterações e o app actualiza novamente as áreas abertas. A velocidade efectiva depende da ligação e da confirmação do backend/provedor."
+  },
+  {
+   "pergunta": "Onde encontro ajuda completa?",
+   "resposta": "Use o ícone de Perguntas Frequentes para respostas rápidas, o ícone de calculadora para simulações e o ícone Sobre/Manual para consultar instruções, políticas, regras de intermediação, privacidade e responsabilidades."
+  }
+ ],
+ "publico": [
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  },
+  {
+   "pergunta": "",
+   "resposta": ""
+  }
+ ]
+}

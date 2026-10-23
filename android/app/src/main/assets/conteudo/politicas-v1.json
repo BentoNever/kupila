@@ -1,0 +1,336 @@
+{
+ "versao": "2026.08.28-4",
+ "fonte": "Kupila 1.0.239 · linhas 8324-8396 e 8184-8211",
+ "manualPoliticas": [
+  {
+   "titulo": "Kupila AO",
+   "paragrafos": []
+  },
+  {
+   "titulo": "Manual, Políticas e Intermediação",
+   "paragrafos": [
+    "Versão 2026.08.28-4",
+    "Manual",
+    "Políticas",
+    "Simular"
+   ]
+  },
+  {
+   "titulo": "Manual de Instruções",
+   "paragrafos": []
+  },
+  {
+   "titulo": "Como usar o Kupila do início ao fim",
+   "paragrafos": [
+    "Guia operacional actualizado para Clientes, Proprietários e Administradores. Inclui conta, pesquisa, anúncios, pagamentos, promoções, segurança, reservas, testemunhos, simulação, persistência e gestão."
+   ]
+  },
+  {
+   "titulo": "1 · Criar e proteger a conta",
+   "paragrafos": [
+    "Escolha Cliente ou Proprietário, preencha os dados, leia integralmente as políticas e aceite-as. A saudação inicial é exibida uma única vez por conta."
+   ]
+  },
+  {
+   "titulo": "2 · Login, sessão e navegação inteligente",
+   "paragrafos": [
+    "Ao terminar de inserir credenciais válidas, o login pode iniciar automaticamente sem tocar em Entrar. O Kupila mantém uma sessão activa por conta, recupera o último estado seguro após recarga, oferece navegação anterior/seguinte no cabeçalho e encerra completamente a sessão através de Sair/Terminar Sessão."
+   ]
+  },
+  {
+   "titulo": "3 · Encontrar produtos",
+   "paragrafos": [
+    "Use categoria, Província, pesquisa e as vitrines Destaques, Recentes, Em Alta, Mais Procurados e Patrocinados. Os rótulos orgânicos dependem de dados reais de utilização."
+   ]
+  },
+  {
+   "titulo": "4 · Consultar detalhes e fotografias",
+   "paragrafos": [
+    "Toque em qualquer card para abrir os detalhes. Use mini carrossel, swipe, setas, miniaturas e zoom. Dados privados só aparecem para quem possui permissão."
+   ]
+  },
+  {
+   "titulo": "5 · Completar o perfil de Proprietário",
+   "paragrafos": [
+    "Informe nome, localização residencial, contactos, fotografia e canal de alerta. Esses dados são reutilizados na gestão dos anúncios e permanecem sujeitos às regras de privacidade."
+   ]
+  },
+  {
+   "titulo": "6 · Cadastrar e recuperar rascunhos",
+   "paragrafos": [
+    "Preencha categoria, subcategoria, dados técnicos, preço, localização, fotos e documentação. O Kupila guarda automaticamente até 5 cadastros inacabados por utilizador, inclusive após erros ou saída da tela. Ao voltar para cadastrar, pode escolher um rascunho, apagá-lo ou iniciar um trabalho novo; ao exceder 5, o mais antigo é substituído."
+   ]
+  },
+  {
+   "titulo": "7 · Documentos e anti-duplicação",
+   "paragrafos": [
+    "Anexe os comprovativos permitidos. O sistema verifica referências, hashes, imagens e características para reduzir anúncios duplicados ou fraudulentos."
+   ]
+  },
+  {
+   "titulo": "8 · Definir aluguer, sinal e recebimento",
+   "paragrafos": [
+    "Em renda/aluguer, informe se o preço é diário, semanal, quinzenal, mensal, anual ou de outra unidade e defina o tempo mínimo (3 meses, 6 meses, anual ou personalizado). A base mínima é preço por unidade × unidades exigidas; a comissão é essa base × percentagem. O sinal é definido globalmente pelo Administrador; informe apenas o meio de recebimento."
+   ]
+  },
+  {
+   "titulo": "9 · Contratar promoções opcionais",
+   "paragrafos": [
+    "Destaque Premium, Top Patrocinados e Prioridade na Vitrine são percentuais sobre o preço. O custo exacto em AOA aparece antes do pagamento e o anúncio é identificado como Patrocinado."
+   ]
+  },
+  {
+   "titulo": "10 · Pagar para publicar",
+   "paragrafos": [
+    "O produto fica como rascunho privado. A taxa de anúncio e promoções seleccionadas são reunidas numa cobrança. Só depois da confirmação financeira o produto é publicado."
+   ]
+  },
+  {
+   "titulo": "11 · Reservar em 2 etapas",
+   "paragrafos": [
+    "1) Gere a referência e pague exactamente o sinal. 2) Submeta o comprovativo. A leitura automática reduz cliques, mas o backend confirma referência + montante antes de reservar."
+   ]
+  },
+  {
+   "titulo": "12 · Custódia, comissão e liberação",
+   "paragrafos": [
+    "Após confirmar o sinal, o Kupila regista a comissão e mantém o líquido em custódia. A liberação ao Proprietário só é solicitada quando o negócio é confirmado por OTP; falhas do provedor deixam a operação pendente, sem nova cobrança ao Cliente."
+   ]
+  },
+  {
+   "titulo": "13 · Vistoria, OTP e reembolso",
+   "paragrafos": [
+    "Após a reserva, os dados do encontro são desbloqueados. Se o Cliente aceitar o produto, entrega o OTP para confirmar o negócio. Se não aceitar e o negócio não for fechado, solicita no comprovativo do app o reembolso do sinal menos a comissão, anexando motivo e evidência. O Proprietário confirma a não conclusão e o Administrador/provedor validam antes do reembolso."
+   ]
+  },
+  {
+   "titulo": "14 · Testemunhos e credibilidade",
+   "paragrafos": [
+    "Após negócio concluído, o Cliente pode receber convite opcional para testemunho. Apenas experiências ligadas a negócios concluídos podem entrar no fluxo de testemunho verificado e moderação."
+   ]
+  },
+  {
+   "titulo": "15 · Alertas, notificações e acompanhamento",
+   "paragrafos": [
+    "Use o sino para acompanhar eventos. Proprietários podem configurar alertas por produto. Reservas possuem prazo e são acompanhadas em tempo real."
+   ]
+  },
+  {
+   "titulo": "16 · Simular antes de decidir",
+   "paragrafos": [
+    "Abra o Simulador para calcular todos os serviços financeiros e visualizar os serviços operacionais incluídos. A simulação não cria cobranças nem altera os Ajustes."
+   ]
+  },
+  {
+   "titulo": "17 · Gerir os seus anúncios",
+   "paragrafos": [
+    "O Proprietário consulta os próprios produtos e estados. Desanúncio/exclusão por iniciativa do Proprietário exige autorização administrativa e respeita as restrições de produtos reservados/concluídos."
+   ]
+  },
+  {
+   "titulo": "18 · Administração e auditoria",
+   "paragrafos": [
+    "O Gestor administra utilizadores, produtos, autorizações, testemunhos, configurações, indicadores, presença, histórico financeiro e auditoria, conforme as permissões do perfil."
+   ]
+  },
+  {
+   "titulo": "19 · FAQ e suporte de utilização",
+   "paragrafos": [
+    "O FAQ reúne dúvidas sobre todos os serviços do app, com Ver mais/Ver menos. O Manual e as Políticas são a referência operacional para uso da plataforma."
+   ]
+  },
+  {
+   "titulo": "20 · Recarregar sem perder contexto",
+   "paragrafos": [
+    "Ao recarregar, o app restaura a sessão autenticada e o último contexto seguro: aba, filtros, pesquisa, scroll e modal elegível. Um checkout interrompido nunca é continuado automaticamente."
+   ]
+  },
+  {
+   "titulo": "21 · Dados vivos em todos os dispositivos",
+   "paragrafos": [
+    "Depois do login, o Kupila escuta em tempo real os dados autorizados no Firestore. Mudanças confirmadas noutro dispositivo são aplicadas automaticamente ao catálogo e aos modais relevantes. Escritas locais aparecem de imediato e são reconciliadas com o servidor; em modo offline o app preserva o cache e sincroniza ao reconectar."
+   ]
+  },
+  {
+   "titulo": "Políticas de Uso e Regras de Intermediação",
+   "paragrafos": [
+    "Estas condições governam o uso efectivo da plataforma e prevalecem sobre valores meramente simulados. A versão vigente é registada no aceite do utilizador."
+   ]
+  },
+  {
+   "titulo": "1. Natureza do Kupila",
+   "paragrafos": [
+    "O Kupila é uma plataforma digital de anúncio, descoberta, reserva e intermediação. Não se torna proprietário dos bens anunciados nem substitui a obrigação de Cliente e Proprietário verificarem as condições finais do negócio."
+   ]
+  },
+  {
+   "titulo": "2. Perfis, acesso e responsabilidades",
+   "paragrafos": [
+    "Cliente, Proprietário e Administrador possuem permissões distintas. O utilizador deve fornecer dados verdadeiros, proteger a sua conta e não tentar ultrapassar restrições de acesso, titularidade ou segurança."
+   ]
+  },
+  {
+   "titulo": "3. Sessão, persistência, rascunhos e segurança",
+   "paragrafos": [
+    "A plataforma utiliza persistência de autenticação e armazenamento local para recuperar a última sessão válida e o estado seguro da interface. Cadastros de produto inacabados são guardados automaticamente, limitados aos 5 mais recentes por utilizador, e reapresentados na próxima tentativa de anúncio. Apenas uma sessão pode permanecer activa por conta. Operações financeiras interrompidas não são retomadas automaticamente após recarga."
+   ]
+  },
+  {
+   "titulo": "4. Publicação e titularidade",
+   "paragrafos": [
+    "O Proprietário deve anunciar apenas bens sob sua legítima tutela, fornecer informações correctas, escolher categoria/subcategoria apropriada e anexar documentação compatível. Anúncios falsos, duplicados, enganosos ou inconsistentes podem ser bloqueados, desanunciados ou submetidos à revisão."
+   ]
+  },
+  {
+   "titulo": "5. Fotografias e documentos",
+   "paragrafos": [
+    "O app limita fotografias e comprovativos conforme as regras técnicas apresentadas no cadastro. Documentos de titularidade, dados bancários e outros elementos privados não são exibidos publicamente e são tratados conforme o perfil e a finalidade operacional."
+   ]
+  },
+  {
+   "titulo": "6. Taxa de anúncio",
+   "paragrafos": [
+    "A publicação de novo anúncio está condicionada ao pagamento da taxa configurada pela plataforma, calculada sobre o preço informado. O produto permanece como rascunho privado até o backend confirmar referência e montante integral junto do provedor financeiro."
+   ]
+  },
+  {
+   "titulo": "7. Base do negócio, aluguer e sinal",
+   "paragrafos": [
+    "Cada anúncio pode possuir percentagem própria de sinal. Na venda, a base é o preço total. Na renda/aluguer, o Proprietário deve informar a unidade do preço e o tempo mínimo; a base mínima é Preço da unidade × Quantidade de unidades exigidas. O sinal é Base do negócio × Percentagem do Sinal. Condições e valores são apresentados antes do pagamento e congelados na reserva."
+   ]
+  },
+  {
+   "titulo": "8. Reserva, comprovativo e autenticação financeira",
+   "paragrafos": [
+    "Gerar referência ou anexar comprovativo não reserva por si só. O app pode ler a referência da imagem para agilizar a operação, mas o backend só cria a reserva depois de confirmar referência e montante integral no provedor. Antes disso o produto continua sujeito à disponibilidade real."
+   ]
+  },
+  {
+   "titulo": "9. Comissão, custódia e liberação",
+   "paragrafos": [
+    "Na venda, a comissão é calculada sobre o sinal. Na renda/aluguer, é calculada por Preço da unidade × Quantidade de unidades mínimas × Percentagem da Comissão. Após a confirmação financeira do sinal, o Kupila regista a comissão e mantém o líquido em custódia. A liberação ao Proprietário é solicitada somente depois da confirmação positiva do negócio por OTP."
+   ]
+  },
+  {
+   "titulo": "10. Promoções e publicidade",
+   "paragrafos": [
+    "Destaque Premium, Top Patrocinados e Prioridade na Vitrine são opcionais e calculados por Preço × Percentagem da Promoção. São identificados como Patrocinado e não podem converter artificialmente um anúncio em “Em Alta” ou “Mais Procurado”, que permanecem indicadores orgânicos."
+   ]
+  },
+  {
+   "titulo": "11. Dados privados e desbloqueio",
+   "paragrafos": [
+    "Bairro, Ponto de Referência, Proprietário, Contacto, documentos e dados financeiros possuem acesso restrito. Cliente/Proprietário não titular só recebe os dados necessários depois de uma reserva financeiramente validada; Administrador e titular possuem acesso conforme permissões."
+   ]
+  },
+  {
+   "titulo": "12. Vistoria, OTP, conclusão e reembolso",
+   "paragrafos": [
+    "O OTP comprova a vistoria. Se o Cliente aceitar o produto, entrega-o ao Proprietário para confirmar o negócio e solicitar a liberação do líquido. Se não aceitar e nenhum negócio for fechado, deve solicitar no app o reembolso do sinal menos a comissão, informando OTP, motivo, descrição, declaração e evidência. O Proprietário precisa confirmar a não conclusão; depois, o Administrador analisa e o provedor financeiro confirma o pagamento do reembolso. Contestação ou prova insuficiente impede aprovação automática."
+   ]
+  },
+  {
+   "titulo": "13. Testemunhos e credibilidade",
+   "paragrafos": [
+    "Apenas participantes ligados a negócios concluídos podem entrar no fluxo de testemunho verificado. A avaliação é opcional, exige consentimento e passa por moderação. O app pode sugerir o testemunho após a conclusão, sem obrigar o utilizador."
+   ]
+  },
+  {
+   "titulo": "14. Alertas e notificações",
+   "paragrafos": [
+    "Alertas do app apoiam o acompanhamento de reservas, interesse, anúncios e operações. E-mail/SMS dependem do contacto, preferência e disponibilidade do serviço. A ausência de alerta externo não altera o estado real gravado no backend."
+   ]
+  },
+  {
+   "titulo": "15. Prazo, expiração, cancelamento e reembolso elegível",
+   "paragrafos": [
+    "Reservas possuem prazo configurado. Ao expirar, o produto pode retornar ao catálogo. Expiração, cancelamento unilateral ou desanúncio não criam estorno automático. A excepção é a solicitação comprovada após vistoria sem negócio fechado, processada exclusivamente pelo fluxo de reembolso do app; comissão, taxas de anúncio e promoções permanecem não reembolsáveis."
+   ]
+  },
+  {
+   "titulo": "16. Desanúncio, exclusão e autorização",
+   "paragrafos": [
+    "Operações solicitadas pelo Proprietário podem exigir código/autorização do Administrador. Produtos em estado reservado ou concluído podem ter bloqueios adicionais. A auditoria regista operações relevantes."
+   ]
+  },
+  {
+   "titulo": "17. Simulador de Intermediação",
+   "paragrafos": [
+    "O simulador apresenta os serviços financeiros e operacionais do Kupila e calcula estimativas em tempo real. É exclusivamente informativo: não cria pagamentos, não publica, não reserva, não transfere dinheiro e não altera os Ajustes. A operação real usa os snapshots do anúncio/checkout."
+   ]
+  },
+  {
+   "titulo": "18. Monitoramento, auditoria e administração",
+   "paragrafos": [
+    "O Administrador pode consultar dados necessários à gestão da plataforma, segurança, moderação, autorizações, indicadores, presença, auditoria e resolução de conflitos. O acesso deve respeitar a finalidade administrativa e as regras internas da plataforma."
+   ]
+  },
+  {
+   "titulo": "19. Aceite e actualizações",
+   "paragrafos": [
+    "O cadastro da conta e a publicação de anúncios exigem leitura/aceite conforme o fluxo. O app regista versão e data/hora. Alterações relevantes às regras podem exigir novo aceite em versões futuras."
+   ]
+  },
+  {
+   "titulo": "20. Limites da intermediação",
+   "paragrafos": [
+    "Nesta versão, o módulo financeiro de reserva processa principalmente o sinal e os serviços de publicação/promoção descritos. O saldo restante do preço do bem não é automaticamente liquidado pelo mesmo fluxo salvo indicação expressa no checkout. Cliente e Proprietário devem confirmar as condições finais do negócio."
+   ]
+  },
+  {
+   "titulo": "Desenvolvimento",
+   "paragrafos": []
+  },
+  {
+   "titulo": "Sousa B.Morais",
+   "paragrafos": [
+    "Kupila AO · · Ano actualizado automaticamente",
+    "Nota operacional: estas regras descrevem o funcionamento configurado no Kupila. Termos jurídicos definitivos, tratamento fiscal, resolução de litígios e conformidade regulatória devem ser revistos pelo responsável legal da plataforma antes da disponibilização comercial.",
+    "Leia até ao final para confirmar a leitura.",
+    "Li e compreendi estas regras"
+   ]
+  }
+ ],
+ "reservaProtegida": [
+  {
+   "titulo": "Protecção da reserva",
+   "paragrafos": []
+  },
+  {
+   "titulo": "Reserva Protegida",
+   "paragrafos": [
+    "Informação geral do processo de reserva.",
+    "Sinal protegido: o processo de reserva mantém os dados sensíveis e o fluxo financeiro sob as regras de intermediação do Kupila até à validação correspondente.",
+    "1"
+   ]
+  },
+  {
+   "titulo": "Reserva e confirmação",
+   "paragrafos": [
+    "O Cliente confirma a reserva conforme as condições e o sinal definidos para o produto.",
+    "2"
+   ]
+  },
+  {
+   "titulo": "Validação presencial",
+   "paragrafos": [
+    "Os dados necessários para a vistoria são disponibilizados conforme as permissões e o estado da reserva.",
+    "3"
+   ]
+  },
+  {
+   "titulo": "Conclusão ou reembolso elegível",
+   "paragrafos": [
+    "A conclusão do negócio ou eventual reembolso segue o fluxo e as validações aplicáveis da plataforma."
+   ]
+  },
+  {
+   "titulo": "Prazo configurado",
+   "paragrafos": []
+  },
+  {
+   "titulo": "A carregar…",
+   "paragrafos": []
+  }
+ ]
+}

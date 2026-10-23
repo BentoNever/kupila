@@ -1,0 +1,177 @@
+rules_version = '2';
+// Kupila-Gestão de negócios — regras Firestore (secções 5, 7, 11, 34 do prompt mestre).
+// Modo SPARK (decisão D-27): sem Cloud Functions, as regras SÃO a autoridade. O papel e o estado da conta vêm de
+// users/{uid} e só mudam pelos caminhos abaixo (cadastro público limitado a Cliente/Proprietário; Administrador
+// muda estado/papel de terceiros). Mutações financeiras ficam reservadas ao Administrador (validação humana
+// auditada) ou a transições verificadas aqui. No modo Blaze, o Admin SDK das Functions escreve os mesmos documentos.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function autenticado() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function caminhoUser(u) { return /databases/$(database)/documents/users/$(u); }
+    function perfil() { return get(caminhoUser(uid())).data; }
+    function activo() { return autenticado() && exists(caminhoUser(uid())) && perfil().status == 'ACTIVE'; }
+    function admin() { return activo() && perfil().role == 'GESTOR'; }
+    function sessaoVigente(sessaoId) {
+      return exists(/databases/$(database)/documents/activeSessions/$(uid())) &&
+        get(/databases/$(database)/documents/activeSessions/$(uid())).data.sessionId == sessaoId;
+    }
+    function soCampos(permitidos) { return request.resource.data.keys().hasOnly(permitidos); }
+    function alterados() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function texto(v, min, max) { return v is string && v.size() >= min && v.size() <= max; }
+    function telefone(v) { return v is string && v.matches('^9[0-9]{8}$'); }
+    function telefoneOpcional(v) { return v == '' || telefone(v); }
+    // Versão das Políticas de Uso vigente (igual a POLITICA_VIGENTE no Central e no APK).
+    function politicaVigente() { return '2026.08.28-4'; }
+    function CAMPOS_PESSOAIS() { return ['name', 'phonePrimary', 'phoneAlt', 'province', 'municipality', 'neighborhood', 'alertChannel', 'photoPath']; }
+    function dadosPessoaisValidos(d) {
+      return texto(d.name, 3, 120) && telefone(d.phonePrimary) && telefoneOpcional(d.phoneAlt) &&
+        d.alertChannel in ['AUTO', 'EMAIL', 'SMS', 'BOTH'] && texto(d.province, 0, 40) && texto(d.municipality, 0, 60) &&
+        texto(d.neighborhood, 0, 100) &&
+        (d.role != 'PROPRIETARIO' || (d.province.size() > 0 && d.municipality.size() > 0 && d.neighborhood.size() > 0));
+    }
+    function CAMPOS_USER() { return ['id', 'role', 'status', 'email', 'createdBy', 'createdAt', 'updatedAt', 'version', 'policyAcceptance',
+      'name', 'phonePrimary', 'phoneAlt', 'province', 'municipality', 'neighborhood', 'alertChannel', 'photoPath']; }
+
+    // Identidade visual pública (antes do login: tema/logo sem flash — secção 6). Sem dados financeiros.
+    match /settings/publicIdentity { allow read: if true; allow write: if false; }
+    // Ajustes completos: leitura autenticada; escrita só pelo Central (versão, autor, data oficial).
+    match /settings/{doc} { allow read: if autenticado(); allow write: if false; }
+    match /settingsVersions/{v} { allow read: if admin(); allow write: if false; }
+
+    match /users/{u} {
+      allow read: if autenticado() && (uid() == u || admin());
+      // Cadastro público (casos 01): só Cliente/Proprietário, activo, e-mail da própria conta, política vigente, hora do servidor.
+      allow create: if autenticado() && uid() == u && soCampos(CAMPOS_USER()) &&
+        request.resource.data.id == u && request.resource.data.role in ['CLIENTE', 'PROPRIETARIO'] &&
+        request.resource.data.status == 'ACTIVE' && request.resource.data.createdBy == null &&
+        request.resource.data.email == request.auth.token.email.lower() && request.resource.data.version == 1 &&
+        request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time &&
+        request.resource.data.policyAcceptance.version == politicaVigente() &&
+        request.resource.data.policyAcceptance.acceptedAt == request.time &&
+        request.resource.data.policyAcceptance.purpose == 'REGISTER' &&
+        (request.resource.data.role != 'PROPRIETARIO' || request.resource.data.photoPath == 'privado/perfis/' + u + '/foto.jpg') &&
+        dadosPessoaisValidos(request.resource.data);
+      // Criação pelo Administrador (caso 02): conta Auth criada numa instância secundária (não troca a sessão); autoria registada.
+      allow create: if admin() && uid() != u && soCampos(CAMPOS_USER()) && request.resource.data.id == u &&
+        request.resource.data.role in ['CLIENTE', 'PROPRIETARIO'] && request.resource.data.status in ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'ARCHIVED'] &&
+        request.resource.data.createdBy == uid() && request.resource.data.version == 1 && request.resource.data.createdAt == request.time &&
+        request.resource.data.policyAcceptance == null && dadosPessoaisValidos(request.resource.data);
+      allow update: if
+        // Titular actualiza os próprios dados pessoais (papel, estado, e-mail e autoria imutáveis), com versão.
+        (uid() == u && resource.data.status == 'ACTIVE' && alterados().hasOnly(CAMPOS_PESSOAIS().concat(['updatedAt', 'version'])) &&
+          request.resource.data.version == resource.data.version + 1 && request.resource.data.updatedAt == request.time &&
+          (request.resource.data.photoPath == resource.data.photoPath || request.resource.data.photoPath == 'privado/perfis/' + u + '/foto.jpg') &&
+          dadosPessoaisValidos(request.resource.data)) ||
+        // Administrador muda o estado de outra conta (qualquer autoria).
+        (admin() && uid() != u && alterados().hasOnly(['status', 'statusChangedBy', 'statusReason', 'updatedAt']) &&
+          request.resource.data.status in ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'ARCHIVED'] && request.resource.data.statusChangedBy == uid() &&
+          request.resource.data.updatedAt == request.time) ||
+        // Administrador edita dados pessoais SÓ de contas que ele próprio criou (regra da origem 14737).
+        (admin() && uid() != u && resource.data.createdBy == uid() && alterados().hasOnly(CAMPOS_PESSOAIS().concat(['updatedAt', 'version'])) &&
+          request.resource.data.version == resource.data.version + 1 && dadosPessoaisValidos(request.resource.data)) ||
+        // Concessão do papel de Administrador, fora do cadastro público, com autor.
+        (admin() && uid() != u && alterados().hasOnly(['role', 'roleGrantedBy', 'roleGrantReason', 'updatedAt']) &&
+          request.resource.data.role == 'GESTOR' && request.resource.data.roleGrantedBy == uid() && texto(request.resource.data.roleGrantReason, 5, 300));
+      allow delete: if false;
+    }
+    // Sessão exclusiva (caso 03): o titular reivindica/renova/termina a sua sessão com a hora do servidor. A instalação
+    // substituída deixa de passar em sessaoVigente() em qualquer escrita protegida e é terminada pelo listener do app.
+    match /activeSessions/{u} {
+      allow read: if autenticado() && (uid() == u || admin());
+      allow create, update: if activo() && uid() == u && request.resource.data.userId == u &&
+        soCampos(['userId', 'role', 'sessionId', 'installId', 'deviceLabel', 'status', 'startedAt', 'lastSeenAt', 'updatedAt',
+          'takenOverAt', 'previousInstallId', 'foreground', 'endedAt']) &&
+        request.resource.data.status in ['ACTIVE', 'ENDED'] && request.resource.data.updatedAt == request.time &&
+        texto(request.resource.data.sessionId, 8, 80) && texto(request.resource.data.installId, 8, 80);
+      allow delete: if false;
+    }
+    // Presença: heartbeat de 1.º plano do próprio utilizador (TTL em expiresAt — política de TTL do Firestore).
+    match /appPresence/{installId} {
+      allow read: if admin();
+      allow create, update: if activo() && request.resource.data.uid == uid() &&
+        soCampos(['uid', 'papel', 'dispositivo', 'estado', 'primeiroPlano', 'vistoEm', 'expiresAt', 'sessaoId']) &&
+        sessaoVigente(request.resource.data.sessaoId);
+      allow delete: if autenticado() && resource.data.uid == uid();
+    }
+
+    // Projecção PÚBLICA do anúncio (sem bairro, ponto de referência, contactos, titularidade, recebimento).
+    match /products/{id} {
+      allow read: if autenticado() && (resource.data.status in ['ACTIVE', 'RESERVED', 'COMPLETED'] || resource.data.ownerId == uid() || admin());
+      allow write: if false;
+    }
+    // Projecção PRIVADA: titular e Administrador. Participantes de reserva confirmada recebem apenas os
+    // dados de encontro pelo Central (função detalhes.encontro), nunca este documento.
+    match /productPrivate/{id} {
+      allow read: if autenticado() && (resource.data.ownerId == uid() || admin());
+      allow write: if false;
+    }
+    match /productIdentityClaims/{c} { allow read, write: if false; }
+    match /productInterest/{i} { allow read: if admin(); allow write: if false; }
+
+    // Rascunhos de trabalho do próprio autor (até 5 — o limite é aplicado pela app e pelo Central na publicação).
+    match /productWorkDrafts/{id} {
+      allow read: if autenticado() && resource.data.userId == uid();
+      allow create, update: if activo() && request.resource.data.userId == uid() && id.matches(uid() + '__.*') &&
+        request.resource.data.versao is int && sessaoVigente(request.resource.data.sessaoId) &&
+        (resource == null || request.resource.data.versao > resource.data.versao);
+      allow delete: if autenticado() && resource.data.userId == uid();
+    }
+    match /listingDrafts/{id} { allow read: if autenticado() && (resource.data.ownerId == uid() || admin()); allow write: if false; }
+    match /listingDraftPrivate/{id} { allow read: if autenticado() && (resource.data.ownerId == uid() || admin()); allow write: if false; }
+    match /tombstones/{id} { allow read: if autenticado() && (resource.data.userId == uid() || admin()); allow write: if false; }
+
+    match /paymentIntents/{id} {
+      allow read: if autenticado() && (resource.data.userId == uid() || admin());
+      allow write: if false;
+    }
+    match /paymentSubmissions/{id} { allow read: if autenticado() && (resource.data.userId == uid() || admin()); allow write: if false; }
+    match /reservations/{id} {
+      allow read: if autenticado() && (resource.data.userId == uid() || resource.data.ownerId == uid() || admin());
+      allow write: if false;
+    }
+    match /payoutReleaseRequests/{id} { allow read: if autenticado() && (resource.data.ownerId == uid() || admin()); allow write: if false; }
+    match /payouts/{id} { allow read: if autenticado() && (resource.data.ownerId == uid() || admin()); allow write: if false; }
+    match /refundRequests/{id} {
+      allow read: if autenticado() && (resource.data.clientId == uid() || resource.data.ownerId == uid() || admin());
+      allow write: if false;
+    }
+    match /refundPayoutRequests/{id} { allow read: if admin(); allow write: if false; }
+    match /overpayments/{id} { allow read: if admin(); allow write: if false; }
+
+    match /authorizationRequests/{id} {
+      allow read: if autenticado() && (resource.data.ownerId == uid() || admin());
+      allow write: if false;
+    }
+    // Hash do código de autorização e do OTP: nunca legível pelo cliente.
+    match /secrets/{doc=**} { allow read, write: if false; }
+
+    match /notifications/{u}/items/{n} {
+      allow read: if autenticado() && uid() == u;
+      // Só marcar como lida.
+      allow update: if autenticado() && uid() == u && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lida', 'lidaEm']);
+      allow create, delete: if false;
+    }
+    match /campaigns/{id} { allow read: if autenticado(); allow write: if false; }
+
+    match /testimonials/{id} {
+      allow read: if autenticado() && (resource.data.status == 'APPROVED' || resource.data.authorId == uid() || admin());
+      allow write: if false;
+    }
+    match /platformMetrics/{doc} { allow read: if autenticado(); allow write: if false; }
+    match /ledger/{id} { allow read: if admin(); allow write: if false; }
+    // Auditoria só de acréscimo: cada utilizador regista as suas próprias acções com a hora do servidor; nunca altera nem apaga.
+    match /auditLog/{id} {
+      allow read: if admin();
+      allow create: if autenticado() && request.resource.data.actorId == uid() && request.resource.data.createdAt == request.time &&
+        soCampos(['actorId', 'actorRole', 'action', 'entityType', 'entityId', 'before', 'after', 'reason', 'result', 'createdAt', 'sessionId']) &&
+        texto(request.resource.data.action, 3, 60);
+      allow update, delete: if false;
+    }
+    match /pendingProcesses/{id} { allow read: if autenticado() && (resource.data.responsavelId == uid() || admin()); allow write: if false; }
+
+    // Qualquer outra colecção (incluindo probes técnicos da origem) é negada.
+    match /{document=**} { allow read, write: if false; }
+  }
+}

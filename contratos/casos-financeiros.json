@@ -1,0 +1,51 @@
+{
+  "_descricao": "Casos de referência do motor financeiro (prompt mestre §37 + convenções D-09/D-10). Usados pelos testes do APK (Kotlin) e do Central (Node) — os dois motores têm de dar exactamente estes valores. Montantes em AOA com 2 casas, como texto.",
+  "versao": 1,
+  "casos": [
+    {
+      "id": "venda-1000000",
+      "entrada": { "modalidade": "VENDA", "preco": "1000000", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": true, "base": "1000000.00", "sinal": "50000.00", "comissao": "7500.00", "liquido": "42500.00", "saldo": "950000.00", "taxa": "10000.00", "publicacao": "10000.00", "liquidoPrevisto": "982500.00", "reembolso": "42500.00", "baseComissao": "SINAL" }
+    },
+    {
+      "id": "aluguer-mensal-100000-3m",
+      "entrada": { "modalidade": "ARRENDAMENTO", "preco": "100000", "unidade": "MONTHLY", "prazo": "3_MONTHS", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": true, "base": "300000.00", "sinal": "100000.00", "comissao": "45000.00", "liquido": "55000.00", "saldo": "200000.00", "taxa": "1000.00", "publicacao": "1000.00", "reembolso": "55000.00", "baseComissao": "CONTRATO_MINIMO" }
+    },
+    {
+      "id": "venda-promocoes-todas",
+      "entrada": { "modalidade": "VENDA", "preco": "1000000", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": ["FEATURED", "TOP_SPONSORED", "PRIORITY"], "percentagensPromocao": { "FEATURED": "0.25", "TOP_SPONSORED": "0.50", "PRIORITY": "0.35" } },
+      "esperado": { "valido": true, "promocoes": { "FEATURED": "2500.00", "TOP_SPONSORED": "5000.00", "PRIORITY": "3500.00" }, "publicacao": "21000.00" }
+    },
+    {
+      "id": "aluguer-comissao-40-invalido",
+      "entrada": { "modalidade": "ARRENDAMENTO", "preco": "100000", "unidade": "MONTHLY", "prazo": "3_MONTHS", "sinalVenda": "5", "mesesSinal": 1, "comissao": "40", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": false, "comissao": "120000.00", "sinal": "100000.00", "liquido": "-20000.00" }
+    },
+    {
+      "id": "aluguer-semanal-10000-3m",
+      "entrada": { "modalidade": "ARRENDAMENTO", "preco": "10000", "unidade": "WEEKLY", "prazo": "3_MONTHS", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": true, "base": "130000.00", "sinal": "42857.14", "comissao": "19500.00", "liquido": "23357.14", "saldo": "87142.86", "taxa": "100.00" }
+    },
+    {
+      "id": "aluguer-anual-padrao-invalido",
+      "entrada": { "modalidade": "ARRENDAMENTO", "preco": "100000", "unidade": "MONTHLY", "prazo": "12_MONTHS", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": false, "base": "1200000.00", "sinal": "100000.00", "comissao": "180000.00" }
+    },
+    {
+      "id": "aluguer-personalizado-sem-equivalencia",
+      "entrada": { "modalidade": "ARRENDAMENTO", "preco": "50000", "unidade": "OTHER", "nomeUnidade": "fim-de-semana", "prazo": "CUSTOM", "prazoQuantidade": 4, "prazoUnidade": "CUSTOM_UNIT", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": false, "base": "200000.00" }
+    },
+    {
+      "id": "aluguer-personalizado-com-equivalencia",
+      "entrada": { "modalidade": "ARRENDAMENTO", "preco": "50000", "unidade": "OTHER", "nomeUnidade": "fim-de-semana", "prazo": "CUSTOM", "prazoQuantidade": 4, "prazoUnidade": "CUSTOM_UNIT", "unidadesPorMes": "4", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": true, "base": "200000.00", "sinal": "200000.00", "comissao": "30000.00", "liquido": "170000.00", "saldo": "0.00" }
+    },
+    {
+      "id": "venda-arredondamento",
+      "entrada": { "modalidade": "VENDA", "preco": "1234567", "sinalVenda": "5", "mesesSinal": 1, "comissao": "15", "taxaAnuncio": "1", "promocoes": [] },
+      "esperado": { "valido": true, "sinal": "61728.35", "comissao": "9259.25", "liquido": "52469.10", "saldo": "1172838.65", "taxa": "12345.67" }
+    }
+  ]
+}

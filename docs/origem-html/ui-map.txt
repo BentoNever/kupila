@@ -1,0 +1,671 @@
+﻿
+[6410] <div #kupila-loading-overlay> .hidden fixed inset-0 z-[250] bg-slate-950/35 flex 
+
+[6418] <div #kupila-alert-overlay> .hidden fixed inset-0 z-[300] bg-black/55 flex item
+  H 6422 Aviso Kupila
+
+[6432] <div #kupila-confirm-overlay> .hidden fixed inset-0 z-[305] bg-black/60 flex item
+  H 6436 Confirmar operação
+
+[6450] <div #kupila-inactivity-overlay> .hidden fixed inset-0 z-[315] bg-slate-950/65 flex 
+  H 6459 Ainda está aí?
+
+[6479] <div #modal-single-session-conflict> .hidden fixed inset-0 z-[260] bg-slate-950/70 backd
+  H 6483 Conta em uso noutro dispositivo
+  B 6491 'Encerrar sessão anterior e continuar' -> confirmSingleSessionTakeover()
+  B 6492 'Voltar ao login' -> cancelSingleSessionTakeover()
+  H 6503 Kupila.ao
+  L 6520 E-mail
+  F 6521 login-identifier [email] placeholder='exemplo@kupila.ao'
+  L 6524 Palavra-passe
+  F 6526 login-password [password] 
+  B 6527 '' -> toggleLoginPassword()
+  B 6531 'Esqueceu as credenciais?' -> openCredentialRecovery()
+  B 6537 'Criar nova conta' -> openRegisterScreen()
+  B 6547 '' -> closeRegisterScreen()
+  H 6548 Criar conta Kupila
+  L 6552 Perfil *
+  F 6553 register-role [select] onchange=toggleRegisterOwnerFields() opts: Cliente=CLIENTE | Proprietário=PROPRIETARIO
+  L 6557 Nome completo *
+  F 6557 register-name [text] 
+  L 6558 E-mail *
+  F 6558 register-email [email] 
+  L 6559 Telefone principal *
+  F 6559 register-phone [tel] maxlength='9'
+  L 6561 Foto do Proprietário *
+  F 6561 register-photo [file] accept='image/jpeg,image/png,image/webp' onchange='previewRegisterPhoto(event)'
+  L 6562 Província *
+  F 6562 register-province [select] onchange=updateRegisterMunicipalities() opts: 
+  L 6562 Município *
+  F 6562 register-municipality [select]  opts: 
+  L 6563 Bairro *
+  F 6563 register-neighborhood [text] 
+  L 6564 Telefone alternativo
+  F 6564 register-phone-alt [tel] maxlength='9'
+  L 6565 Canal preferido para alertas
+  F 6565 register-alert-channel [select]  opts: Automático (e-mail preferencial)=AUTO | E-mail=EMAIL | SMS | E-mail + SMS=BOTH
+  L 6567 Palavra-passe *
+  F 6567 register-password [password] 
+  L 6567 Confirmar *
+  F 6567 register-password-confirm [password] 
+  B 6570 'Ler Políticas e Regras do Kupila' -> openKupilaPolicies('REGISTER')
+  F 6571 register-policy-accept [checkbox] onchange="syncPolicyCheckboxState('REGISTER')"
+  B 6571 'Políticas de Uso e Regras de Intermediação' -> openKupilaPolicies('REGISTER')
+
+[6584] <div #modal-credential-recovery> .fixed inset-0 z-[180] bg-black/55 flex items-end s
+  H 6587 Recuperar credenciais
+  B 6588 '' -> closeCredentialRecovery()
+  L 6593 E-mail da conta
+  F 6593 recovery-email [email] placeholder='seuemail@dominio.com'
+  B 6595 'Enviar link de recuperação' -> sendCredentialRecovery()
+  H 6616 Kupila.ao
+  B 6622 '' -> kupilaNavigateBack()
+  B 6623 '' -> kupilaNavigateForward()
+  B 6624 '0' -> openKupilaOfflineCenter()
+  B 6625 '' -> switchTab('my-listings')
+  B 6629 '0' -> openAdminPendingProcesses()
+  B 6633 '' -> openSettings()
+  B 6636 '' -> openKupilaFaq()
+  B 6639 '' -> openIntermediationSimulator()
+  B 6642 '' -> openKupilaPolicies('GENERAL')
+  B 6645 '' -> openSessionModal()
+  B 6649 '0' -> openNotifications()
+  F 6667 province-filter [select] onchange=applyFilters(true);persistUiSessionNow();scheduleUiPersistence() opts: Todas (21 Províncias)=TODAS | Cabinda | Zaire | Uíge | Bengo | Luanda | Icolo e Bengo | Cuanza-Norte | Cuanza-Sul | Malanje | Lunda-Norte | Lunda-Sul | Moxico | Moxico Leste | Bié | Huambo | Benguela | Namibe | Huíla | Cunene | Cubango | Cuando
+
+[6696] <section #tab-explore> .kupila-home flex flex-col
+  F 6701 search-input [text] placeholder='Pesquisar produto, município ou marca' oninput='applyFilters(true)'
+  B 6702 '' -> clearHomeSearch()
+  B 6705 'Todos' -> setCategory('ALL')
+  B 6706 'Imóveis' -> setCategory('IMOVEL')
+  B 6707 'Terrenos' -> setCategory('TERRENO')
+  B 6708 'Viaturas' -> setCategory('VIATURA')
+  B 6709 'Motorizadas' -> setCategory('MOTORIZADA')
+  B 6710 'Outros' -> setCategory('OUTRO')
+  B 6713 'Tudo' -> setIntent('ALL')
+  B 6714 'Comprar' -> setIntent('VENDA')
+  B 6715 'Alugar' -> setIntent('ARRENDAMENTO')
+  H 6725 Mais Destacados
+  B 6735 'Destaques' -> setFeaturedMode('FEATURED')
+  B 6736 'Recentes' -> setFeaturedMode('RECENT')
+  B 6737 'Em alta' -> setFeaturedMode('TRENDING')
+  B 6738 'Procurados' -> setFeaturedMode('POPULAR')
+  B 6739 'Patrocinados' -> setFeaturedMode('SPONSORED')
+  H 6756 Reservas e Reembolsos
+  H 6768 Explorar catálogo
+  B 6777 '' -> changeCatalogPage(-1)
+  B 6779 '' -> changeCatalogPage(1)
+
+[6785] <section #tab-publish> .p-4 space-y-4 hidden
+  H 6787 Anunciar Produto
+
+[6791] <form #publish-form> .space-y-4
+  L 6795 Categoria do Produto *
+  F 6798 pub-type-imovel [radio] onchange='togglePublishFields()' value='IMOVEL'
+  L 6798 Imóvel
+  F 6799 pub-type-terreno [radio] onchange='togglePublishFields()' value='TERRENO'
+  L 6799 Terreno
+  F 6800 pub-type-viatura [radio] onchange='togglePublishFields()' value='VIATURA'
+  L 6800 Viatura
+  F 6801 pub-type-motorizada [radio] onchange='togglePublishFields()' value='MOTORIZADA'
+  L 6801 Motorizada
+  F 6802 pub-type-outro [radio] onchange='togglePublishFields()' value='OUTRO'
+  L 6802 Outros ProdutosEletrónicos, equipamentos, mobiliário, peças…
+  L 6807 Subcategoria *
+  F 6808 pub-subcategory [select] onchange=scheduleDuplicatePrecheck() opts: 
+  L 6813 Modalidade do Negócio *
+  F 6814 pub-intent [select] onchange=togglePublishFields() opts: Venda Definitiva=VENDA | Arrendamento / Aluguer=ARRENDAMENTO
+  L 6822 Título do Anúncio *
+  F 6823 pub-title [text] placeholder='Ex: Vivenda T3 no Talatona ou Hyundai Santa Fe 2021'
+  L 6830 Preço informado por *
+  F 6830 pub-rental-price-unit [select] onchange=updateRentalTermsUI();calculateCommission() opts: Dia=DAILY | Semana=WEEKLY | Quinzena=BIWEEKLY | Mês=MONTHLY | Ano=ANNUAL | Outra unidade=OTHER
+  L 6831 Tempo mínimo exigido *
+  F 6831 pub-rental-period [select] onchange=updateRentalTermsUI();calculateCommission() opts: No mínimo 3 meses=3_MONTHS | No mínimo 6 meses=6_MONTHS | Anual (12 meses)=12_MONTHS | Outro período específico=CUSTOM
+  L 6834 Quantidade mínima *
+  F 6834 pub-rental-min-count [number] min='1' step='1' oninput='updateRentalTermsUI();calculateCommission()' value='1'
+  L 6835 Unidade do período *
+  F 6835 pub-rental-min-unit [select] onchange=updateRentalTermsUI();calculateCommission() opts: Dia(s)=DAY | Semana(s)=WEEK | Quinzena(s)=BIWEEK | Mês(es)=MONTH | Ano(s)=YEAR | Mesma unidade personalizada=CUSTOM_UNIT
+  L 6837 Nome da outra unidade de preço *
+  F 6837 pub-rental-other-unit [text] placeholder='Ex: fim-de-semana, temporada ou pacote' maxlength='40' oninput='updateRentalTermsUI();calculateCommission()'
+  L 6840 Meses de sinal exigidos
+  F 6841 pub-rental-deposit-months [number] min='1' max='12' step='1' value='1'
+  L 6859 Quantidade de Compartimentos *
+  F 6860 pub-compartments [number] placeholder='Ex: 6' min='1' step='1'
+  L 6863 Estado / Reparos *
+  F 6864 pub-repair-status [select]  opts: Seleccione= | Não precisa de reparos | Pequenos reparos | Precisa de reparos | Em reparação
+  L 6875 Qualidade / Acabamentos
+  F 6878 ? [checkbox] value='Mosaicada'
+  L 6877 Mosaicada
+  F 6882 ? [checkbox] value='Pintada'
+  L 6881 Pintada
+  F 6886 ? [checkbox] value='Climatizada'
+  L 6885 Climatizada
+  F 6890 ? [checkbox] value='Mobilada'
+  L 6889 Mobilada
+  L 6897 Outras Características / Informações
+  F 6898 pub-property-notes [textarea] placeholder='Ex: 3 quartos, 2 casas de banho, quintal, garagem, água da rede, gerador, condições especiais, reparos necessários...' maxlength='600'
+  L 6907 Área (m²) *
+  F 6907 pub-land-area [number] placeholder='Ex: 600' min='1' step='0.01'
+  L 6908 Finalidade *
+  F 6908 pub-land-purpose [select]  opts: Seleccione= | Residencial | Comercial | Agrícola | Industrial | Mista
+  L 6910 Topografia
+  F 6910 pub-land-topography [select]  opts: Não informado= | Plano | Inclinado | Irregular
+  L 6910 Acesso
+  F 6910 pub-land-access [select]  opts: Não informado= | Asfaltado | Terra batida | Outro
+  L 6911 Infraestruturas / Observações
+  F 6911 pub-land-notes [textarea] placeholder='Água, energia, vedação, estrada, marcos, coordenadas, etc.' maxlength='600'
+  L 6917 Marca *
+  F 6917 pub-vehicle-brand [text] placeholder='Toyota' maxlength='80'
+  L 6917 Modelo *
+  F 6917 pub-vehicle-model [text] placeholder='Hilux' maxlength='100'
+  L 6918 Ano *
+  F 6918 pub-vehicle-year [number] placeholder='2022' min='1950' max='2100'
+  L 6918 Quilometragem
+  F 6918 pub-vehicle-mileage [number] placeholder='45000' min='0'
+  L 6919 Combustível
+  F 6919 pub-vehicle-fuel [select]  opts: Seleccione= | Gasolina | Gasóleo | Híbrido | Eléctrico
+  L 6919 Transmissão
+  F 6919 pub-vehicle-transmission [select]  opts: Seleccione= | Manual | Automática
+  L 6920 Estado / Observações
+  F 6920 pub-vehicle-notes [textarea] placeholder='Conservação, revisões, avarias, extras…' maxlength='500'
+  L 6926 Marca *
+  F 6926 pub-moto-brand [text] placeholder='Honda' maxlength='80'
+  L 6926 Modelo *
+  F 6926 pub-moto-model [text] placeholder='CB 125' maxlength='100'
+  L 6927 Ano *
+  F 6927 pub-moto-year [number] placeholder='2023' min='1950' max='2100'
+  L 6927 Cilindrada
+  F 6927 pub-moto-cc [number] placeholder='125' min='1'
+  L 6927 Km
+  F 6927 pub-moto-mileage [number] placeholder='5000' min='0'
+  L 6928 Estado / Observações
+  F 6928 pub-moto-notes [textarea] placeholder='Conservação, revisões, acessórios, avarias…' maxlength='500'
+  L 6934 Estado *
+  F 6934 pub-other-condition [select]  opts: Seleccione= | Novo | Seminovo | Usado - bom estado | Usado - precisa reparação
+  L 6934 Quantidade
+  F 6934 pub-other-quantity [number] min='1' step='1' value='1'
+  L 6935 Marca
+  F 6935 pub-other-brand [text] placeholder='Opcional' maxlength='80'
+  L 6935 Modelo / Referência
+  F 6935 pub-other-model [text] placeholder='Opcional' maxlength='100'
+  L 6936 Descrição técnica *
+  F 6936 pub-other-notes [textarea] placeholder='Características, dimensões, capacidade, especificações, defeitos conhecidos…' maxlength='700'
+  L 6943 Perfil da localização
+  F 6943 pub-location-profile [select]  opts: Não especificado= | Zona urbana | Zona suburbana | Zona rural | Condomínio | Zona residencial | Zona comercial | Centro urbano
+  L 6944 Condomínio / referência comercial
+  F 6944 pub-condominium-name [text] placeholder='Ex: Condomínio X' maxlength='100'
+  L 6946 Outros pontos fortes / qualidades
+  F 6946 pub-interest-highlights [textarea] placeholder='Ex: rua asfaltada, segurança 24h, água regular, vista privilegiada, próximo de escolas, baixa quilometragem, pouco uso...' maxlength='500'
+  L 6952 Província *
+  F 6953 pub-province [select] onchange=updateMunicipalities() opts: Cabinda | Zaire | Uíge | Bengo | Luanda | Icolo e Bengo | Cuanza-Norte | Cuanza-Sul | Malanje | Lunda-Norte | Lunda-Sul | Moxico | Moxico Leste | Bié | Huambo | Benguela | Namibe | Huíla | Cunene | Cubango | Cuando
+  L 6978 Município *
+  F 6979 pub-location [select]  opts: Seleccione o município=
+  L 6988 Bairro *
+  F 6989 pub-neighborhood [text] placeholder='Ex: Talatona' maxlength='100'
+  L 6992 Ponto de Referência *
+  F 6993 pub-reference-point [text] placeholder='Ex: Próximo ao Shopping...' maxlength='160'
+  L 7004 Preço do Negócio (Kwanza - AOA) *
+  F 7005 pub-price [number] placeholder='Ex: 15000000' min='1' oninput='calculateCommission()'
+  L 7009 Sinal de Reserva global — Venda (%)
+  F 7009 pub-deposit-percent [number] min='0.1' max='100' step='0.1' value='5'
+  B 7011 'Ver regras completas de reserva e intermediação' -> openKupilaPolicies('GENERAL')
+  L 7038 Fotos do Pertence *
+  F 7047 pub-images [file] accept='image/*' onchange='previewImages(event)'
+  L 7043 Adicionar Escolher fonte
+  L 7058 Nº / Referência do Documento de Titularidade *
+  F 7059 pub-doc [text] placeholder='Nº do Livrete (Viatura) ou Registo Predial (Imóvel)'
+  L 7063 Comprovativos de Titularidade *
+  F 7070 pub-ownership-docs [file] accept='.jpg,.jpeg,application/pdf,image/jpeg' onchange='previewOwnershipDocuments(event)'
+  L 7067 Adicionar documentos · escolher fonte
+  L 7084 Forma de Pagamento / Recebimento *
+  F 7085 pub-payout-method [select] onchange=togglePayoutFields() opts: Transferência via IBAN=IBAN | Multicaixa Express=EXPRESS
+  L 7091 IBAN Bancário *
+  F 7092 pub-iban [text] placeholder='AO06.0000.0000.0000.0000.0'
+  L 7095 Nº associado ao Multicaixa Express *
+  F 7096 pub-payout-express-phone [tel] placeholder='923000000' maxlength='9'
+  F 7106 pub-alert-enabled [checkbox] onchange='toggleProductAlertFields()'
+  L 7104 Receber alertas deste produtoAcompanhe reservas e sinais de interesse relevantes deste anú
+  F 7110 pub-alert-reservation [checkbox] 
+  L 7110 Quando for reservado
+  F 7111 pub-alert-interest [checkbox] 
+  L 7111 Quando despertar interesse
+  L 7113 Canal para este produto
+  F 7113 pub-alert-channel [select]  opts: Usar preferência do meu perfil=PROFILE | E-mail=EMAIL | SMS | E-mail + SMS=BOTH
+  B 7121 'Ler regras aplicáveis ao anúncio' -> openKupilaPolicies('LISTING')
+  F 7122 publish-policy-accept [checkbox] onchange="syncPolicyCheckboxState('LISTING')"
+  L 7122 Li e aceito as Políticas de Uso e as Regras de Intermediação aplicáveis a este anúncio.
+
+[7127] <div #publish-promotion-services> .border-t pt-3 space-y-2
+  F 7129 pub-promo-featured [checkbox] onchange='calculateCommission()' value='FEATURED'
+  L 7129 Destaque PremiumMaior prioridade na vitrine de Destaques.—
+  F 7130 pub-promo-top [checkbox] onchange='calculateCommission()' value='TOP_SPONSORED'
+  L 7130 Top PatrocinadosEntrada na lista paga, sempre identificada como “Patrocinado”.—
+  F 7131 pub-promo-priority [checkbox] onchange='calculateCommission()' value='PRIORITY'
+  L 7131 Prioridade na VitrineImpulsionamento temporário entre anúncios elegíveis.—
+
+[7136] <section #publish-financial-summary> .bg-white border border-emerald-200 rounded-2xl p-3
+  H 7138 Quem paga, quem recebe e quanto
+
+[7144] <div #publish-fin-summary-info> .hidden rounded-xl border border-emerald-100 bg-eme
+
+[7145] <div #publish-fin-global-chips> .grid grid-cols-2 sm:grid-cols-4 gap-1.5
+
+[7160] <div #publish-fin-explanation> .rounded-xl bg-slate-50 border border-slate-100 p-2
+  B 7170 'Cancelar' -> cancelPublishWork()
+  B 7171 'Cancelar Edição' -> cancelEditListing()
+
+[7178] <section #tab-my-listings> .p-4 space-y-4 hidden
+  H 7181 Painel do Proprietário
+  B 7192 'Gerir' -> openOwnerRegistration(false)
+  B 7206 'Utilizadores' -> openUserManagement()
+  B 7207 'Catálogo' -> openAdminCatalogCenter63()
+  B 7208 'Monitoramento' -> openPlatformMonitoring()
+  B 7226 'Clientes & ProprietáriosConsultar fichas e gerir o' -> openUserManagement()
+  B 7227 'AdministradoresConsultar a equipa administrativa a' -> openAdministratorDirectory()
+  B 7233 'AutorizaçõesDesanúncio e exclusão de produtos.' -> openAuthorizationCenter()
+  B 7234 'HistóricoAuditoria e operações registadas.' -> openOperationHistory()
+  H 7266 Produtos Cadastrados
+  B 7272 '' -> return scrollProducts(-1)
+  B 7274 '' -> return scrollProducts(1)
+  F 7291 otp-input [text] placeholder='Código OTP de 6 dígitos' maxlength='6'
+  B 7292 'Validar' -> validateOTP()
+  H 7303 Os Seus Pertences Cadastrados
+
+[7313] <div #modal-details> .fixed inset-0 bg-slate-950/75 z-50 flex items-end 
+
+[7317] <div #modal-gallery-stage> .kupila-detail-hero relative h-40 sm:h-44 md:h-48 b
+  B 7323 '' -> closeModal('modal-details')
+  B 7327 '' -> changeModalImage(-1)
+  B 7328 '' -> changeModalImage(1)
+  B 7329 '' -> openProductPhotoViewer()
+
+[7333] <div #modal-detail-tags> .bg-white border-b border-slate-100 px-3 py-2 flex 
+
+[7340] <div #modal-image-thumbnails-wrap> .kupila-detail-thumbs-wrap hidden bg-white border-b
+
+[7341] <div #modal-image-thumbnails> .hidden flex gap-1.5 overflow-x-auto no-scrollbar s
+  H 7350 Produto
+
+[7358] <section #modal-summary-section> .bg-white border border-slate-200 rounded-2xl p-3.5
+  B 7368 '' -> toggleCommissionInfo(event)
+
+[7371] <div #modal-commission-info> .kupila-commission-info hidden
+
+[7374] <div #modal-owner-summary-card> .mt-2 border border-emerald-100 bg-emerald-50/70 ro
+
+[7389] <section #modal-financial-summary-section> .bg-white border border-emerald-200 rounded-2xl p-3
+  H 7390 Fluxo completo deste negócio
+
+[7401] <section #modal-crud-section> .hidden bg-white border border-slate-200 rounded-2x
+  B 7407 'Novo' -> kupilaDetailCreateProduct()
+  B 7408 'Ver' -> kupilaDetailReadProduct()
+  B 7409 'Editar' -> kupilaDetailEditProduct()
+  B 7410 'Excluir' -> kupilaDetailDeleteProduct()
+
+[7415] <section #modal-reservation-section> .bg-slate-950 text-white rounded-2xl p-4 shadow-sm
+  H 7416 Validação em 2 etapas
+
+[7425] <div #modal-private-location-status> .bg-amber-50 border border-amber-200 rounded-2xl p-
+
+[7429] <div #modal-private-location-details> .hidden mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2
+
+[7438] <div #modal-property-section> .hidden border border-brand-100 bg-brand-50 rounded
+  H 7439 Características do Produto
+
+[7440] <div #modal-property-details> .space-y-2
+  H 7445 Titularidade & segurança
+  B 7457 'Gerar referência do sinal' -> proceedToCheckout()
+
+[7464] <div #modal-checkout> .fixed inset-0 bg-black/70 z-50 flex items-end md:i
+  H 7467 Reserva do produto
+  B 7468 '' -> closeModal('modal-checkout')
+  B 7476 'Regras de intermediação e comissões' -> openKupilaPolicies('GENERAL')
+
+[7478] <section #payment-step-1> .space-y-3
+  B 7481 'ReferênciaATM / Homebanking' -> selectPayMethod('REF')
+  B 7482 'MC ExpressQuando suportado pelo provedor' -> selectPayMethod('EXPRESS')
+  L 7489 Telemóvel Multicaixa Express
+  F 7489 express-phone [tel] placeholder='923000000' maxlength='9'
+  B 7490 'Já paguei — submeter comprovativo' -> goToReceiptStep()
+
+[7493] <section #payment-step-2> .hidden space-y-3
+  F 7495 payment-receipt-file [file] accept='image/jpeg,image/png,image/webp' onchange='analyzePaymentReceipt(event)'
+  L 7495 Adicionar comprovativoJPG, PNG ou WebP · máximo 4 MB
+  L 7498 Referência do comprovativo
+  F 7498 payment-manual-reference [text] placeholder='Digite apenas se a leitura automática falhar' maxlength='16' oninput='validateManualReceiptReference()'
+  B 7500 'Submeter e validar automaticamente' -> submitPaymentReceipt()
+  B 7501 '← Voltar aos dados de pagamento' -> backToPaymentStep()
+
+[7509] <div #modal-receipt> .fixed inset-0 bg-black/80 z-50 flex items-center j
+  H 7517 Reserva Confirmada com Sucesso!
+  B 7558 'Comprovativo JPG' -> downloadReceiptJPG()
+  B 7559 'Comprovativo PDF' -> downloadReceiptPDF()
+  B 7566 'Entendido e Voltar ao Catálogo' -> closeModal('modal-receipt')
+
+[7573] <div #modal-refund-request> .fixed inset-0 z-[191] bg-black/70 flex items-end m
+  H 7575 Solicitar reembolso
+  B 7575 '' -> closeModal('modal-refund-request')
+  L 7579 OTP apresentado na vistoria *
+  F 7579 refund-request-otp [text] placeholder='6 dígitos' maxlength='6'
+  L 7580 Motivo principal *
+  F 7580 refund-request-reason [select]  opts: Seleccione= | Produto diferente do anúncio=PRODUCT_MISMATCH | Estado/condição insatisfatória=CONDITION_UNSATISFACTORY | Problema de documentação/titularidade=DOCUMENTATION_ISSUE | Proprietário não compareceu=OWNER_DID_NOT_ATTEND | Outro motivo comprovável=OTHER
+  L 7581 Descrição do que ocorreu *
+  F 7581 refund-request-description [textarea] placeholder='Explique objectivamente por que o negócio não foi fechado com o Proprietário.' maxlength='800'
+  L 7582 Evidência da vistoria / não conclusão *
+  F 7582 refund-evidence-file [file] accept='image/jpeg,image/png,image/webp,application/pdf' onchange='prepareRefundEvidence(event)'
+  L 7582 Foto ou PDF até 600 KB
+  F 7583 refund-request-declaration [checkbox] 
+  L 7583 Declaro que houve vistoria presencial, que o negócio não foi fechado com o Proprietário e 
+
+[7591] <div #modal-refund-evidence> .fixed inset-0 z-[192] bg-black/75 flex items-end m
+  H 7593 Evidência da não conclusão
+  B 7593 '' -> closeModal('modal-refund-evidence')
+  B 7597 'Guardar cópia da evidência' -> downloadActiveRefundEvidence()
+
+[7603] <div #modal-notifications> .fixed inset-0 bg-black/55 z-50 flex items-end md:i
+  H 7606 Notificações
+  B 7607 '' -> closeModal('modal-notifications')
+  B 7610 'Todas' -> setNotificationFilter('ALL')
+  B 7611 'Reservas' -> setNotificationFilter('RESERVATION')
+  B 7612 'Monetização' -> setNotificationFilter('MONETIZATION')
+  B 7613 'Interesse' -> setNotificationFilter('INTEREST')
+  B 7614 'Administração' -> setNotificationFilter('ADMIN')
+  B 7615 'Novidades' -> setNotificationFilter('MARKETING')
+  B 7616 'Marcar lidas' -> markAllNotificationsRead()
+
+[7623] <div #modal-testimonials> .fixed inset-0 bg-black/65 z-[58] flex items-end md
+  H 7626 Testemunhos & Negócios Verificados
+  B 7627 '' -> closeModal('modal-testimonials')
+
+[7636] <section #testimonial-eligible-section> .hidden space-y-2
+  H 7636 Partilhe uma experiência real
+
+[7636] <div #testimonial-eligible-list> .space-y-2
+
+[7636] <div #testimonial-composer> .hidden
+
+[7637] <section #testimonial-admin-section> .hidden space-y-2
+  H 7637 Moderação
+
+[7637] <div #testimonial-pending-list> .space-y-2
+  H 7638 Experiências verificadas
+
+[7638] <div #testimonial-public-list> .space-y-2
+
+[7644] <div #modal-owner-registration> .fixed inset-0 bg-black/60 z-50 flex items-end md:i
+  H 7649 Cadastro do Proprietário
+  B 7651 '' -> closeModal('modal-owner-registration')
+  L 7660 Foto do Proprietário *
+  F 7663 owner-photo [file] accept='image/*' onchange='previewOwnerPhoto(event)'
+  L 7661 Seleccionar Foto
+  L 7669 Nome *
+  F 7670 owner-name [text] maxlength='120'
+  L 7673 E-mail Funcional *
+  F 7674 owner-email [email] placeholder='nome@dominio.com' maxlength='160'
+  L 7679 Província de Residência *
+  F 7680 owner-province [select] onchange=updateOwnerMunicipalities() opts: 
+  L 7683 Município *
+  F 7684 owner-municipality [select]  opts: 
+  L 7688 Bairro de Residência *
+  F 7689 owner-neighborhood [text] maxlength='100'
+  L 7693 Telefone Principal *
+  F 7694 owner-phone-primary [tel] placeholder='923000000' maxlength='9'
+  L 7697 Telefone Alternativo
+  F 7698 owner-phone-alt [tel] placeholder='924000000' maxlength='9'
+  F 7703 owner-alert-channel [select]  opts: Automático (e-mail preferencial)=AUTO | E-mail=EMAIL | SMS | E-mail + SMS=BOTH
+  B 7705 'Guardar Cadastro' -> saveOwnerRegistration()
+
+[7713] <div #modal-platform-monitor> .fixed inset-0 bg-black/65 z-50 flex items-end md:i
+  H 7718 Centro de Monitoramento
+  B 7722 '' -> refreshPlatformMonitoring()
+  B 7723 '' -> closeModal('modal-platform-monitor')
+  B 7737 '7d' -> setMonitoringChartDays(7)
+  B 7737 '14d' -> setMonitoringChartDays(14)
+  B 7737 '30d' -> setMonitoringChartDays(30)
+
+[7766] <div #modal-monitor-detail> .fixed inset-0 bg-black/65 z-50 flex items-center j
+  H 7769 Detalhes
+  B 7770 '' -> closeModal('modal-monitor-detail')
+
+[7777] <div #modal-monetization-history> .fixed inset-0 bg-black/60 z-50 flex items-end md:i
+  H 7780 Histórico da Monetização
+  B 7781 '' -> closeModal('modal-monetization-history')
+
+[7791] <div #modal-settings> .fixed inset-0 bg-black/60 z-50 flex items-end md:i
+  H 7796 Ajustes da Plataforma
+  B 7798 '' -> closeModal('modal-settings')
+
+[7802] <div #settings-scroll-area> .p-4 space-y-4 overflow-y-auto overscroll-contain f
+  L 7806 Sinal de Reserva Requerido (%)
+  F 7808 setting-deposit-percent [number] min='0.01' max='100' step='0.01'
+  L 7813 Meses de sinal — Renda / Aluguer
+  F 7814 setting-rental-deposit-months [number] min='1' max='12' step='1'
+  L 7818 Comissão da Plataforma (% do Sinal)
+  F 7820 setting-commission-percent [number] min='0' max='100' step='0.01'
+  L 7825 Prazo de Validade da Reserva (horas)
+  F 7827 setting-reservation-hours [number] min='0.02' max='8760' step='0.01'
+  L 7833 Bloqueio por Inatividade (minutos)
+  F 7835 setting-session-timeout-minutes [number] min='1' max='1440' step='1'
+  L 7841 Taxa de Anúncio do Proprietário (% do Preço do Produto)
+  F 7843 setting-listing-fee-percent [number] min='0' max='100' step='0.01'
+  L 7853 Entidade de pagamento
+  F 7853 setting-payment-entity [text] placeholder='Configurar entidade real' maxlength='20'
+  L 7855 Destaque (%)
+  F 7855 setting-promo-featured-percent [number] min='0' max='100' step='0.01'
+  L 7856 Top (%)
+  F 7856 setting-promo-top-percent [number] min='0' max='100' step='0.01'
+  L 7857 Prioridade (%)
+  F 7857 setting-promo-priority-percent [number] min='0' max='100' step='0.01'
+  L 7859 Duração dos destaques (dias)
+  F 7859 setting-promo-duration-days [number] min='1' max='90' step='1'
+  F 7863 setting-owner-alert-reservation [checkbox] 
+  L 7863 Alertar quando houver reserva
+  F 7864 setting-owner-alert-interest [checkbox] 
+  L 7864 Alertar por interesse relevante
+  L 7866 Clientes distintos
+  F 7866 setting-owner-interest-threshold [number] min='2' max='100' step='1'
+  L 7867 Janela (h)
+  F 7867 setting-owner-interest-window [number] min='1' max='168' step='1'
+  L 7868 Repetir após (h)
+  F 7868 setting-owner-interest-cooldown [number] min='1' max='168' step='1'
+  F 7871 setting-owner-alert-email [checkbox] 
+  L 7871 Permitir E-mail
+  F 7872 setting-owner-alert-sms [checkbox] 
+  L 7872 Permitir SMS
+
+[7875] <section #settings-visual-identity> .rounded-2xl border border-emerald-100 bg-gradient-
+  L 7881 Paleta do app
+  F 7889 setting-theme-primary [color] value='#16a34a'
+  F 7889 setting-theme-accent [color] value='#facc15'
+
+[7892] <div #settings-home-visual> .border-t border-emerald-100 pt-3 space-y-3
+  L 7894 Destaques e Pesquisa
+  F 7904 setting-home-search-primary [color] value='#0f766e'
+  F 7904 setting-home-search-accent [color] value='#2dd4bf'
+  F 7905 setting-home-showcase-primary [color] value='#4338ca'
+  F 7905 setting-home-showcase-accent [color] value='#a78bfa'
+
+[7909] <div #settings-appearance-mode> .border-t border-emerald-100 pt-3 space-y-2
+  L 7911 Tema claro e escuro
+  L 7921 Logo da plataforma
+  F 7925 setting-app-logo-file [file] accept='image/png,image/jpeg,image/webp'
+  L 7925 Escolher novo logo
+
+[7940] <section #settings-alerts-marketing> .rounded-2xl border border-indigo-100 bg-indigo-50/
+  L 7946 Comportamento do alerta
+  F 7946 setting-alert-mode [select]  opts: Automático (celular)=AUTO | Som=SOUND | Vibração=VIBRATE | Som + vibração=BOTH | Silencioso=SILENT
+  F 7947 setting-alert-system [checkbox] 
+  L 7947 Notificação do sistemaQuando o navegador permitir, usa a notificação nativa do dispositivo
+  F 7948 setting-haptic-buttons [checkbox] 
+  L 7948 Feedback háptico nos botõesNo celular, cada toque confirmado num botão gera uma vibração c
+  B 7949 'Testar alerta neste dispositivo' -> testKupilaDeviceAlert()
+
+[7952] <section #settings-marketing> .rounded-2xl border border-rose-100 bg-rose-50/70 p
+  F 7955 marketing-title [text] placeholder='Título da campanha' maxlength='70'
+  F 7956 marketing-message [textarea] placeholder='Mensagem curta, clara e relevante para o utilizador' maxlength='320'
+  L 7957 Público
+  F 7957 marketing-audience [select]  opts: Todos=ALL | Clientes=CLIENTE | Proprietários=PROPRIETARIO
+  L 7957 Prioridade
+  F 7957 marketing-priority [select]  opts: Normal=NORMAL | Alta=HIGH
+  L 7958 Início
+  F 7958 marketing-start [datetime-local] 
+  L 7958 Fim
+  F 7958 marketing-end [datetime-local] 
+  L 7959 Ação
+  F 7959 marketing-action [select]  opts: Sem ação=NONE | Explorar produtos=EXPLORE | Minhas reservas=RESERVATIONS | Meus anúncios=LISTINGS
+  L 7959 Botão
+  F 7959 marketing-cta [text] placeholder='Ex.: Ver agora' maxlength='30'
+  B 7960 'Criar campanha' -> createMarketingCampaign()
+  B 7974 'Ver Histórico Detalhado' -> openMonetizationHistory()
+  B 7982 'Guardar Ajustes' -> saveSettings()
+
+[7991] <div #modal-session> .fixed inset-0 bg-black/60 z-50 flex items-center j
+  H 7994 Perfil e Permissões
+  B 7996 '' -> openAdministratorDirectory()
+  B 7997 '' -> closeModal('modal-session')
+  B 8003 'Meu Perfil' -> closeModal('modal-session');openOwnerRegistration(false)
+  B 8004 'Autorizações' -> closeModal('modal-session');openAuthorizationCenter()
+  B 8017 'Terminar Sessão' -> logout()
+
+[8023] <div #modal-user-management> .fixed inset-0 bg-black/60 z-50 flex items-end md:i
+  H 8026 Gestão de Utilizadores
+  B 8027 '' -> closeModal('modal-user-management')
+  B 8036 'Novo Cliente / Proprietário' -> startCreateUser()
+  B 8039 '' -> closeUserEditor()
+  F 8042 managed-user-photo [file] accept='image/*' onchange='previewManagedUserPhoto(event)'
+  L 8042 Foto
+  L 8045 Perfil *
+  F 8045 managed-user-role [select] onchange=toggleManagedUserFields() opts: Cliente=CLIENTE | Proprietário=PROPRIETARIO
+  L 8046 Estado *
+  F 8046 managed-user-status [select]  opts: Activo=ACTIVE | Inactivo=INACTIVE | Suspenso=SUSPENDED | Arquivado=ARCHIVED
+  L 8048 Nome *
+  F 8048 managed-user-name [text] maxlength='120'
+  L 8049 E-mail
+  F 8049 managed-user-email [email] placeholder='nome@dominio.com' maxlength='160'
+  L 8050 Palavra-passe *
+  F 8050 managed-user-password [password] placeholder='Mínimo 6 caracteres'
+  L 8051 Telefone Principal *
+  F 8051 managed-user-phone [text] maxlength='9'
+  L 8051 Alternativo
+  F 8051 managed-user-phone-alt [text] maxlength='9'
+  L 8053 Província *
+  F 8053 managed-user-province [select] onchange=updateManagedUserMunicipalities() opts: 
+  L 8053 Município *
+  F 8053 managed-user-municipality [select]  opts: 
+  L 8054 Bairro *
+  F 8054 managed-user-neighborhood [text] 
+  B 8056 'Guardar Utilizador' -> saveManagedUser()
+
+[8065] <div #modal-admin-directory> .fixed inset-0 bg-black/65 z-50 flex items-center j
+  H 8068 Fichas dos Administradores
+  B 8069 '' -> closeModal('modal-admin-directory')
+
+[8078] <div #modal-admin-pending> .fixed inset-0 bg-black/65 z-[56] flex items-end md
+  H 8081 Processos Pendentes
+  B 8082 '' -> closeModal('modal-admin-pending')
+  B 8086 'Actualizar' -> refreshAdminPendingProcesses(true)
+
+[8094] <div #modal-admin-pending-action> .fixed inset-0 bg-black/70 z-[214] flex items-end m
+  H 8099 Processo pendente
+  B 8102 '' -> closeModal('modal-admin-pending-action')
+  B 8110 'Manter pendente' -> closeModal('modal-admin-pending-action')
+
+[8116] <div #modal-user-record> .fixed inset-0 bg-black/60 z-[55] flex items-end md
+  H 8121 Utilizador
+  B 8123 '' -> closeUserRecord()
+  B 8127 'Baixar JPG' -> exportUserRecordJPG166()
+  B 8128 'Baixar PDF' -> exportUserRecordPDF166()
+
+[8135] <div #modal-operation-history> .fixed inset-0 bg-black/60 z-50 flex items-end md:i
+  H 8138 Histórico de Operações
+  B 8139 '' -> closeModal('modal-operation-history')
+
+[8146] <div #modal-listing-authorizations> .fixed inset-0 bg-black/60 z-50 flex items-end md:i
+  H 8149 Autorizações de Produto
+  B 8150 '' -> closeModal('modal-listing-authorizations')
+  B 8161 'Home' -> goHome()
+  B 8166 'Anunciar' -> startCreateListing()
+  B 8173 'Proprietário' -> switchTab('my-listings')
+
+[8184] <div #modal-reservation-protection> .fixed inset-0 z-[187] bg-black/60 flex items-end m
+  H 8189 Reserva Protegida
+
+[8212] <div #modal-kupila-faq> .fixed inset-0 z-[188] bg-black/60 flex items-end m
+  H 8217 Perguntas Frequentes
+  B 8224 'Ver mais' -> toggleAllKupilaFaq()
+  B 8228 'Abrir Manual e Políticas do Kupila' -> closeModal('modal-kupila-faq');openKupilaPolicies('GENERAL')
+
+[8235] <div #modal-product-drafts> .fixed inset-0 z-[189] bg-black/65 flex items-end m
+  H 8238 Cadastros inacabados
+  B 8239 '' -> startNewProductWork()
+  B 8246 'Não continuar · iniciar novo anúncio' -> startNewProductWork()
+
+[8253] <div #modal-intermediation-simulator> .fixed inset-0 z-[189] bg-black/65 flex items-end m
+  H 8256 Simulador de Intermediação
+  B 8257 '' -> closeModal('modal-intermediation-simulator')
+  L 8262 Tipo de simulação
+  F 8262 sim-intermediation-mode [select] onchange=calculateIntermediationSimulation() opts: Simulação completa=COMPLETE | Reserva do Cliente=RESERVATION | Publicação do Proprietário=LISTING
+  L 8263 Modalidade do negócio
+  F 8263 sim-business-intent [select] onchange=calculateIntermediationSimulation() opts: Venda definitiva=VENDA | Renda / Aluguer=ARRENDAMENTO
+  L 8265 Preço do produto (AOA)
+  F 8265 sim-product-price [number] min='0' step='1000' oninput='calculateIntermediationSimulation()' value='10000000'
+
+[8266] <div #sim-rental-terms> .hidden bg-sky-50 border border-sky-100 rounded-xl 
+  L 8267 Preço por
+  F 8267 sim-rental-price-unit [select] onchange=calculateIntermediationSimulation() opts: Dia=DAILY | Semana=WEEKLY | Quinzena=BIWEEKLY | Mês=MONTHLY | Ano=ANNUAL | Outra unidade=OTHER
+  L 8267 Tempo mínimo
+  F 8267 sim-rental-period [select] onchange=calculateIntermediationSimulation() opts: 3 meses=3_MONTHS | 6 meses=6_MONTHS | Anual=12_MONTHS | Outro período=CUSTOM
+
+[8268] <div #sim-rental-custom> .hidden grid grid-cols-2 gap-2
+  F 8268 sim-rental-min-count [number] min='1' step='1' oninput='calculateIntermediationSimulation()' value='1'
+  F 8268 sim-rental-min-unit [select] onchange=calculateIntermediationSimulation() opts: Dia(s)=DAY | Semana(s)=WEEK | Quinzena(s)=BIWEEK | Mês(es)=MONTH | Ano(s)=YEAR | Mesma unidade personalizada=CUSTOM_UNIT
+  F 8269 sim-rental-other-unit [text] placeholder='Nome da outra unidade' maxlength='40' oninput='calculateIntermediationSimulation()'
+  L 8273 Sinal (%)
+  F 8273 sim-deposit-percent [number] min='0' max='100' step='0.01' oninput='calculateIntermediationSimulation()'
+  L 8274 Comissão (%)
+  F 8274 sim-commission-percent [number] min='0' max='100' step='0.01' oninput='calculateIntermediationSimulation()'
+  L 8275 Taxa anúncio (%)
+  F 8275 sim-listing-percent [number] min='0' max='100' step='0.01' oninput='calculateIntermediationSimulation()'
+
+[8278] <div #sim-persistence-bar> .flex items-center justify-between gap-2 rounded-xl
+
+[8284] <section #sim-reservation-section> .bg-white border border-slate-200 rounded-2xl p-3.5
+  H 8285 Fluxo do Cliente e Proprietário
+
+[8298] <section #sim-listing-section> .bg-white border border-slate-200 rounded-2xl p-3.5
+  H 8299 Custos do Proprietário
+  F 8302 sim-promo-featured-enabled [checkbox] onchange='calculateIntermediationSimulation()'
+  F 8302 sim-promo-featured-percent [number] min='0' max='100' step='0.01' oninput='calculateIntermediationSimulation()'
+  L 8302 Destaque Premium%0 AOA
+  F 8303 sim-promo-top-enabled [checkbox] onchange='calculateIntermediationSimulation()'
+  F 8303 sim-promo-top-percent [number] min='0' max='100' step='0.01' oninput='calculateIntermediationSimulation()'
+  L 8303 Top Patrocinados%0 AOA
+  F 8304 sim-promo-priority-enabled [checkbox] onchange='calculateIntermediationSimulation()'
+  F 8304 sim-promo-priority-percent [number] min='0' max='100' step='0.01' oninput='calculateIntermediationSimulation()'
+  L 8304 Prioridade na Vitrine%0 AOA
+
+[8309] <section #sim-platform-section> .bg-gradient-to-br from-brand-900 to-slate-950 text
+
+[8324] <div #modal-kupila-policies> .fixed inset-0 z-[190] bg-black/65 flex items-end m
+  H 8327 Manual, Políticas e Intermediação
+  B 8328 '' -> closeKupilaPolicies()
+
+[8330] <div #policy-content-scroll> .flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-
+  B 8332 'Manual' -> scrollKupilaPolicyTo('policy-manual-start')
+  B 8333 'Políticas' -> scrollKupilaPolicyTo('policy-rules-start')
+  B 8334 'Simular' -> closeKupilaPolicies();openIntermediationSimulator()
+
+[8336] <section #policy-manual-start> .bg-slate-950 text-white rounded-2xl p-4
+  H 8338 Como usar o Kupila do início ao fim
+
+[8364] <div #policy-rules-start> .border-t border-slate-200 pt-4
+  B 8391 'Li e compreendi estas regras' -> acknowledgeKupilaPolicies()
+
+[8397] <div #modal-product-photo-viewer> .fixed inset-0 z-[210] bg-black/95 hidden flex-col 
+  B 8398 '' -> closeProductPhotoViewer()
+  B 8399 '' -> changeProductPhotoViewer(-1)
+  B 8401 '' -> changeProductPhotoViewer(1)
+
+[17296] <div #modal-offline-sync> .fixed inset-0 z-[214] bg-black/65 flex items-end m
+  H 17299 Sincronização do dispositivo
+  B 17300 '' -> closeModal('modal-offline-sync')
+  B 17308 'Alertas' -> requestKupilaBackgroundAlerts63()
