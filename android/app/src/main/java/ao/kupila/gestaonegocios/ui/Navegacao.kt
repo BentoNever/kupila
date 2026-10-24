@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Box
@@ -174,20 +173,17 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
         ))
         ao.kupila.gestaonegocios.ui.actualizacao.FaixaActualizacao(abrirEcra = { abrir(Rotas.ACTUALIZACAO) })
         Box(Modifier.weight(1f).fillMaxWidth()) {
-            // GESTO: deslizar na horizontal muda de separador (Início ↔ Anunciar ↔ Painel). Carrosséis e listas horizontais
-            // consomem o gesto primeiro, por isso continuam a funcionar normalmente.
+            // GESTO: os separadores são páginas de um paginador horizontal — a página acompanha o dedo e encaixa ao soltar
+            // (Início ↔ Anunciar ↔ Painel). Carrosséis internos rolam primeiro; no limite deles o paginador assume (rolagem aninhada).
             val abas = if (anuncia) listOf(Aba.EXPLORAR, Aba.ANUNCIAR, Aba.PROPRIETARIO) else listOf(Aba.EXPLORAR)
-            val limiteAba = with(androidx.compose.ui.platform.LocalDensity.current) { 90.dp.toPx() }
-            androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().pointerInput(aba, anuncia) {
-                var total = 0f
-                detectHorizontalDragGestures(onDragStart = { total = 0f }, onDragEnd = {
-                    val i = abas.indexOf(aba)
-                    if (total < -limiteAba && i < abas.lastIndex) aba = abas[i + 1]
-                    else if (total > limiteAba && i > 0) aba = abas[i - 1]
-                }) { _, dx -> total += dx }
-            }) {
+            val pagina = androidx.compose.foundation.pager.rememberPagerState(initialPage = abas.indexOf(aba).coerceAtLeast(0)) { abas.size }
+            // Toque no rodapé → anima até à página; deslizar → actualiza o separador activo.
+            androidx.compose.runtime.LaunchedEffect(aba) { val i = abas.indexOf(aba); if (i >= 0 && i != pagina.currentPage) pagina.animateScrollToPage(i) }
+            androidx.compose.runtime.LaunchedEffect(pagina) { androidx.compose.runtime.snapshotFlow { pagina.settledPage }.collect { aba = abas[it] } }
+            androidx.compose.foundation.layout.Column(Modifier.fillMaxSize()) {
                 BarraLocalizacao(r.perfil.nome, explorar.geografia.provincias, filtro.provincia, explorar::provincia)
-                when (aba) {
+                androidx.compose.foundation.pager.HorizontalPager(pagina, Modifier.weight(1f).fillMaxWidth(), beyondViewportPageCount = 0, key = { abas[it] }) { p ->
+                when (abas[p]) {
                     Aba.EXPLORAR -> ao.kupila.gestaonegocios.ui.home.HomeEcra(explorar, aoAbrir = { abrir(Rotas.detalhe(it)) },
                         aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.CONFIANCA) },
                         reservas = { ao.kupila.gestaonegocios.ui.negocios.ReservasHome(hiltViewModel(key = "home-reservas"), aoPagar = { abrir(Rotas.checkout(it)) }, aoProduto = { abrir(Rotas.detalhe(it)) }, aoRecibo = { abrir(Rotas.recibo(it)) }) }, nome = r.perfil.nome)
@@ -198,6 +194,7 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                         aoUtilizadores = { abrir(Rotas.UTILIZADORES) }, aoCatalogo = { abrir(Rotas.monitorDetalhe("PRODUCTS")) }, aoMonitor = { abrir(Rotas.MONITOR) },
                         aoAdministradores = { abrir(Rotas.DIRECTORIO) }, aoAutorizacoes = { abrir(Rotas.AUTORIZACOES) }, aoHistorico = { abrir(Rotas.HISTORICO) },
                         aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.CONFIANCA) })
+                }
                 }
             }
             NavHost(nav, startDestination = BASE, Modifier.fillMaxSize(),

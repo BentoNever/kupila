@@ -61,6 +61,7 @@ import ao.kupila.gestaonegocios.ui.kp.sup
 import ao.kupila.gestaonegocios.ui.kp.toque
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.launch
+import androidx.lifecycle.repeatOnLifecycle
 
 // Cores computadas da origem (Kupila 1.0.239, preset de vitrine AURORA); com a identidade Spotec harmonizam com carvão e laranja.
 @Composable private fun tom(html: Long, spotec: Long) = Color(if (LocalMarca.current.spotec) spotec else html)
@@ -189,12 +190,25 @@ private fun <X> Grelha3(itens: List<X>, espaco: androidx.compose.ui.unit.Dp, cel
 @Composable
 private fun Vitrine(vitrine: Vitrine, aoVitrine: (Vitrine) -> Unit, cartoes: List<CartaoAnuncio>?, aoAbrir: (String) -> Unit, aoReservaProtegida: (String) -> Unit, aoConfianca: () -> Unit) {
     val itens = cartoes.orEmpty().take(12)
-    val estado = rememberLazyListState()
     val ambito = rememberCoroutineScope()
     val total = itens.size
-    val inicio = remember(total) { if (total < 2) 0 else (Int.MAX_VALUE / 2).let { it - it % total } }
-    LaunchedEffect(total, vitrine) { estado.scrollToItem(inicio) }
-    val actual by remember(total) { derivedStateOf { if (total == 0) 0 else estado.firstVisibleItemIndex % total + 1 } }
+    // Dois produtos por página, sempre inteiros no ecrã.
+    val paginas = (total + 1) / 2
+    val pager = androidx.compose.foundation.pager.rememberPagerState { paginas.coerceAtLeast(1) }
+    LaunchedEffect(vitrine) { pager.scrollToPage(0) }
+    // Passagem automática inteligente: a cada 6 s, só com o ecrã visível e nunca enquanto a pessoa está a tocar/arrastar.
+    val ciclo = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    LaunchedEffect(paginas, ciclo) {
+        if (paginas < 2) return@LaunchedEffect
+        ciclo.lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.RESUMED) {
+            while (true) {
+                kotlinx.coroutines.delay(6000)
+                if (!pager.isScrollInProgress) pager.animateScrollToPage((pager.currentPage + 1) % paginas)
+            }
+        }
+    }
+    val primeiro = pager.currentPage * 2 + 1
+    val ultimo = minOf(primeiro + 1, total)
     Column(Modifier.fillMaxWidth()
         .sup(15.dp, pincel = if (LocalMarca.current.spotec) gradiente(138f, 0f to Color(0xFFFBF3E8), .52f to Color.White, 1f to Color(0xFFF6EEE3)) else vitrineFundo, borda = tom(0xFFA6A7E2, 0xFFEADFD0), sombra = indigo.copy(alpha = .16f), desfoque = 30.dp).padding(7.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -208,7 +222,7 @@ private fun Vitrine(vitrine: Vitrine, aoVitrine: (Vitrine) -> Unit, cartoes: Lis
                 }
                 T(vitrine.subtitulo, 8f, tom(0xFF5559A8, 0xFF5C5F62), Modifier.padding(top = 2.dp), linha = 10f)
             }
-            T(if (total == 0) "0/0" else "$actual/$total", 7f, tom(0xFF3F3AB0, 0xFF2D2F31), 850,
+            T(if (total == 0) "0/0" else if (primeiro == ultimo) "$primeiro/$total" else "$primeiro–$ultimo/$total", 7f, tom(0xFF3F3AB0, 0xFF2D2F31), 850,
                 Modifier.sup(999.dp, fundo = tom(0xFFEDE8FE, 0xFFFFF1E0), borda = tom(0xFFB9BAE6, 0xFFF5D2A8)).padding(horizontal = 6.dp, vertical = 3.dp))
         }
         Spacer(Modifier.height(10.dp))
@@ -232,22 +246,32 @@ private fun Vitrine(vitrine: Vitrine, aoVitrine: (Vitrine) -> Unit, cartoes: Lis
                     T(if (cartoes == null) "A carregar os produtos…" else "Nenhum produto disponível para estes filtros.", 9f, Kp.slate400, 600, centro = true)
                 }
             } else {
-                LazyRow(state = estado, flingBehavior = rememberSnapFlingBehavior(estado), modifier = Modifier.fillMaxWidth(),
-                    userScrollEnabled = total > 1, contentPadding = PaddingValues(0.dp)) {
-                    items(if (total < 2) total else Int.MAX_VALUE, key = null) { i ->
-                        val c = itens[i % total]
-                        CartaoVitrine(c, i % total + 1, Modifier.fillParentMaxWidth(if (total < 2) 1f else .5f), { aoAbrir(c.anuncio.id) }, { aoReservaProtegida(c.anuncio.id) }, aoConfianca)
+                Column {
+                    androidx.compose.foundation.pager.HorizontalPager(pager, Modifier.fillMaxWidth(), pageSpacing = 8.dp, key = { it }) { pg ->
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            listOf(pg * 2, pg * 2 + 1).forEach { i ->
+                                if (i < total) { val c = itens[i]
+                                    CartaoVitrine(c, i + 1, Modifier.weight(1f), { aoAbrir(c.anuncio.id) }, { aoReservaProtegida(c.anuncio.id) }, aoConfianca)
+                                } else Spacer(Modifier.weight(1f))
+                            }
+                        }
                     }
-                }
-                if (total > 1) {
-                    SetaCarrossel(Fa.CHEVRON_LEFT, Modifier.align(Alignment.CenterStart)) { ambito.launch { estado.animateScrollToItem(estado.firstVisibleItemIndex - 1) } }
-                    SetaCarrossel(Fa.CHEVRON_RIGHT, Modifier.align(Alignment.CenterEnd)) { ambito.launch { estado.animateScrollToItem(estado.firstVisibleItemIndex + 1) } }
+                    if (paginas > 1) Row(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 2.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                        SetaCarrossel(Fa.CHEVRON_LEFT, Modifier) { ambito.launch { pager.animateScrollToPage((pager.currentPage - 1 + paginas) % paginas) } }
+                        Spacer(Modifier.width(10.dp))
+                        repeat(paginas) { i ->
+                            val on = i == pager.currentPage
+                            Box(Modifier.padding(horizontal = 3.dp).size(width = if (on) 18.dp else 6.dp, height = 6.dp).sup(6.dp, fundo = if (on) violeta else violeta.copy(alpha = .25f))
+                                .toque { ambito.launch { pager.animateScrollToPage(i) } })
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        SetaCarrossel(Fa.CHEVRON_RIGHT, Modifier) { ambito.launch { pager.animateScrollToPage((pager.currentPage + 1) % paginas) } }
+                    }
                 }
             }
         }
     }
 }
-
 private val vitrineFundo: Brush = object : androidx.compose.ui.graphics.ShaderBrush() {
     override fun createShader(size: androidx.compose.ui.geometry.Size): androidx.compose.ui.graphics.Shader {
         // radial-gradient(circle at 92% 4%, violeta .32 → transparente 35%) sobre linear-gradient(138deg, #DDDBF5, #F4F0FE 52%, #EAE9F9)
@@ -271,7 +295,8 @@ fun CartaoVitrine(c: CartaoAnuncio, numero: Int, modifier: Modifier, aoAbrir: ()
     val reservado = a.estado == EstadoAnuncio.RESERVADO
     Box(modifier.sup(14.dp, fundo = Color.White, borda = Color(0xFFE9EEF3), sombra = Kp.slate900.copy(.055f), desfoque = 16.dp).toque(aoTocar = aoAbrir)) {
     Column {
-        Box(Modifier.fillMaxWidth().aspectRatio(183f / 253f).background(Color(0xFFEEF2F7))) {
+        // Foto 4:3: os dois cartões cabem inteiros no ecrã (a foto alta da origem empurrava o texto para fora da vista).
+        Box(Modifier.fillMaxWidth().aspectRatio(4f / 3f).background(Color(0xFFEEF2F7))) {
             val capa = a.fotos.firstOrNull()
             if (capa != null) AsyncImage(modeloImagem(capa.miniatura ?: capa.url), a.titulo, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
             val (fundoSelo, icone, corIcone) = destaque(c, marca.c700)

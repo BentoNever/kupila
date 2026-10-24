@@ -130,16 +130,15 @@ fun BarraInferior(aba: Aba, papel: Papel, aoInicio: () -> Unit, aoAnunciar: () -
     val fundo = if (marca.spotec) gradiente(90f, marca.escuro[0], marca.escuro[1]) else gradiente(135f, marca.c900, marca.c800)
     Box(Modifier.fillMaxWidth().shadow(16.dp, androidx.compose.foundation.shape.RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp), ambientColor = Color.Black.copy(.25f), spotColor = Color.Black.copy(.25f))
         .background(fundo, androidx.compose.foundation.shape.RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)).navigationBarsPadding()) {
-        Row(Modifier.fillMaxWidth().height(66.dp).padding(horizontal = 18.dp), verticalAlignment = Alignment.CenterVertically,
+        Row(Modifier.fillMaxWidth().height(72.dp).padding(horizontal = 18.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = if (dono) Arrangement.SpaceBetween else Arrangement.Center) {
             ItemNav(Fa.HOUSE, "Início", aba == Aba.EXPLORAR, aoInicio, Modifier.weight(1f, fill = dono))
             if (dono) {
                 Column(Modifier.weight(1f).toque(aoTocar = aoAnunciar), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(Modifier.size(50.dp).offset(y = (-14).dp).sup(50.dp, pincel = gradiente(135f, marca.primaria, marca.c700), borda = if (marca.spotec) marca.escuro[0] else marca.c900,
-                        bordaLargura = 4.dp, forma = CircleShape, sombra = marca.primaria.copy(.35f), desfoque = 14.dp), contentAlignment = Alignment.Center) {
-                        FaIcone(Fa.PLUS, 16f, marca.sobrePrimaria)
-                    }
-                    T("Anunciar", 9f, if (aba == Aba.ANUNCIAR) acentoEscuro else suaveEscuro, if (aba == Aba.ANUNCIAR) 800 else 600, Modifier.offset(y = (-10).dp), max = 1)
+                    // Dentro da barra (nada sai do rodapé): círculo da cor de acção com o "+" e o rótulo por baixo.
+                    Box(Modifier.size(38.dp).sup(38.dp, pincel = gradiente(135f, marca.primaria, marca.c700), forma = CircleShape, sombra = marca.primaria.copy(.35f), desfoque = 10.dp),
+                        contentAlignment = Alignment.Center) { FaIcone(Fa.PLUS, 13f, marca.sobrePrimaria) }
+                    T("Anunciar", 9f, if (aba == Aba.ANUNCIAR) acentoEscuro else suaveEscuro, if (aba == Aba.ANUNCIAR) 800 else 600, Modifier.padding(top = 3.dp), max = 1)
                 }
                 ItemNav(Fa.USER_GEAR, if (papel == Papel.ADMINISTRADOR) "Painel" else "Proprietário", aba == Aba.PROPRIETARIO, aoProprietario, Modifier.weight(1f))
             }
@@ -152,7 +151,7 @@ private fun ItemNav(glifo: String, rotulo: String, activo: Boolean, aoTocar: () 
     val marca = LocalMarca.current
     val cor = if (activo) acentoEscuro else suaveEscuro
     Column(modifier.toque(aoTocar = aoTocar), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(width = 56.dp, height = 30.dp).sup(15.dp, fundo = if (activo) marca.primaria.copy(alpha = .16f) else null), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(width = 56.dp, height = 38.dp).sup(19.dp, fundo = if (activo) marca.primaria.copy(alpha = .16f) else null), contentAlignment = Alignment.Center) {
             FaIcone(glifo, 14f, cor)
         }
         T(rotulo, 9f, cor, if (activo) 800 else 600, Modifier.padding(top = 3.dp), max = 1)

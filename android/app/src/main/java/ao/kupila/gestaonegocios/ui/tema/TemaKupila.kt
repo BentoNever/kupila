@@ -107,6 +107,7 @@ fun TemaKupila(identidade: IdentidadeVisual, modoLocal: ModoAparencia? = null, s
         ModoAparencia.ESCURO -> true
         ModoAparencia.AUTOMATICO -> isSystemInDarkTheme()
     }
+    ao.kupila.gestaonegocios.ui.kp.Kp.neutrosSpotec = spotec
     val d = Color(identidade.destaque)
     val extra = CoresKupila(
         destaque = d, sobreDestaque = sobre(d),

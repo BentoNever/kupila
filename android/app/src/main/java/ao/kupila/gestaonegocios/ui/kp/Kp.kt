@@ -39,15 +39,23 @@ import kotlin.math.sin
  * Valores tirados dos estilos COMPUTADOS no navegador (tools/referencia-html, docs/paridade-visual.md), não das classes isoladas.
  */
 object Kp {
-    // Tailwind slate/gray/emerald/amber/indigo usados pela origem.
-    val slate50 = Color(0xFFF8FAFC); val slate100 = Color(0xFFF1F5F9); val slate200 = Color(0xFFE2E8F0); val slate300 = Color(0xFFCBD5E1)
-    val slate400 = Color(0xFF94A3B8); val slate500 = Color(0xFF64748B); val slate600 = Color(0xFF475569); val slate700 = Color(0xFF334155)
-    val slate800 = Color(0xFF1E293B); val slate900 = Color(0xFF0F172A); val slate950 = Color(0xFF020617)
+    /**
+     * Neutros da identidade activa. Com a identidade Spotec (como no PDV Digital) os "slate" azulados do HTML passam a carvão e
+     * creme da marca — cartões, modais, cabeçalhos e textos de TODA a app seguem a paleta de uma só vez. Definido pelo tema.
+     */
+    @Volatile var neutrosSpotec: Boolean = true
+    private fun n(html: Long, spotec: Long) = Color(if (neutrosSpotec) spotec else html)
+    val slate50 get() = n(0xFFF8FAFC, 0xFFF8F6F2); val slate100 get() = n(0xFFF1F5F9, 0xFFF1EDE6); val slate200 get() = n(0xFFE2E8F0, 0xFFE5DFD6)
+    val slate300 get() = n(0xFFCBD5E1, 0xFFD2CBC0); val slate400 get() = n(0xFF94A3B8, 0xFFA39D94); val slate500 get() = n(0xFF64748B, 0xFF77726B)
+    val slate600 get() = n(0xFF475569, 0xFF5C5F62); val slate700 get() = n(0xFF334155, 0xFF3F4245); val slate800 get() = n(0xFF1E293B, 0xFF2D2F31)
+    val slate900 get() = n(0xFF0F172A, 0xFF1E2022); val slate950 get() = n(0xFF020617, 0xFF141615)
+    // Tailwind gray/emerald/amber/indigo usados pela origem.
     val gray50 = Color(0xFFF9FAFB); val gray100 = Color(0xFFF3F4F6); val gray500 = Color(0xFF6B7280); val gray600 = Color(0xFF4B5563); val gray800 = Color(0xFF1F2937)
     val gray200 = Color(0xFFE5E7EB); val gray300 = Color(0xFFD1D5DB); val gray400 = Color(0xFF9CA3AF); val gray700 = Color(0xFF374151); val gray900 = Color(0xFF111827)
     val emerald50 = Color(0xFFECFDF5); val emerald100 = Color(0xFFD1FAE5); val emerald300 = Color(0xFF6EE7B7); val emerald600 = Color(0xFF059669); val emerald700 = Color(0xFF047857); val emerald900 = Color(0xFF064E3B)
     val amber50 = Color(0xFFFFFBEB); val amber100 = Color(0xFFFEF3C7); val amber200 = Color(0xFFFDE68A); val amber300 = Color(0xFFFCD34D); val amber400 = Color(0xFFFBBF24); val amber700 = Color(0xFFB45309); val amber800 = Color(0xFF92400E); val amber900 = Color(0xFF78350F)
-    val yellow300 = Color(0xFFFDE047); val yellow400 = Color(0xFFFACC15)
+    /** Destaque sobre fundos escuros: amarelo no HTML, laranja na identidade Spotec. */
+    val yellow300 get() = n(0xFFFDE047, 0xFFF8B565); val yellow400 get() = n(0xFFFACC15, 0xFFF49A2E)
     val red50 = Color(0xFFFEF2F2); val red500 = Color(0xFFEF4444); val red600 = Color(0xFFDC2626); val red700 = Color(0xFFB91C1C)
     val blue50 = Color(0xFFEFF6FF); val blue600 = Color(0xFF2563EB); val blue700 = Color(0xFF1D4ED8)
     val violet50 = Color(0xFFF5F3FF); val violet100 = Color(0xFFEDE9FE); val violet600 = Color(0xFF7C3AED); val violet700 = Color(0xFF6D28D9); val violet800 = Color(0xFF5B21B6); val violet900 = Color(0xFF4C1D95)
