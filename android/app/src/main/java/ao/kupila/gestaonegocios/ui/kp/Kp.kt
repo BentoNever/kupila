@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,9 +59,18 @@ object Kp {
     val FaBrands = FontFamily(Font(R.font.fa_brands, FontWeight.Normal))
 }
 
-/** Paleta "brand" calculada como a origem (`kupila-1-0-161-first-paint-theme`): o tema do Administrador muda tudo de uma vez. */
+/**
+ * Paleta "brand" calculada como a origem (`kupila-1-0-161-first-paint-theme`): o tema do Administrador muda tudo de uma vez.
+ * `fundo` (opcional) são as 3 cores escuras da marca para cabeçalho, barra e rodapé — como a identidade Spotec do PDV Digital
+ * (laranja de acção sobre carvão). Sem elas, o fundo deriva da cor primária, como no HTML.
+ */
 @Immutable
-data class Marca(val primaria: Color, val destaque: Color) {
+data class Marca(val primaria: Color, val destaque: Color, val fundo: List<Color>? = null) {
+    /** Cabeçalho, "Explorar em" e rodapé. */
+    val escuro: List<Color> get() = fundo ?: listOf(c900, c800, c700)
+    /** Texto/ícone sobre a cor de acção. */
+    val sobrePrimaria: Color get() = if (primaria.luminance() > 0.45f) Color(0xFF141615) else Color.White
+    val spotec: Boolean get() = fundo != null
     private fun m(b: Color, t: Float) = Color(primaria.red + (b.red - primaria.red) * t, primaria.green + (b.green - primaria.green) * t, primaria.blue + (b.blue - primaria.blue) * t)
     val c50 = m(Color.White, .94f); val c100 = m(Color.White, .86f); val c200 = m(Color.White, .70f); val c300 = m(Color.White, .53f)
     val c400 = m(Color.White, .30f); val c500 = m(Color.White, .08f); val c600 = primaria; val c700 = m(Color.Black, .14f)
@@ -68,6 +78,20 @@ data class Marca(val primaria: Color, val destaque: Color) {
 }
 
 val LocalMarca = staticCompositionLocalOf { Marca(Color(0xFF16A34A), Color(0xFFFACC15)) }
+
+/** Identidade visual Spotec (igual ao PDV Digital): laranja #F07E01 sobre carvão. */
+object Spotec {
+    val laranja = Color(0xFFF07E01)
+    val carvao = listOf(Color(0xFF141615), Color(0xFF1E2022), Color(0xFF2D2F31))
+    val fundoClaro = Color(0xFFF6F3EE)
+    val marca = Marca(laranja, laranja, carvao)
+}
+
+/**
+ * Tamanhos do PDV Digital (tipografia Material 3 com a fonte do telemóvel): os px do HTML (8–12) passam para a escala
+ * legível do PDV (rótulos ~12 sp, texto ~14 sp, títulos ≥ 18 sp). Um só ponto: todos os ecrãs acompanham.
+ */
+fun pdvSp(px: Float): Float = if (px < 16f) px * 0.75f + 5.5f else px + 1.5f
 
 /** Texto com as medidas exactas da origem (px → sp). */
 @Composable
@@ -77,7 +101,7 @@ fun T(
 ) {
     Text(if (maiusculas) texto.uppercase() else texto, modifier, color = cor, maxLines = max, overflow = TextOverflow.Ellipsis,
         textAlign = if (centro) TextAlign.Center else if (fim) TextAlign.End else null,
-        style = LocalTextStyle.current.merge(TextStyle(fontSize = tamanho.sp, fontWeight = FontWeight(peso), lineHeight = (linha ?: (tamanho * 1.25f)).sp,
+        style = LocalTextStyle.current.merge(TextStyle(fontSize = pdvSp(tamanho).sp, fontWeight = FontWeight(peso), lineHeight = (pdvSp(tamanho) * ((linha ?: (tamanho * 1.3f)) / tamanho)).sp,
             letterSpacing = if (espacamento == 0f) TextUnit.Unspecified else espacamento.sp)))
 }
 
@@ -89,7 +113,7 @@ fun T(texto: String, tamanho: Float, cor: Color, modifier: Modifier, peso: Int =
 /** Ícone FontAwesome com o mesmo glifo da origem (`fa-solid` por omissão; `regular = true` para `fa-regular`). */
 @Composable
 fun FaIcone(glifo: String, tamanho: Float, cor: Color, modifier: Modifier = Modifier, regular: Boolean = false, marcas: Boolean = false) {
-    Text(glifo, modifier, color = cor, fontSize = tamanho.sp, lineHeight = tamanho.sp, letterSpacing = 0.em,
+    Text(glifo, modifier, color = cor, fontSize = pdvSp(tamanho).sp, lineHeight = pdvSp(tamanho).sp, letterSpacing = 0.em,
         fontFamily = if (marcas) Kp.FaBrands else if (regular) Kp.FaRegular else Kp.FaSolid, fontWeight = if (regular || marcas) FontWeight.Normal else FontWeight.Black)
 }
 

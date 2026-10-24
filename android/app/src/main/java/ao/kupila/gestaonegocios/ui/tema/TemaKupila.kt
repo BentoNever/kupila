@@ -46,7 +46,8 @@ fun misturar(a: Color, b: Color, t: Float) = Color(
     blue = a.blue + (b.blue - a.blue) * t, alpha = 1f,
 )
 
-private fun esquema(id: IdentidadeVisual, escuro: Boolean): ColorScheme {
+private fun esquema(id: IdentidadeVisual, escuro: Boolean, spotec: Boolean): ColorScheme {
+    if (spotec) return esquemaSpotec(escuro)
     val p = Color(id.primaria)
     val d = Color(id.destaque)
     return if (escuro) darkColorScheme(
@@ -66,18 +67,40 @@ private fun esquema(id: IdentidadeVisual, escuro: Boolean): ColorScheme {
     )
 }
 
+/** Esquema da paleta Spotec do PDV Digital (laranja de acção sobre carvão; fundo claro creme). */
+private fun esquemaSpotec(escuro: Boolean): ColorScheme {
+    val l = ao.kupila.gestaonegocios.ui.kp.Spotec.laranja
+    val sobre = Color(0xFF141615)
+    return if (escuro) darkColorScheme(
+        primary = l, onPrimary = sobre, primaryContainer = misturar(Color(0xFF17191A), l, 0.28f), onPrimaryContainer = misturar(l, Color.White, 0.65f),
+        secondary = Color(0xFFC9CCCF), onSecondary = sobre,
+        background = Color(0xFF0E0F10), onBackground = Color(0xFFECECEC), surface = Color(0xFF17191A), onSurface = Color(0xFFECECEC),
+        surfaceVariant = misturar(Color(0xFF17191A), Color.White, 0.05f), onSurfaceVariant = Color(0xFFA3A7AB),
+        outline = misturar(Color(0xFF17191A), Color.White, 0.18f), outlineVariant = misturar(Color(0xFF17191A), Color.White, 0.08f), surfaceTint = Color.Transparent,
+    ) else lightColorScheme(
+        primary = l, onPrimary = sobre, primaryContainer = misturar(Color.White, l, 0.18f), onPrimaryContainer = misturar(l, Color.Black, 0.6f),
+        secondary = Color(0xFF2D2F31), onSecondary = Color.White,
+        background = ao.kupila.gestaonegocios.ui.kp.Spotec.fundoClaro, onBackground = sobre, surface = Color.White, onSurface = sobre,
+        surfaceVariant = misturar(ao.kupila.gestaonegocios.ui.kp.Spotec.fundoClaro, Color.Black, 0.04f), onSurfaceVariant = Color(0xFF5C5F62),
+        outline = misturar(ao.kupila.gestaonegocios.ui.kp.Spotec.fundoClaro, Color.Black, 0.16f), outlineVariant = misturar(ao.kupila.gestaonegocios.ui.kp.Spotec.fundoClaro, Color.Black, 0.08f),
+        surfaceTint = Color.Transparent,
+    )
+}
+
 /** Tipografia legível no celular: a origem usava 7–9 px; aqui nada abaixo de 12 sp (secção 6). */
 private val tipografia = Typography().let { t ->
+    // Igual ao PDV Digital: Material 3 com a fonte do telemóvel (Roboto) e títulos mais firmes.
     t.copy(
-        titleLarge = t.titleLarge.copy(fontWeight = FontWeight.Bold),
+        headlineMedium = t.headlineMedium.copy(fontWeight = FontWeight.ExtraBold, letterSpacing = (-0.5).sp),
+        headlineSmall = t.headlineSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = (-0.25).sp),
+        titleLarge = t.titleLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = (-0.2).sp),
         titleMedium = t.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-        labelSmall = TextStyle(fontSize = 12.sp, lineHeight = 16.sp, fontWeight = FontWeight.Medium),
-        bodySmall = t.bodySmall.copy(fontSize = 13.sp, lineHeight = 18.sp),
+        labelLarge = t.labelLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = 0.4.sp),
     )
 }
 
 @Composable
-fun TemaKupila(identidade: IdentidadeVisual, modoLocal: ModoAparencia? = null, conteudo: @Composable () -> Unit) {
+fun TemaKupila(identidade: IdentidadeVisual, modoLocal: ModoAparencia? = null, spotec: Boolean = true, conteudo: @Composable () -> Unit) {
     val modo = modoLocal ?: identidade.modoPlataforma
     val escuro = when (modo) {
         ModoAparencia.CLARO -> false
@@ -93,7 +116,7 @@ fun TemaKupila(identidade: IdentidadeVisual, modoLocal: ModoAparencia? = null, c
         aviso = if (escuro) Color(0xFFFBBF24) else Color(0xFFB45309),
         pago = if (escuro) Color(0xFFF0ABFC) else Color(0xFFA21CAF),
     )
-    CompositionLocalProvider(LocalCoresKupila provides extra, ao.kupila.gestaonegocios.ui.kp.LocalMarca provides ao.kupila.gestaonegocios.ui.kp.Marca(Color(identidade.primaria), d)) {
-        MaterialTheme(colorScheme = esquema(identidade, escuro), typography = tipografia, content = conteudo)
+    CompositionLocalProvider(LocalCoresKupila provides extra, ao.kupila.gestaonegocios.ui.kp.LocalMarca provides (if (spotec) ao.kupila.gestaonegocios.ui.kp.Spotec.marca else ao.kupila.gestaonegocios.ui.kp.Marca(Color(identidade.primaria), d))) {
+        MaterialTheme(colorScheme = esquema(identidade, escuro, spotec), typography = tipografia, content = conteudo)
     }
 }

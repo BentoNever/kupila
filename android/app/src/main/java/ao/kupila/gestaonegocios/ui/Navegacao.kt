@@ -172,7 +172,7 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                 when (aba) {
                     Aba.EXPLORAR -> ao.kupila.gestaonegocios.ui.home.HomeEcra(explorar, aoAbrir = { abrir(Rotas.detalhe(it)) },
                         aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.CONFIANCA) },
-                        reservas = { ao.kupila.gestaonegocios.ui.negocios.ReservasHome(hiltViewModel(key = "home-reservas"), aoPagar = { abrir(Rotas.checkout(it)) }, aoProduto = { abrir(Rotas.detalhe(it)) }) })
+                        reservas = { ao.kupila.gestaonegocios.ui.negocios.ReservasHome(hiltViewModel(key = "home-reservas"), aoPagar = { abrir(Rotas.checkout(it)) }, aoProduto = { abrir(Rotas.detalhe(it)) }) }, nome = r.perfil.nome)
                     Aba.ANUNCIAR -> AnunciarEcra(hiltViewModel(key = "aba-anunciar"), aoVoltar = { aba = Aba.EXPLORAR }, aoLerPoliticas = { abrir(Rotas.POLITICAS) },
                         aoPagar = { aba = Aba.EXPLORAR; abrir(Rotas.checkout(it)) }, aoPublicado = { aba = Aba.EXPLORAR; abrir(Rotas.detalhe(it)) })
                     Aba.PROPRIETARIO -> ao.kupila.gestaonegocios.ui.painel.PainelEcra(hiltViewModel(key = "aba-painel"), aoAbrir = { abrir(Rotas.detalhe(it)) },

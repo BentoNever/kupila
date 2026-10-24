@@ -154,7 +154,8 @@ private fun processos(intencoes: List<Registo>, reembolsos: List<Registo>, reser
 private fun CartaoProcesso(p: Processo, marcado: Boolean, aoMarcar: (Boolean) -> Unit, vm: NegociosViewModel, ocupado: String?) {
     val marca = LocalMarca.current
     var aberto by remember { mutableStateOf(false) }
-    var texto by remember { mutableStateOf("") }
+    // A nota do Administrador sobre o processo nunca se perde (sessão bloqueada, app fechada…).
+    var texto by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("pendente.${p.id}")
     Column(Modifier.fillMaxWidth().sup(16.dp, fundo = Color.White, borda = Kp.slate200, sombra = Kp.slate900.copy(.06f), desfoque = 8.dp).toque { aberto = !aberto }.padding(14.dp)) {
         Row(verticalAlignment = Alignment.Top) {
             Checkbox(marcado, aoMarcar, Modifier.size(18.dp).padding(top = 4.dp), enabled = p.accionavel, colors = CheckboxDefaults.colors(checkedColor = marca.c600, uncheckedColor = Kp.slate400))

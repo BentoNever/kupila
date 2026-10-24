@@ -54,8 +54,12 @@ fun CabecalhoApp(papel: Papel, logo: String?, a: AccoesCabecalho) {
     val marca = LocalMarca.current
     val dono = papel != Papel.CLIENTE
     val admin = papel == Papel.ADMINISTRADOR
-    Column(Modifier.fillMaxWidth().shadow(4.dp, ambientColor = Color.Black.copy(.1f), spotColor = Color.Black.copy(.1f)).background(marca.c700).statusBarsPadding()) {
-        Row(Modifier.fillMaxWidth().height(52.dp).padding(12.dp, 10.dp, 12.dp, 7.dp), verticalAlignment = Alignment.CenterVertically) {
+    Box(Modifier.fillMaxWidth().shadow(4.dp, ambientColor = Color.Black.copy(.1f), spotColor = Color.Black.copy(.1f))
+        .background(if (marca.spotec) ao.kupila.gestaonegocios.ui.kp.GradienteMarca else androidx.compose.ui.graphics.SolidColor(marca.c700))) {
+        // Assinatura Spotec: o traço laranja do "S" atravessa o cabeçalho (como no PDV Digital).
+        if (marca.spotec) ao.kupila.gestaonegocios.ui.kp.TracoSpotec(Modifier.matchParentSize().padding(start = 120.dp, top = 6.dp, bottom = 4.dp), alfa = 0.12f, espessura = 2f)
+    Column(Modifier.fillMaxWidth().statusBarsPadding()) {
+        Row(Modifier.fillMaxWidth().height(56.dp).padding(12.dp, 10.dp, 12.dp, 7.dp), verticalAlignment = Alignment.CenterVertically) {
             LogoMarca(29f, 9f, 15.2f, logo, Modifier.toque(aoTocar = a.inicio))
             Spacer(Modifier.width(3.dp))
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -74,7 +78,14 @@ fun CabecalhoApp(papel: Papel, logo: String?, a: AccoesCabecalho) {
             }
         }
     }
+    }
 }
+
+/** Cor de destaque sobre o fundo escuro da marca: amarelo no HTML, laranja na identidade Spotec. */
+private val acentoEscuro: Color @Composable get() = LocalMarca.current.let { if (it.spotec) it.primaria else Kp.yellow400 }
+/** Texto suave sobre o fundo escuro da marca. */
+private val suaveEscuro: Color @Composable get() = LocalMarca.current.let { if (it.spotec) Color.White.copy(alpha = .78f) else it.c100 }
+private val fundoBarra: androidx.compose.ui.graphics.Brush @Composable get() = LocalMarca.current.let { m -> if (m.spotec) gradiente(90f, m.escuro[0], m.escuro[1]) else gradiente(90f, m.c900, m.c800) }
 
 @Composable
 private fun Botao(glifo: String, aoTocar: () -> Unit, activo: Boolean = true, regular: Boolean = false, cor: Color = Color.White, ponto: Boolean = false,
@@ -82,10 +93,10 @@ private fun Botao(glifo: String, aoTocar: () -> Unit, activo: Boolean = true, re
     val marca = LocalMarca.current
     Box(Modifier.size(25.3.dp).alpha(if (activo) 1f else .35f).toque(activo, aoTocar), contentAlignment = Alignment.Center) {
         FaIcone(glifo, 11.33f, cor, regular = regular)
-        if (ponto) Box(Modifier.align(Alignment.BottomEnd).offset((-3).dp, (-3).dp).size(6.dp).sup(6.dp, fundo = Kp.yellow400, borda = marca.c700, forma = CircleShape))
+        if (ponto) Box(Modifier.align(Alignment.BottomEnd).offset((-3).dp, (-3).dp).size(6.dp).sup(6.dp, fundo = acentoEscuro, borda = if (marca.spotec) marca.escuro[0] else marca.c700, forma = CircleShape))
         insignia?.let {
             Box(Modifier.align(Alignment.TopEnd).offset(3.dp, (-2).dp).height(14.dp).widthIn(min = 14.dp)
-                .sup(14.dp, fundo = corInsignia, borda = marca.c700, forma = CircleShape).padding(horizontal = 3.dp), contentAlignment = Alignment.Center) {
+                .sup(14.dp, fundo = corInsignia, borda = if (marca.spotec) marca.escuro[0] else marca.c700, forma = CircleShape).padding(horizontal = 3.dp), contentAlignment = Alignment.Center) {
                 T(it, 6.5f, textoInsignia, 900, linha = 10f)
             }
         }
@@ -96,18 +107,18 @@ private fun Botao(glifo: String, aoTocar: () -> Unit, activo: Boolean = true, re
 @Composable
 fun BarraLocalizacao(nome: String, provincias: List<String>, provincia: String?, aoEscolher: (String?) -> Unit) {
     val marca = LocalMarca.current
-    Row(Modifier.fillMaxWidth().height(40.dp).background(gradiente(90f, marca.c900, marca.c800)).padding(horizontal = 12.dp, vertical = 6.dp),
+    Row(Modifier.fillMaxWidth().height(44.dp).background(fundoBarra).padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
             T(nome.ifBlank { "Utilizador" }, 8f, Color.White, 800, max = 1, espacamento = .08f, modifier = Modifier.weight(1f, fill = false)
-                .sup(999.dp, fundo = Color(0xFF29AA58).copy(alpha = .22f), borda = Color(0xFFB9E3C9).copy(alpha = .34f)).padding(horizontal = 7.dp, vertical = 3.dp))
-            T("•", 8f, marca.c100.copy(alpha = .7f), modifier = Modifier.padding(horizontal = 6.dp))
-            FaIcone(Fa.LOCATION_DOT, 8f, Kp.yellow400); Spacer(Modifier.width(6.dp))
-            T("Explorar em", 8f, marca.c100, 700, espacamento = .2f, max = 1)
+                .sup(999.dp, fundo = (if (marca.spotec) marca.primaria else Color(0xFF29AA58)).copy(alpha = .22f), borda = (if (marca.spotec) marca.primaria else Color(0xFFB9E3C9)).copy(alpha = .34f)).padding(horizontal = 7.dp, vertical = 3.dp))
+            T("•", 8f, suaveEscuro.copy(alpha = .7f), modifier = Modifier.padding(horizontal = 6.dp))
+            FaIcone(Fa.LOCATION_DOT, 8f, acentoEscuro); Spacer(Modifier.width(6.dp))
+            T("Explorar em", 8f, suaveEscuro, 700, espacamento = .2f, max = 1)
         }
         KpSelect(listOf<Pair<String?, String>>(null to "Todas (21 Províncias)") + provincias.map { it to it }, provincia, aoEscolher,
             Modifier.width(178.dp).shadow(6.dp, androidx.compose.foundation.shape.RoundedCornerShape(999.dp), ambientColor = Kp.slate950.copy(.12f), spotColor = Kp.slate950.copy(.12f)),
-            altura = 27.dp, tamanho = 10f, raio = 999.dp, corTexto = marca.c900, borda = Color(0xFF5CBF80), peso = 750, centrar = true)
+            altura = 30.dp, tamanho = 10f, raio = 999.dp, corTexto = if (marca.spotec) marca.escuro[0] else marca.c900, borda = if (marca.spotec) marca.primaria else Color(0xFF5CBF80), peso = 750, centrar = true)
     }
 }
 
@@ -117,18 +128,18 @@ fun BarraInferior(aba: Aba, papel: Papel, aoInicio: () -> Unit, aoAnunciar: () -
     val marca = LocalMarca.current
     val dono = papel != Papel.CLIENTE
     Box(Modifier.fillMaxWidth().shadow(11.dp, ambientColor = marca.c950.copy(.18f), spotColor = marca.c950.copy(.18f))
-        .background(gradiente(135f, marca.c900, marca.c800)).navigationBarsPadding()) {
-        Row(Modifier.fillMaxWidth().height(58.dp).padding(12.dp, 8.dp, 12.dp, 12.dp), verticalAlignment = Alignment.Top,
+        .background(if (marca.spotec) gradiente(135f, marca.escuro[0], marca.escuro[1]) else gradiente(135f, marca.c900, marca.c800)).navigationBarsPadding()) {
+        Row(Modifier.fillMaxWidth().height(64.dp).padding(12.dp, 8.dp, 12.dp, 12.dp), verticalAlignment = Alignment.Top,
             horizontalArrangement = if (dono) Arrangement.SpaceBetween else Arrangement.Center) {
             ItemNav(Fa.HOUSE, "Home", aba == Aba.EXPLORAR, aoInicio, Modifier.weight(1f, fill = dono))
             if (dono) {
                 // `-mt-5`: o círculo sobe 20 px acima da barra; no fluxo ocupa só 20 px, e o rótulo fica abaixo como na origem.
                 Column(Modifier.weight(1f).toque(aoTocar = aoAnunciar), horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(Modifier.height(20.dp), contentAlignment = Alignment.BottomCenter) {
-                        Box(Modifier.wrapContentHeight(Alignment.Bottom, unbounded = true).requiredSize(40.dp).sup(40.dp, fundo = marca.c600, borda = if (aba == Aba.ANUNCIAR) Kp.yellow400.copy(.75f) else marca.c900, bordaLargura = 4.dp,
-                            forma = CircleShape, sombra = Color.Black.copy(.1f), desfoque = 6.dp), contentAlignment = Alignment.Center) { FaIcone(Fa.PLUS, 16f, Color.White) }
+                        Box(Modifier.wrapContentHeight(Alignment.Bottom, unbounded = true).requiredSize(40.dp).sup(40.dp, fundo = marca.c600, borda = if (aba == Aba.ANUNCIAR) acentoEscuro.copy(.75f) else if (marca.spotec) marca.escuro[0] else marca.c900, bordaLargura = 4.dp,
+                            forma = CircleShape, sombra = Color.Black.copy(.1f), desfoque = 6.dp), contentAlignment = Alignment.Center) { FaIcone(Fa.PLUS, 16f, marca.sobrePrimaria) }
                     }
-                    T("Anunciar", 10f, if (aba == Aba.ANUNCIAR) Kp.yellow400 else marca.c100, 500, Modifier.padding(top = 7.dp), linha = 15f)
+                    T("Anunciar", 10f, if (aba == Aba.ANUNCIAR) acentoEscuro else suaveEscuro, 500, Modifier.padding(top = 7.dp), linha = 15f)
                 }
                 ItemNav(Fa.USER_GEAR, "Proprietário", aba == Aba.PROPRIETARIO, aoProprietario, Modifier.weight(1f))
             }
@@ -138,8 +149,8 @@ fun BarraInferior(aba: Aba, papel: Papel, aoInicio: () -> Unit, aoAnunciar: () -
 
 @Composable
 private fun ItemNav(glifo: String, rotulo: String, activo: Boolean, aoTocar: () -> Unit, modifier: Modifier) {
-    val cor = if (activo) Kp.yellow400 else LocalMarca.current.c100
-    Column(modifier.height(35.dp).toque(aoTocar = aoTocar).padding(horizontal = 4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    val cor = if (activo) acentoEscuro else suaveEscuro
+    Column(modifier.height(42.dp).toque(aoTocar = aoTocar).padding(horizontal = 4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         FaIcone(glifo, 18f, cor)
         T(rotulo, 10f, cor, 500, Modifier.padding(top = 2.dp), linha = 15f)
     }

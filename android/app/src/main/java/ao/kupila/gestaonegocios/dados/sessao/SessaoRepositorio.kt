@@ -247,6 +247,23 @@ class SessaoRepositorio @Inject constructor(
         _estado.value = EstadoSessao.SemSessao()
     }
 
+    /**
+     * "Restaurar sessão" (como o PDV Digital): a sessão continua aberta e só se confirma a identidade. A senha é comparada no
+     * próprio aparelho com a cópia cifrada do reinício rápido (sem rede); sem essa cópia, reautentica no Firebase e guarda-a.
+     * Devolve null quando desbloqueia, ou o motivo.
+     */
+    suspend fun desbloquear(senha: String): String? {
+        val a = _estado.value as? EstadoSessao.Activa ?: return "A sessão já não está activa. Entre novamente."
+        val email = a.perfil.email
+        val local = runCatching { dispositivo.acessoRapido(email) }.getOrNull()
+        if (local != null) return if (local == senha) null else "Senha incorrecta. Tente novamente."
+        return runCatching {
+            val u = auth.currentUser ?: error("Sessão expirada.")
+            u.reauthenticate(com.google.firebase.auth.EmailAuthProvider.getCredential(email, senha)).await()
+            dispositivo.guardarAcessoRapido(email, senha)
+        }.fold({ null }, { e -> if (eFalhaDeRede(e)) "Sem internet para confirmar a senha. Use a impressão digital ou tente quando a ligação voltar." else "Senha incorrecta. Tente novamente." })
+    }
+
     /** Fim automático por inactividade (`automaticSessionLock`, HTML 10776-10790). */
     suspend fun sairPorInactividade(minutos: Int) {
         sair()

@@ -67,12 +67,22 @@ data class FormPerfil(val nome: String = "", val email: String = "", val provinc
 @HiltViewModel
 class PerfilProprietarioViewModel @Inject constructor(
     private val conta: ContaActiva, private val central: CentralSpark, private val sessao: SessaoRepositorio, private val imagens: Imagens, val geografia: Geografia,
+    @param:dagger.hilt.android.qualifiers.ApplicationContext private val contexto: android.content.Context,
 ) : ViewModel() {
+    /** Perda zero: as alterações ainda não guardadas ficam em rascunho deste utilizador e voltam ao reabrir. */
+    private val prefixo = "perfil.${conta.recursos.value?.perfil?.uid}."
+    private fun r(k: String) = ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.ler(contexto, prefixo + k)
     val estado = MutableStateFlow(conta.recursos.value?.perfil?.let { p ->
-        FormPerfil(p.nome, p.email, p.residencia.provincia.ifBlank { "Luanda" }, p.residencia.municipio, p.residencia.bairro, p.telefonePrincipal, p.telefoneAlternativo, p.canalAlertas, fotoUrl = p.fotoUrl)
+        FormPerfil(r("nome") ?: p.nome, p.email, r("provincia") ?: p.residencia.provincia.ifBlank { "Luanda" }, r("municipio") ?: p.residencia.municipio, r("bairro") ?: p.residencia.bairro,
+            r("telefone") ?: p.telefonePrincipal, r("telefoneAlt") ?: p.telefoneAlternativo, r("canal")?.let(CanalAlerta::de) ?: p.canalAlertas, fotoUrl = p.fotoUrl)
     } ?: FormPerfil())
 
-    fun mudar(f: (FormPerfil) -> FormPerfil) = estado.update { f(it).copy(erro = null, ok = false) }
+    fun mudar(f: (FormPerfil) -> FormPerfil) {
+        estado.update { f(it).copy(erro = null, ok = false) }
+        val x = estado.value
+        mapOf("nome" to x.nome, "provincia" to x.provincia, "municipio" to x.municipio, "bairro" to x.bairro, "telefone" to x.telefone, "telefoneAlt" to x.telefoneAlt, "canal" to x.canal.codigo)
+            .forEach { (k, v) -> ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.escrever(contexto, prefixo + k, v) }
+    }
     fun foto(uri: Uri) = viewModelScope.launch {
         estado.update { it.copy(aProcessar = true) }
         runCatching { imagens.fotoPerfil(uri) }.onSuccess { b -> estado.update { it.copy(foto = b, aProcessar = false) } }
@@ -94,7 +104,7 @@ class PerfilProprietarioViewModel @Inject constructor(
             central.actualizarPerfil(mapOf("name" to f.nome.trim(), "phonePrimary" to f.telefone, "phoneAlt" to f.telefoneAlt, "province" to f.provincia,
                 "municipality" to f.municipio, "neighborhood" to f.bairro.trim(), "alertChannel" to f.canal.codigo), f.foto)
             sessao.actualizarPerfil()
-        }.onSuccess { estado.update { it.copy(aGuardar = false, ok = true) } }.onFailure { e -> estado.update { it.copy(aGuardar = false, erro = MensagensErro.de(e)) } }
+        }.onSuccess { ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.limpar(contexto, prefixo); estado.update { it.copy(aGuardar = false, ok = true) } }.onFailure { e -> estado.update { it.copy(aGuardar = false, erro = MensagensErro.de(e)) } }
     }
 }
 

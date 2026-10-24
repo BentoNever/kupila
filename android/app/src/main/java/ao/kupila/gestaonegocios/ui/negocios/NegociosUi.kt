@@ -175,7 +175,8 @@ private fun CartaoReservaCliente(vm: NegociosViewModel, rc: ReservaCliente, reem
     }
     if (testemunhar) {
         var estrelas by remember { mutableStateOf(5) }
-        var texto by remember { mutableStateOf("") }
+        var texto by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("testemunho.${r.id}")
+        val ctxT = androidx.compose.ui.platform.LocalContext.current
         var modo by remember { mutableStateOf(ao.kupila.gestaonegocios.dominio.testemunhos.ModoNome.ABREVIADO) }
         AlertDialog(onDismissRequest = { testemunhar = false }, title = { Text("Como correu?") }, text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -183,7 +184,7 @@ private fun CartaoReservaCliente(vm: NegociosViewModel, rc: ReservaCliente, reem
                 Campo(texto, { texto = it }, "O seu testemunho", linhas = 3, maxCaracteres = 600)
                 Seletor("Mostrar como", ao.kupila.gestaonegocios.dominio.testemunhos.ModoNome.entries.map { it to it.rotulo }, modo, { modo = it })
             }
-        }, confirmButton = { TextButton(enabled = texto.trim().length >= 20, onClick = { vm.testemunho(r, estrelas, texto, modo); testemunhar = false }) { Text("Enviar") } },
+        }, confirmButton = { TextButton(enabled = texto.trim().length >= 20, onClick = { vm.testemunho(r, estrelas, texto, modo); ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.limpar(ctxT, "testemunho.${r.id}"); testemunhar = false }) { Text("Enviar") } },
             dismissButton = { TextButton(onClick = { testemunhar = false }) { Text("Agora não") } })
     }
     if (pedir) DialogoReembolso(ocupado == "rfd:${r.id}", aoFechar = { pedir = false }) { motivo, desc, uri -> vm.pedirReembolso(r.id, rc.otp!!, motivo, desc, uri); pedir = false }
@@ -192,7 +193,8 @@ private fun CartaoReservaCliente(vm: NegociosViewModel, rc: ReservaCliente, reem
 @Composable
 private fun DialogoReembolso(ocupado: Boolean, aoFechar: () -> Unit, aoEnviar: (MotivoReembolso, String, Uri) -> Unit) {
     var motivo by remember { mutableStateOf(MotivoReembolso.entries.first()) }
-    var desc by remember { mutableStateOf("") }
+    var desc by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("reembolso.descricao")
+    val ctxR = androidx.compose.ui.platform.LocalContext.current
     var uri by remember { mutableStateOf<Uri?>(null) }
     val escolher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri = it }
     AlertDialog(onDismissRequest = aoFechar, title = { Text("Pedir reembolso") }, text = {
@@ -203,7 +205,7 @@ private fun DialogoReembolso(ocupado: Boolean, aoFechar: () -> Unit, aoEnviar: (
             Text(motivo.declaracao, style = MaterialTheme.typography.bodySmall)
             Text("A comissão Kupila não é reembolsável. O OTP desta reserva é usado automaticamente para comprovar a vistoria.", style = MaterialTheme.typography.bodySmall)
         }
-    }, confirmButton = { TextButton(enabled = uri != null && desc.trim().length >= 20 && !ocupado, onClick = { aoEnviar(motivo, desc, uri!!) }) { Text("Declaro e envio") } },
+    }, confirmButton = { TextButton(enabled = uri != null && desc.trim().length >= 20 && !ocupado, onClick = { aoEnviar(motivo, desc, uri!!); ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.limpar(ctxR, "reembolso.") }) { Text("Declaro e envio") } },
         dismissButton = { TextButton(onClick = aoFechar) { Text("Cancelar") } })
 }
 

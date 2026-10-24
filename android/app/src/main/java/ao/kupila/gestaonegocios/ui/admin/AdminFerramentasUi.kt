@@ -75,7 +75,9 @@ fun UtilizadoresEcra(vm: AdminViewModel, aoFechar: () -> Unit, aoFicha: (String)
     val reservas by vm.reservas.collectAsStateWithLifecycle()
     val msg by vm.mensagem.collectAsStateWithLifecycle()
     val ocupado by vm.ocupado.collectAsStateWithLifecycle()
-    var criar by remember { mutableStateOf(false) }
+    val ctxRascunho = androidx.compose.ui.platform.LocalContext.current
+    // Um registo a meio (app fechada, sessão bloqueada…) reabre o editor exactamente como estava.
+    var criar by remember { mutableStateOf(ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.existe(ctxRascunho, "admin.novo.")) }
     val agora = System.currentTimeMillis()
     val online = pr.filter { (it.ms("lastSeenAt") ?: 0) > agora - Presenca.JANELA_ONLINE_MS }.map { it.s("userId") }.toSet()
     val contas = us.filter { Papel.canonico(it.s("role")) != Papel.ADMINISTRADOR }.sortedBy { it.s("name").lowercase() }
@@ -293,9 +295,11 @@ private fun EditorUtilizador(vm: AdminViewModel, ocupado: Boolean, aoFechar: () 
     val marca = LocalMarca.current
     var papel by rememberSaveable { mutableStateOf(Papel.CLIENTE) }
     var estado by rememberSaveable { mutableStateOf(EstadoConta.ACTIVA) }
-    var nome by rememberSaveable { mutableStateOf("") }; var email by rememberSaveable { mutableStateOf("") }; var senha by remember { mutableStateOf("") }
-    var tel by rememberSaveable { mutableStateOf("") }; var alt by rememberSaveable { mutableStateOf("") }
-    var prov by rememberSaveable { mutableStateOf("Luanda") }; var mun by rememberSaveable { mutableStateOf("") }; var bairro by rememberSaveable { mutableStateOf("") }
+    // Perda zero: tudo menos a senha fica em rascunho automático até a conta ser guardada.
+    var nome by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("admin.novo.nome"); var email by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("admin.novo.email"); var senha by remember { mutableStateOf("") }
+    var tel by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("admin.novo.tel"); var alt by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("admin.novo.alt")
+    var prov by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("admin.novo.prov", "Luanda"); var mun by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("admin.novo.mun"); var bairro by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("admin.novo.bairro")
+    val contextoRascunho = androidx.compose.ui.platform.LocalContext.current
     var foto by remember { mutableStateOf<android.net.Uri?>(null) }
     val escolher = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia()) { foto = it }
     val dono = papel == Papel.PROPRIETARIO
@@ -331,7 +335,7 @@ private fun EditorUtilizador(vm: AdminViewModel, ocupado: Boolean, aoFechar: () 
             Column { KpRotulo("Bairro", 10f, obrigatorio = true); KpEntrada(bairro, { bairro = it }, altura = 33.dp, tamanhoTexto = 12f) }
         }
         KpBotao("Guardar Utilizador", {
-            vm.criar(papel, nome, email, senha, tel, prov, if (dono) mun.ifBlank { vm.geografia.municipios(prov).firstOrNull().orEmpty() } else "", if (dono) bairro else "", estado, alt, foto, aoCriado = aoFechar)
+            vm.criar(papel, nome, email, senha, tel, prov, if (dono) mun.ifBlank { vm.geografia.municipios(prov).firstOrNull().orEmpty() } else "", if (dono) bairro else "", estado, alt, foto, aoCriado = { ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.limpar(contextoRascunho, "admin.novo."); aoFechar() })
         }, icone = Fa.FLOPPY_DISK, fundo = Kp.slate900, altura = 36.dp, raio = 12.dp, tamanho = 12f, ocupado = ocupado)
     }
 }

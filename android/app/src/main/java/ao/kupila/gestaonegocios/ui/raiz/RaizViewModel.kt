@@ -30,6 +30,7 @@ class RaizViewModel @Inject constructor(
     val estado = sessao.estado
     val identidade = ajustes.identidade
     val modoLocal = ajustes.modoLocal
+    val spotec = ajustes.spotec
 
     private val _tomando = MutableStateFlow(false)
     val tomando: StateFlow<Boolean> = _tomando.asStateFlow()
@@ -54,6 +55,24 @@ class RaizViewModel @Inject constructor(
         if (_inactividade.value !is Inactividade.Fase.Activa) _inactividade.value = Inactividade.Fase.Activa
     }
 
+    // ---------------- restauro (como o PDV Digital): a sessão fica protegida, não termina; ao desbloquear continua onde estava.
+    private val _bloqueio = MutableStateFlow<ao.kupila.gestaonegocios.ui.entrada.MotivoBloqueio?>(null)
+    val bloqueio: StateFlow<ao.kupila.gestaonegocios.ui.entrada.MotivoBloqueio?> = _bloqueio.asStateFlow()
+    private var saiuEm = 0L
+
+    fun foiParaFundo() { saiuEm = SystemClock.elapsedRealtime() }
+    /** Volta ao ecrã: protege a sessão só se esteve fora mais tempo do que o limite de inactividade da plataforma. */
+    fun voltou() {
+        if (saiuEm == 0L || conta.recursos.value == null || _bloqueio.value != null) return
+        val fora = SystemClock.elapsedRealtime() - saiuEm
+        saiuEm = 0L
+        if (fora >= ajustes.ajustes.value.inactividadeMinutos * 60_000L) _bloqueio.value = ao.kupila.gestaonegocios.ui.entrada.MotivoBloqueio.SAIDA
+        actividade()
+    }
+    suspend fun desbloquear(senha: String): String? = sessao.desbloquear(senha).also { if (it == null) { _bloqueio.value = null; actividade() } }
+    fun desbloquearPorBiometria() { _bloqueio.value = null; actividade() }
+    fun trocarConta() = viewModelScope.launch { _bloqueio.value = null; sessao.sair() }
+
     init {
         viewModelScope.launch {
             while (isActive) {
@@ -62,7 +81,7 @@ class RaizViewModel @Inject constructor(
                 val minutos = ajustes.ajustes.value.inactividadeMinutos
                 val f = Inactividade.fase(SystemClock.elapsedRealtime() - ultimaActividade, minutos)
                 _inactividade.value = f
-                if (f is Inactividade.Fase.Esgotada) { sessao.sairPorInactividade(minutos); actividade() }
+                if (f is Inactividade.Fase.Esgotada && _bloqueio.value == null) { _bloqueio.value = ao.kupila.gestaonegocios.ui.entrada.MotivoBloqueio.INACTIVIDADE; actividade() }
             }
         }
     }

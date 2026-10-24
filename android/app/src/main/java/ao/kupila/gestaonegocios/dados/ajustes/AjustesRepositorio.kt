@@ -54,6 +54,7 @@ class AjustesRepositorio @Inject constructor(@param:ApplicationContext private v
     private val json = Json { ignoreUnknownKeys = true }
     private val chaveIdentidade = stringPreferencesKey("identidade")
     private val chaveModoLocal = stringPreferencesKey("modo_local")
+    private val chavePaletaLocal = stringPreferencesKey("paleta_local")
 
     /** Lido de forma síncrona UMA vez no arranque (antes do 1.º frame); depois actualizado por eventos. */
     private val _identidade = MutableStateFlow(runBlocking { lerIdentidade() })
@@ -71,6 +72,14 @@ class AjustesRepositorio @Inject constructor(@param:ApplicationContext private v
 
     private fun IdentidadeGuardada.paraDominio() = IdentidadeVisual(versao, TemaVisual.daOrigem(tema), primaria, destaque, PaletaVitrine.daOrigem(vitrine),
         sp, sa, hp, ha, when (modo) { "DARK" -> ModoAparencia.ESCURO; "AUTO" -> ModoAparencia.AUTOMATICO; else -> ModoAparencia.CLARO }, logo)
+
+    private val _spotec = MutableStateFlow(runBlocking { contexto.dadosAjustes.data.first()[chavePaletaLocal] != "plataforma" })
+    /** Identidade visual Spotec (igual ao PDV Digital) neste aparelho; false = a paleta definida pelo Administrador. */
+    val spotec: StateFlow<Boolean> = _spotec.asStateFlow()
+    fun definirSpotec(s: Boolean) = ambito.launch {
+        contexto.dadosAjustes.edit { it[chavePaletaLocal] = if (s) "spotec" else "plataforma" }
+        _spotec.value = s
+    }
 
     fun definirModoLocal(m: ModoAparencia?) = ambito.launch {
         contexto.dadosAjustes.edit { if (m == null) it.remove(chaveModoLocal) else it[chaveModoLocal] = m.name }

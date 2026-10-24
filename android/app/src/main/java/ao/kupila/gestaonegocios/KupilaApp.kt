@@ -13,7 +13,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class KupilaApp : Application(), Configuration.Provider {
+class KupilaApp : Application(), Configuration.Provider, coil3.SingletonImageLoader.Factory {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var conta: ContaActiva
@@ -37,6 +37,15 @@ class KupilaApp : Application(), Configuration.Provider {
         })
         conta.iniciar()
     }
+
+    /**
+     * Cache inteligente das fotografias: memória (20% da RAM da app) + disco PERSISTENTE na pasta da app (o sistema não a apaga
+     * como apaga a cache) — o catálogo já visto abre com fotos mesmo sem internet e cada foto só é descarregada uma vez.
+     */
+    override fun newImageLoader(context: coil3.PlatformContext): coil3.ImageLoader = coil3.ImageLoader.Builder(context)
+        .memoryCache { coil3.memory.MemoryCache.Builder().maxSizePercent(context, 0.20).build() }
+        .diskCache { coil3.disk.DiskCache.Builder().directory(okio.Path.Companion.run { filesDir.resolve("imagens").toOkioPath() }).maxSizeBytes(300L * 1024 * 1024).build() }
+        .build()
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(workerFactory).build()

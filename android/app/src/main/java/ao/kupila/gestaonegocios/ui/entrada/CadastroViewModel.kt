@@ -67,11 +67,14 @@ class CadastroViewModel @Inject constructor(
         }
     }
 
+    /** Perda zero: SavedStateHandle (rodar/memória) e, por baixo, o rascunho persistente (app fechada, telemóvel reiniciado). */
+    private fun r(k: String): String? = guardado[k] ?: ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.ler(contexto, "cadastro.$k")
     private fun restaurar() = FormCadastro(
-        papel = Papel.canonico(guardado["papel"]) ?: Papel.CLIENTE, nome = guardado["nome"] ?: "", email = guardado["email"] ?: "",
-        telefone = guardado["telefone"] ?: "", telefoneAlt = guardado["telefoneAlt"] ?: "", provincia = guardado["provincia"] ?: "Luanda",
-        municipio = guardado["municipio"] ?: "", bairro = guardado["bairro"] ?: "", canal = CanalAlerta.de(guardado["canal"]),
-        politicasLidas = guardado["lidas"] ?: false, politicasAceites = guardado["aceites"] ?: false, fotoCaminho = guardado["foto"],
+        papel = Papel.canonico(r("papel")) ?: Papel.CLIENTE, nome = r("nome") ?: "", email = r("email") ?: "",
+        telefone = r("telefone") ?: "", telefoneAlt = r("telefoneAlt") ?: "", provincia = r("provincia") ?: "Luanda",
+        municipio = r("municipio") ?: "", bairro = r("bairro") ?: "", canal = CanalAlerta.de(r("canal")),
+        politicasLidas = (guardado["lidas"] ?: r("lidas")?.toBoolean()) ?: false, politicasAceites = (guardado["aceites"] ?: r("aceites")?.toBoolean()) ?: false,
+        fotoCaminho = r("foto")?.takeIf { File(it).exists() },
     )
 
     private fun mudar(f: (FormCadastro) -> FormCadastro) {
@@ -80,6 +83,9 @@ class CadastroViewModel @Inject constructor(
         guardado["papel"] = x.papel.codigo; guardado["nome"] = x.nome; guardado["email"] = x.email; guardado["telefone"] = x.telefone
         guardado["telefoneAlt"] = x.telefoneAlt; guardado["provincia"] = x.provincia; guardado["municipio"] = x.municipio; guardado["bairro"] = x.bairro
         guardado["canal"] = x.canal.codigo; guardado["lidas"] = x.politicasLidas; guardado["aceites"] = x.politicasAceites; guardado["foto"] = x.fotoCaminho
+        mapOf("papel" to x.papel.codigo, "nome" to x.nome, "email" to x.email, "telefone" to x.telefone, "telefoneAlt" to x.telefoneAlt, "provincia" to x.provincia,
+            "municipio" to x.municipio, "bairro" to x.bairro, "canal" to x.canal.codigo, "lidas" to x.politicasLidas.toString(), "aceites" to x.politicasAceites.toString(),
+            "foto" to x.fotoCaminho.orEmpty()).forEach { (k, v) -> ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.escrever(contexto, "cadastro.$k", v) }
     }
 
     fun papel(p: Papel) = mudar { it.copy(papel = p) }
@@ -100,7 +106,7 @@ class CadastroViewModel @Inject constructor(
         _estado.update { it.copy(aProcessarFoto = true) }
         runCatching {
             val bytes = imagens.fotoPerfil(uri)
-            File(contexto.cacheDir, "cadastro").apply { mkdirs() }.let { d -> File(d, "foto-perfil.jpg").apply { writeBytes(bytes) } }
+            File(contexto.filesDir, "rascunhos/cadastro").apply { mkdirs() }.let { d -> File(d, "foto-perfil.jpg").apply { writeBytes(bytes) } }
         }.onSuccess { f -> mudar { it.copy(fotoCaminho = f.absolutePath) } }
             .onFailure { e -> _estado.update { it.copy(erroGeral = e.message ?: "Não foi possível processar a foto.") } }
         _estado.update { it.copy(aProcessarFoto = false) }
@@ -137,7 +143,7 @@ class CadastroViewModel @Inject constructor(
             if (dono) f.provincia else "", if (dono) f.municipio else "", if (dono) f.bairro.trim() else "", if (dono) f.canal else CanalAlerta.AUTOMATICO,
             conteudos.versaoPoliticas, f.politicasLidas, if (dono) f.fotoCaminho?.let { File(it).takeIf(File::exists)?.readBytes() } else null)
         val r = if (e.completar) sessao.concluirCadastro(d) else sessao.registar(d, f.senha)
-        r.onSuccess { f.fotoCaminho?.let { File(it).delete() }; guardado.keys().forEach { guardado.remove<Any>(it) } }
+        r.onSuccess { f.fotoCaminho?.let { File(it).delete() }; guardado.keys().forEach { guardado.remove<Any>(it) }; ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.limpar(contexto, "cadastro.") }
         _estado.update { it.copy(aEnviar = false, erroGeral = r.exceptionOrNull()?.let(MensagensErro::de)) }
     }
 }

@@ -2,9 +2,6 @@ package ao.kupila.gestaonegocios.ui.raiz
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,7 +10,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ao.kupila.gestaonegocios.dados.sessao.EstadoSessao
-import ao.kupila.gestaonegocios.dominio.sessao.Inactividade
 import ao.kupila.gestaonegocios.ui.Navegacao
 import ao.kupila.gestaonegocios.ui.comum.Carregando
 import ao.kupila.gestaonegocios.ui.entrada.ConflitoSessaoDialogo
@@ -28,9 +24,17 @@ fun Raiz(vm: RaizViewModel = hiltViewModel()) {
     val identidade by vm.identidade.collectAsStateWithLifecycle()
     val modoLocal by vm.modoLocal.collectAsStateWithLifecycle()
     val estado by vm.estado.collectAsStateWithLifecycle()
-    val inactividade by vm.inactividade.collectAsStateWithLifecycle()
     val tomando by vm.tomando.collectAsStateWithLifecycle()
-    TemaKupila(identidade, modoLocal) {
+    val bloqueio by vm.bloqueio.collectAsStateWithLifecycle()
+    val spotec by vm.spotec.collectAsStateWithLifecycle()
+    val ciclo = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(ciclo) {
+        val o = androidx.lifecycle.LifecycleEventObserver { _, ev ->
+            if (ev == androidx.lifecycle.Lifecycle.Event.ON_STOP) vm.foiParaFundo() else if (ev == androidx.lifecycle.Lifecycle.Event.ON_START) vm.voltou()
+        }
+        ciclo.lifecycle.addObserver(o); onDispose { ciclo.lifecycle.removeObserver(o) }
+    }
+    TemaKupila(identidade, modoLocal, spotec) {
         Box(Modifier.fillMaxSize().pointerInput(Unit) {
             // Qualquer toque conta como actividade (sem consumir o evento).
             awaitPointerEventScope { while (true) { awaitPointerEvent(PointerEventPass.Initial); vm.actividade() } }
@@ -43,15 +47,10 @@ fun Raiz(vm: RaizViewModel = hiltViewModel()) {
                 val c = estado as EstadoSessao.Conflito
                 ConflitoSessaoDialogo(c.dispositivo, c.vistoEm, tomando, vm::tomarSessao, vm::cancelarConflito)
             }
-            (inactividade as? Inactividade.Fase.Aviso)?.let { a ->
-                AlertDialog(
-                    onDismissRequest = vm::actividade,
-                    title = { Text("Ainda está aí?") },
-                    text = { Text("Por segurança, a sessão será encerrada por inactividade em ${Inactividade.contagem(a.restanteMs)}. Os rascunhos ficam guardados neste dispositivo.") },
-                    confirmButton = { TextButton(onClick = vm::actividade) { Text("Continuar sessão") } },
-                    dismissButton = { TextButton(onClick = { vm.sair() }) { Text("Terminar sessão") } },
-                )
-            }
+            // Restauro por cima do ecrã onde a pessoa estava (a navegação e os formulários continuam por baixo).
+            val activa = estado as? EstadoSessao.Activa
+            if (activa != null && bloqueio != null) ao.kupila.gestaonegocios.ui.entrada.EcraRestauro(activa.perfil.nome, bloqueio!!, vm::desbloquear,
+                porBiometria = vm::desbloquearPorBiometria, trocarConta = { vm.trocarConta() })
         }
     }
 }
