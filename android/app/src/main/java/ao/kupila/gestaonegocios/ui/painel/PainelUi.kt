@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -279,9 +280,9 @@ private fun Grupo(icone: String, titulo: String, itens: List<Triple<String, Pair
     Row(verticalAlignment = Alignment.CenterVertically) { FaIcone(icone, 7.5f, marca.c600); Spacer(Modifier.width(8.dp)); T(titulo, 7.5f, Kp.slate500, 800, espacamento = 1.2f, maiusculas = true) }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         itens.forEach { (ic, tx, f) ->
-            Row(Modifier.weight(1f).height(66.dp).sup(16.dp, fundo = Color.White, borda = Kp.slate200).toque(aoTocar = f).padding(10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(Modifier.weight(1f).heightIn(min = 66.dp).sup(16.dp, fundo = Color.White, borda = Kp.slate200).toque(aoTocar = f).padding(10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Box(Modifier.size(30.dp).sup(10.dp, fundo = Color.White, borda = Kp.slate200, sombra = Kp.slate900.copy(.06f), desfoque = 4.dp), contentAlignment = Alignment.Center) { FaIcone(ic, 10f, marca.c800) }
-                Column { T(tx.first, 9f, Kp.slate900, 800, max = 1); T(tx.second, 6.5f, Kp.slate500, Modifier.padding(top = 3.dp), linha = 9.5f) }
+                Column { T(tx.first, 9f, Kp.slate900, 800, max = 2); T(tx.second, 6.5f, Kp.slate500, Modifier.padding(top = 3.dp), linha = 9.5f, max = 3) }
             }
         }
     }

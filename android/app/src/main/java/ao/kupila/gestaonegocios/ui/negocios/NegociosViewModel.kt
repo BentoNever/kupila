@@ -155,6 +155,23 @@ class NegociosViewModel @Inject constructor(
         "Pedido de reembolso enviado. O Proprietário confirma e o Administrador conclui."
     }
 
+    /** "Comprovativo JPG/PDF" do recibo (`downloadReceiptJPG/PDF`): gerado no aparelho, abre o seletor de partilha. */
+    fun exportarRecibo(rc: ReservaCliente, pdf: Boolean, aoPronto: (Intent) -> Unit) = accao("rec:${rc.r.id}") {
+        val r = rc.r
+        val linhas = listOf(
+            ao.kupila.gestaonegocios.dados.media.LinhaDoc("Reserva"), ao.kupila.gestaonegocios.dados.media.LinhaDoc("Recibo", r.id),
+            ao.kupila.gestaonegocios.dados.media.LinhaDoc("Produto", r.s("listingTitle")), ao.kupila.gestaonegocios.dados.media.LinhaDoc("Sinal pago", ao.kupila.gestaonegocios.dominio.financeiro.FormatoAoa.formatar(ao.kupila.gestaonegocios.dominio.financeiro.Dinheiro.de(java.math.BigDecimal.valueOf(r.n("amount"))))),
+            ao.kupila.gestaonegocios.dados.media.LinhaDoc("Código de vistoria (OTP)", rc.otp ?: "—", destaque = true),
+            ao.kupila.gestaonegocios.dados.media.LinhaDoc("Expira em", r.ms("expiresAt")?.let { java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.forLanguageTag("pt-AO")).format(java.util.Date(it)) } ?: "—"),
+            ao.kupila.gestaonegocios.dados.media.LinhaDoc("Proprietário"), ao.kupila.gestaonegocios.dados.media.LinhaDoc("Contacto", r.s("ownerPhone").let { if (it.isBlank()) "—" else "+244 $it" }),
+            ao.kupila.gestaonegocios.dados.media.LinhaDoc("Província / Município", r.s("location").ifBlank { r.s("province") }),
+            ao.kupila.gestaonegocios.dados.media.LinhaDoc("Bairro", r.s("neighborhood").ifBlank { "—" }), ao.kupila.gestaonegocios.dados.media.LinhaDoc("Ponto de referência", r.s("referencePoint").ifBlank { "—" }))
+        val rodape = "Apresente o OTP ao Proprietário apenas depois de concluir a vistoria. A comissão Kupila não é reembolsável."
+        val f = if (pdf) documentos.pdf("recibo-${r.id}", "Comprovativo de reserva", "Reserva confirmada · pagamento verificado", linhas, rodape)
+            else documentos.jpg("recibo-${r.id}", "Comprovativo de reserva", "Reserva confirmada · pagamento verificado", linhas, rodape)
+        aoPronto(documentos.partilhar(f, if (pdf) "application/pdf" else "image/jpeg")); null
+    }
+
     fun testemunho(r: Registo, estrelas: Int, texto: String, modo: ao.kupila.gestaonegocios.dominio.testemunhos.ModoNome) = accao("tst:${r.id}") {
         require(texto.trim().length in 20..600) { "Escreva entre 20 e 600 caracteres." }
         testemunhos.submeter(r.d, r.id, perfil ?: return@accao null, estrelas, texto, modo); "Obrigado! O seu testemunho segue para moderação."

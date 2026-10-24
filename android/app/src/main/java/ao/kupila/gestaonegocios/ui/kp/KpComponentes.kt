@@ -98,11 +98,13 @@ private fun Modifier.onFoco(f: (Boolean) -> Unit) = this.onFocusChanged { f(it.i
 @Composable
 fun KpBotao(
     texto: String, aoTocar: () -> Unit, modifier: Modifier = Modifier, icone: String? = null, ocupado: Boolean = false, activo: Boolean = true,
-    fundo: Color? = null, pincel: androidx.compose.ui.graphics.Brush? = null, cor: Color = Color.White, borda: Color? = null, altura: Dp = 31.dp, raio: Dp = 9.dp,
+    fundo: Color? = null, pincel: androidx.compose.ui.graphics.Brush? = null, cor: Color = Color.Unspecified, borda: Color? = null, altura: Dp = 31.dp, raio: Dp = 9.dp,
     tamanho: Float = 9.5f, sombra: Boolean = true, iconeRegular: Boolean = false,
 ) {
     val marca = LocalMarca.current
     val f = fundo ?: marca.c600
+    // Botão de acção por defeito: texto com o contraste da marca (carvão sobre o laranja Spotec, como no PDV); senão branco.
+    val cor = if (cor != Color.Unspecified) cor else if (fundo == null && pincel == null) marca.sobrePrimaria else Color.White
     Row(modifier.fillMaxWidth().height(altura)
         .sup(raio, fundo = if (pincel == null) (if (activo) f else f.copy(alpha = .55f)) else null, pincel = pincel, borda = borda,
             sombra = if (sombra && borda == null && activo) f.copy(alpha = .28f) else null, desfoque = 20.dp)

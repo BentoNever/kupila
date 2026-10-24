@@ -76,7 +76,8 @@ object Rotas {
     fun anunciar(rascunho: String? = null, editar: String? = null) = "anunciar?rascunho=${rascunho.orEmpty()}&editar=${editar.orEmpty()}"
     const val CHECKOUT = "checkout/{id}"; fun checkout(id: String) = "checkout/$id"
     const val MEUS = "meus-anuncios"; const val NOTIFICACOES = "notificacoes"; const val ADMIN = "admin"; const val PENDENTES = "pendentes"; const val CONFIANCA = "confianca"; const val PERFIL = "perfil-proprietario"; const val AJUSTES = "ajustes"
-    const val UTILIZADORES = "utilizadores"; const val MONITOR = "monitor"; const val HISTORICO = "historico"; const val DIRECTORIO = "directorio"; const val MONETIZACAO = "monetizacao"
+    const val UTILIZADORES = "utilizadores"; const val MONITOR = "monitor"; const val HISTORICO = "historico"; const val DIRECTORIO = "directorio"; const val MONETIZACAO = "monetizacao"; const val AUTORIZACOES = "autorizacoes"
+    const val RECIBO = "recibo/{id}"; fun recibo(id: String) = "recibo/$id"
     const val MONITOR_DETALHE = "monitor-detalhe/{tipo}?c={c}&m={m}"; fun monitorDetalhe(t: String, c: String = "", m: String = "") = "monitor-detalhe/$t?c=$c&m=$m"
     const val FICHA = "ficha/{uid}"; fun ficha(uid: String) = "ficha/$uid"
 }
@@ -172,13 +173,13 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                 when (aba) {
                     Aba.EXPLORAR -> ao.kupila.gestaonegocios.ui.home.HomeEcra(explorar, aoAbrir = { abrir(Rotas.detalhe(it)) },
                         aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.CONFIANCA) },
-                        reservas = { ao.kupila.gestaonegocios.ui.negocios.ReservasHome(hiltViewModel(key = "home-reservas"), aoPagar = { abrir(Rotas.checkout(it)) }, aoProduto = { abrir(Rotas.detalhe(it)) }) }, nome = r.perfil.nome)
+                        reservas = { ao.kupila.gestaonegocios.ui.negocios.ReservasHome(hiltViewModel(key = "home-reservas"), aoPagar = { abrir(Rotas.checkout(it)) }, aoProduto = { abrir(Rotas.detalhe(it)) }, aoRecibo = { abrir(Rotas.recibo(it)) }) }, nome = r.perfil.nome)
                     Aba.ANUNCIAR -> AnunciarEcra(hiltViewModel(key = "aba-anunciar"), aoVoltar = { aba = Aba.EXPLORAR }, aoLerPoliticas = { abrir(Rotas.POLITICAS) },
                         aoPagar = { aba = Aba.EXPLORAR; abrir(Rotas.checkout(it)) }, aoPublicado = { aba = Aba.EXPLORAR; abrir(Rotas.detalhe(it)) })
                     Aba.PROPRIETARIO -> ao.kupila.gestaonegocios.ui.painel.PainelEcra(hiltViewModel(key = "aba-painel"), aoAbrir = { abrir(Rotas.detalhe(it)) },
                         aoEditar = { abrir(Rotas.anunciar(editar = it)) }, aoPerfil = { abrir(Rotas.PERFIL) },
                         aoUtilizadores = { abrir(Rotas.UTILIZADORES) }, aoCatalogo = { abrir(Rotas.monitorDetalhe("PRODUCTS")) }, aoMonitor = { abrir(Rotas.MONITOR) },
-                        aoAdministradores = { abrir(Rotas.DIRECTORIO) }, aoAutorizacoes = { abrir(Rotas.MEUS) }, aoHistorico = { abrir(Rotas.HISTORICO) },
+                        aoAdministradores = { abrir(Rotas.DIRECTORIO) }, aoAutorizacoes = { abrir(Rotas.AUTORIZACOES) }, aoHistorico = { abrir(Rotas.HISTORICO) },
                         aoReservaProtegida = { abrir(Rotas.PROTECAO) }, aoConfianca = { abrir(Rotas.CONFIANCA) })
                 }
             }
@@ -218,6 +219,11 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                     aoActualizacao = { abrir(Rotas.ACTUALIZACAO) }) } }
                 composable(Rotas.PENDENTES) { Modal(fechar) { ao.kupila.gestaonegocios.ui.pendentes.PendentesEcra(hiltViewModel(), aoVoltar = fechar) } }
                 composable(Rotas.AJUSTES) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.AjustesEcra(hiltViewModel(), aoFechar = fechar, aoHistorico = { abrir(Rotas.MONETIZACAO) }) } }
+                composable(Rotas.RECIBO) { e -> Modal(fechar) {
+                    ao.kupila.gestaonegocios.ui.negocios.ReciboEcra(hiltViewModel(), e.arguments?.getString("id").orEmpty(), aoFechar = { nav.popBackStack(BASE, false); aba = Aba.EXPLORAR },
+                        aoReembolso = { abrir(Rotas.NEGOCIOS) })
+                } }
+                composable(Rotas.AUTORIZACOES) { Modal(fechar) { ao.kupila.gestaonegocios.ui.meus.AutorizacoesEcra(hiltViewModel(), aoFechar = fechar) } }
                 composable(Rotas.MONETIZACAO) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.MonetizacaoEcra(hiltViewModel(), aoFechar = fechar) } }
                 composable(Rotas.UTILIZADORES) { Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.UtilizadoresEcra(hiltViewModel(), aoFechar = fechar, aoFicha = { abrir(Rotas.ficha(it)) }) } }
                 composable(Rotas.FICHA) { e -> Modal(fechar) { ao.kupila.gestaonegocios.ui.admin.FichaUtilizadorEcra(hiltViewModel(), e.arguments?.getString("uid").orEmpty(), aoFechar = fechar, aoHistorico = { abrir(Rotas.HISTORICO) }) } }
@@ -241,7 +247,7 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                         when (n.accao) {
                             "OPEN_LISTING" -> n.entidadeId?.let { abrir(Rotas.detalhe(it)) }
                             "OPEN_PAYMENT" -> n.entidadeId?.let { abrir(Rotas.checkout(it)) }
-                            "OPEN_AUTHORIZATION" -> { nav.popBackStack(BASE, false); aba = Aba.PROPRIETARIO }
+                            "OPEN_AUTHORIZATION" -> abrir(Rotas.AUTORIZACOES)
                             else -> abrir(Rotas.NEGOCIOS)
                         }
                     })

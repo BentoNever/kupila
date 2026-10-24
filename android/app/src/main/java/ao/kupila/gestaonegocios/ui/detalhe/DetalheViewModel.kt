@@ -70,9 +70,9 @@ class DetalheViewModel @Inject constructor(
         val p = conta.recursos.value?.perfil ?: return@launch
         if (_aReservar.value) return@launch
         _aReservar.value = true; _erroActualizacao.value = null
-        runCatching { transaccoes.intencao("RESERVATION", p, a.id, a.donoId, r, ajustes.ajustes.value.entidadePagamento, a.titulo) }
+        runCatching { ao.kupila.gestaonegocios.ui.kp.Avisos.comCarregamento("A gerar a referência da reserva…") { transaccoes.intencao("RESERVATION", p, a.id, a.donoId, r, ajustes.ajustes.value.entidadePagamento, a.titulo) } }
             .onSuccess { aoPagar(it["id"] as String) }
-            .onFailure { _erroActualizacao.value = MensagensErro.de(it) }
+            .onFailure { MensagensErro.de(it).let { m -> _erroActualizacao.value = m; ao.kupila.gestaonegocios.ui.kp.Avisos.mostrar(m, "Não foi possível reservar", ao.kupila.gestaonegocios.ui.kp.TipoAvisoKp.ERRO) } }
         _aReservar.value = false
     }
 

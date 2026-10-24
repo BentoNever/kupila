@@ -295,6 +295,13 @@ private fun Identidade(id: IdentidadeVisual, vm: AjustesViewModel, aoLogo: () ->
                 FaIcone(Fa.BOLT, 7f, marca.c800); Spacer(Modifier.width(4.dp)); T("Tempo real", 7.5f, marca.c800, 700)
             }
         }
+        // Identidade deste telemóvel: Spotec (igual ao PDV Digital) ou a paleta da plataforma definida abaixo.
+        val spotec by vm.ajustes.spotec.collectAsStateWithLifecycle()
+        T("Identidade deste telemóvel", 9f, Kp.slate800, 700)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Amostra("Spotec", ao.kupila.gestaonegocios.ui.kp.Spotec.carvao.take(2) + ao.kupila.gestaonegocios.ui.kp.Spotec.laranja, spotec, Modifier.weight(1f)) { vm.ajustes.definirSpotec(true) }
+            Amostra("Da plataforma", listOf(Color(id.primaria).let { c -> Color(c.red * .55f, c.green * .55f, c.blue * .55f) }, Color(id.primaria), Color(id.destaque)), !spotec, Modifier.weight(1f)) { vm.ajustes.definirSpotec(false) }
+        }
         T("Paleta do app", 9f, Kp.slate800, 700)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TemaVisual.entries.filter { it != TemaVisual.PERSONALIZADO }.forEach { t ->

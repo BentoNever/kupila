@@ -74,7 +74,8 @@ data class Marca(val primaria: Color, val destaque: Color, val fundo: List<Color
     private fun m(b: Color, t: Float) = Color(primaria.red + (b.red - primaria.red) * t, primaria.green + (b.green - primaria.green) * t, primaria.blue + (b.blue - primaria.blue) * t)
     val c50 = m(Color.White, .94f); val c100 = m(Color.White, .86f); val c200 = m(Color.White, .70f); val c300 = m(Color.White, .53f)
     val c400 = m(Color.White, .30f); val c500 = m(Color.White, .08f); val c600 = primaria; val c700 = m(Color.Black, .14f)
-    val c800 = m(Color.Black, .27f); val c900 = m(Color.Black, .40f); val c950 = m(Color.Black, .58f)
+    // Com fundo próprio (identidade Spotec) os tons mais escuros são o carvão da marca, não o laranja escurecido.
+    val c800 = fundo?.getOrNull(2) ?: m(Color.Black, .27f); val c900 = fundo?.getOrNull(1) ?: m(Color.Black, .40f); val c950 = fundo?.getOrNull(0) ?: m(Color.Black, .58f)
 }
 
 val LocalMarca = staticCompositionLocalOf { Marca(Color(0xFF16A34A), Color(0xFFFACC15)) }

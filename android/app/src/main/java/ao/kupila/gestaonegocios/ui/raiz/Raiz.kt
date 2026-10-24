@@ -51,6 +51,8 @@ fun Raiz(vm: RaizViewModel = hiltViewModel()) {
             val activa = estado as? EstadoSessao.Activa
             if (activa != null && bloqueio != null) ao.kupila.gestaonegocios.ui.entrada.EcraRestauro(activa.perfil.nome, bloqueio!!, vm::desbloquear,
                 porBiometria = vm::desbloquearPorBiometria, trocarConta = { vm.trocarConta() })
+            // "Aviso Kupila" e "A carregar…" globais (substituem alertas nativos).
+            ao.kupila.gestaonegocios.ui.kp.AvisosGlobais()
         }
     }
 }
