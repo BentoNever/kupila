@@ -121,12 +121,28 @@ class EventosConta(private val base: BaseDadosConta, private val perfil: Perfil)
     suspend fun actualizar(conjuntos: Collection<Conjunto>, automatica: Boolean = false): Result<Unit> = mutex.withLock {
         runCatching {
             Economia.exigirLeitura(automatica)
+            // Quota: uma actualização automática ignora o que foi lido há pouco (vários ecrãs abertos seguidos = 1 leitura).
+            // O gesto "deslizar para actualizar" e os botões explícitos (automatica = false) lêem sempre.
+            val agora = System.currentTimeMillis()
+            val alvo = conjuntos.distinct().filter { c -> !automatica || agora - (lidoEm[c] ?: 0L) >= intervaloMinimo(c) }
+            if (alvo.isEmpty()) return@runCatching
             _aSincronizar.value = true; _erro.value = null
-            conjuntos.distinct().map { c -> ambito.async { runCatching { lerConjunto(c) }.exceptionOrNull() } }.awaitAll()
+            alvo.forEach { lidoEm[it] = agora }
+            alvo.map { c -> ambito.async { runCatching { lerConjunto(c) }.exceptionOrNull() } }.awaitAll()
                 .filterNotNull().firstOrNull { it !is EmPoupanca }?.let { _erro.value = MensagensErro.de(it) }
             _actualizadoEm.value = System.currentTimeMillis()
             base.meta().gravar(MetaLocal("eventos", "ok", System.currentTimeMillis()))
         }.also { _aSincronizar.value = false }.onFailure { if (it !is EmPoupanca) _erro.value = MensagensErro.de(it) }
+    }
+
+    /** Última leitura de cada conjunto nesta sessão (memória — custo zero). */
+    private val lidoEm = java.util.concurrent.ConcurrentHashMap<Conjunto, Long>()
+
+    /** Intervalo mínimo entre leituras AUTOMÁTICAS: dados que mudam pouco esperam mais. */
+    private fun intervaloMinimo(c: Conjunto): Long = when (c) {
+        Conjunto.CONFIANCA, Conjunto.TESTEMUNHOS_PUBLICOS -> 6 * 3_600_000L
+        Conjunto.UTILIZADORES, Conjunto.AUDITORIA, Conjunto.PRESENCA, Conjunto.MEUS_TESTEMUNHOS -> 5 * 60_000L
+        else -> 90_000L
     }
 
     private suspend fun lerConjunto(c: Conjunto) {

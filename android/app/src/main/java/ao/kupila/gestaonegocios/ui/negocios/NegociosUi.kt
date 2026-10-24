@@ -403,8 +403,7 @@ fun ReservasHome(vm: NegociosViewModel, aoPagar: (String) -> Unit, aoProduto: (S
         pag.forEach { i -> CartaoAoVivo(i.s("listingTitle"), i.id, rotuloIntencao(i.s("status")), ao.kupila.gestaonegocios.ui.kp.Kp.amber100, ao.kupila.gestaonegocios.ui.kp.Kp.amber800,
             ao.kupila.gestaonegocios.ui.kp.Kp.amber200, "${if (i.s("type") == "RESERVATION") "Sinal" else "Publicação"} por pagar", aoa(i.n("amount")), "Pagar", ao.kupila.gestaonegocios.ui.comum.Fa.WALLET) { aoPagar(i.id) } }
         // `renderMyReservations` (HTML 14927): estado, contagem decrescente em tempo real e "Abrir" → recibo com o OTP.
-        var agora by remember { mutableStateOf(System.currentTimeMillis()) }
-        androidx.compose.runtime.LaunchedEffect(Unit) { while (true) { kotlinx.coroutines.delay(1000); agora = System.currentTimeMillis() } }
+        val agora = ao.kupila.gestaonegocios.ui.comum.rememberAgora()
         rs.filter { it.r.s("status") in setOf("ACTIVE", "EXPIRED", "REFUND_PENDING", "REFUNDED") }.forEach { rc ->
             val r = rc.r
             val rf = rfs.firstOrNull { it.s("reservationId") == r.id }

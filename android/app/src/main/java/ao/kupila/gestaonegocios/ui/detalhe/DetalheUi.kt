@@ -169,11 +169,15 @@ fun DetalheEcra(vm: DetalheViewModel, aoVoltar: () -> Unit, aoReservar: ((String
         // CTA fixo
         val ac = accoes
         if (ac != null) Column(Modifier.fillMaxWidth().background(Color.White.copy(.95f)).padding(top = 1.dp).padding(14.dp)) {
+            // Como a origem (`details-primary-action`, HTML 14184): disponível → "Gerar referência do sinal" para qualquer perfil;
+            // editar faz-se na secção de gestão do produto. O próprio dono recebe a explicação em vez de um botão escondido.
             when {
-                ac.podeEditar && aoEditar != null -> KpBotao("Editar anúncio", { aoEditar(vm.id) }, icone = Fa.PEN, altura = 38.dp, raio = 12.dp, tamanho = 10f)
-                ac.podeReservar && aoReservar != null -> KpBotao("Gerar referência do sinal", { vm.reservar(aoReservar) }, icone = Fa.BARCODE, ocupado = ocupado,
-                    altura = 38.dp, raio = 12.dp, tamanho = 10f)
-                else -> KpBotao(ac.motivoSemReserva ?: "Indisponível", {}, activo = false, altura = 38.dp, raio = 12.dp, tamanho = 10f)
+                ac.reservado -> KpBotao("Produto reservado", {}, icone = Fa.LOCK, activo = false, fundo = Kp.amber100, cor = Kp.amber800, borda = Kp.amber200, altura = 44.dp, raio = 16.dp, tamanho = 11f)
+                ac.podeReservar && aoReservar != null -> KpBotao("Gerar referência do sinal", {
+                    if (ac.proprio) ao.kupila.gestaonegocios.ui.kp.Avisos.mostrar("Este produto é seu: não é possível reservar o próprio anúncio. Para alterar dados, use “Editar” na gestão do produto, acima.", "Produto próprio")
+                    else vm.reservar(aoReservar)
+                }, icone = Fa.BARCODE, ocupado = ocupado, altura = 44.dp, raio = 16.dp, tamanho = 11f)
+                else -> KpBotao(ac.motivoSemReserva ?: "Indisponível", {}, activo = false, altura = 44.dp, raio = 16.dp, tamanho = 11f)
             }
             Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 T("Gerar referência não reserva o produto. A reserva nasce somente após comprovativo + pagamento serem validados.", 7f, Kp.slate600, centro = true)

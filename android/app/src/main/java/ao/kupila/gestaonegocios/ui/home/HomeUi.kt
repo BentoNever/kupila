@@ -278,9 +278,9 @@ fun CartaoVitrine(c: CartaoAnuncio, numero: Int, modifier: Modifier, aoAbrir: ()
             Box(Modifier.padding(5.dp).size(18.dp).sup(7.dp, fundo = fundoSelo, sombra = Kp.slate900.copy(.18f), desfoque = 8.dp), contentAlignment = Alignment.Center) {
                 icone?.let { FaIcone(it, 7f, corIcone) }
             }
-            T(numero.toString().padStart(2, '0'), 6.5f, Color.White, 900, Modifier.padding(start = 28.dp, top = 5.dp).height(18.dp)
-                .sup(7.dp, fundo = Kp.slate900.copy(alpha = .78f), borda = Color.White.copy(alpha = .58f), sombra = Kp.slate900.copy(.18f), desfoque = 9.dp).padding(horizontal = 5.dp, vertical = 5.5.dp),
-                espacamento = .26f, linha = 6.5f)
+            T(numero.toString().padStart(2, '0'), 6.5f, Color.White, 900, Modifier.padding(start = 28.dp, top = 5.dp)
+                .sup(7.dp, fundo = Kp.slate900.copy(alpha = .78f), borda = Color.White.copy(alpha = .58f), sombra = Kp.slate900.copy(.18f), desfoque = 9.dp).padding(horizontal = 6.dp, vertical = 2.dp),
+                espacamento = .26f)
             Box(Modifier.align(Alignment.TopEnd).padding(5.dp).size(7.dp)
                 .sup(7.dp, fundo = if (reservado) Kp.amber400 else Color(0xFF29AA58), borda = Color.White.copy(alpha = .9f), forma = CircleShape, sombra = Kp.slate900.copy(.22f), desfoque = 6.dp))
             Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(46.dp).background(Brush.verticalGradient(listOf(Color.Transparent, Kp.slate900.copy(alpha = .62f)))))

@@ -60,12 +60,9 @@ fun CabecalhoApp(papel: Papel, logo: String?, a: AccoesCabecalho) {
         if (marca.spotec) ao.kupila.gestaonegocios.ui.kp.TracoSpotec(Modifier.matchParentSize().padding(start = 120.dp, top = 6.dp, bottom = 4.dp), alfa = 0.12f, espessura = 2f)
     Column(Modifier.fillMaxWidth().statusBarsPadding()) {
         Row(Modifier.fillMaxWidth().height(56.dp).padding(12.dp, 10.dp, 12.dp, 7.dp), verticalAlignment = Alignment.CenterVertically) {
-            LogoMarca(29f, 9f, 15.2f, logo, Modifier.toque(aoTocar = a.inicio))
-            Spacer(Modifier.width(3.dp))
+            LogoMarca(32f, 10f, 16f, logo, Modifier.toque(aoTocar = a.inicio))
+            Spacer(Modifier.width(12.dp))
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Botao(Fa.EXPAND, a.ecraCheio)
-                Botao(Fa.ARROW_LEFT, a.voltar, activo = a.podeVoltar)
-                Botao(Fa.ARROW_RIGHT, a.avancar, activo = a.podeAvancar)
                 Botao(Fa.ARROWS_ROTATE, a.sincronizar, insignia = a.porSincronizar.takeIf { it > 0 }?.toString(), corInsignia = Kp.amber400)
                 if (dono) Botao(Fa.FOLDER_CLOSED, a.meusAnuncios, cor = marca.c50, ponto = a.avisoMeusAnuncios)
                 if (admin) Botao(Fa.LIST_CHECK, a.pendentes, insignia = a.nPendentes.takeIf { it > 0 }?.let { if (it > 99) "99+" else it.toString() }, corInsignia = Kp.yellow400, textoInsignia = Kp.slate900)
@@ -122,26 +119,29 @@ fun BarraLocalizacao(nome: String, provincias: List<String>, provincia: String?,
     }
 }
 
-/** NAV inferior (`#app-bottom-nav`, HTML 8160-8177): Home · Anunciar (botão central) · Proprietário. O Cliente vê só a Home. */
+/**
+ * NAV inferior (`#app-bottom-nav`, HTML 8160-8177): Home · Anunciar (botão central) · Proprietário; o Cliente vê só a Home.
+ * Desenho elegante: cantos superiores arredondados, item activo numa pastilha da cor de acção e "+" central elevado.
+ */
 @Composable
 fun BarraInferior(aba: Aba, papel: Papel, aoInicio: () -> Unit, aoAnunciar: () -> Unit, aoProprietario: () -> Unit) {
     val marca = LocalMarca.current
     val dono = papel != Papel.CLIENTE
-    Box(Modifier.fillMaxWidth().shadow(11.dp, ambientColor = marca.c950.copy(.18f), spotColor = marca.c950.copy(.18f))
-        .background(if (marca.spotec) gradiente(135f, marca.escuro[0], marca.escuro[1]) else gradiente(135f, marca.c900, marca.c800)).navigationBarsPadding()) {
-        Row(Modifier.fillMaxWidth().height(64.dp).padding(12.dp, 8.dp, 12.dp, 12.dp), verticalAlignment = Alignment.Top,
+    val fundo = if (marca.spotec) gradiente(90f, marca.escuro[0], marca.escuro[1]) else gradiente(135f, marca.c900, marca.c800)
+    Box(Modifier.fillMaxWidth().shadow(16.dp, androidx.compose.foundation.shape.RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp), ambientColor = Color.Black.copy(.25f), spotColor = Color.Black.copy(.25f))
+        .background(fundo, androidx.compose.foundation.shape.RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)).navigationBarsPadding()) {
+        Row(Modifier.fillMaxWidth().height(66.dp).padding(horizontal = 18.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = if (dono) Arrangement.SpaceBetween else Arrangement.Center) {
-            ItemNav(Fa.HOUSE, "Home", aba == Aba.EXPLORAR, aoInicio, Modifier.weight(1f, fill = dono))
+            ItemNav(Fa.HOUSE, "Início", aba == Aba.EXPLORAR, aoInicio, Modifier.weight(1f, fill = dono))
             if (dono) {
-                // `-mt-5`: o círculo sobe 20 px acima da barra; no fluxo ocupa só 20 px, e o rótulo fica abaixo como na origem.
                 Column(Modifier.weight(1f).toque(aoTocar = aoAnunciar), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(Modifier.height(20.dp), contentAlignment = Alignment.BottomCenter) {
-                        Box(Modifier.wrapContentHeight(Alignment.Bottom, unbounded = true).requiredSize(40.dp).sup(40.dp, fundo = marca.c600, borda = if (aba == Aba.ANUNCIAR) acentoEscuro.copy(.75f) else if (marca.spotec) marca.escuro[0] else marca.c900, bordaLargura = 4.dp,
-                            forma = CircleShape, sombra = Color.Black.copy(.1f), desfoque = 6.dp), contentAlignment = Alignment.Center) { FaIcone(Fa.PLUS, 16f, marca.sobrePrimaria) }
+                    Box(Modifier.size(50.dp).offset(y = (-14).dp).sup(50.dp, pincel = gradiente(135f, marca.primaria, marca.c700), borda = if (marca.spotec) marca.escuro[0] else marca.c900,
+                        bordaLargura = 4.dp, forma = CircleShape, sombra = marca.primaria.copy(.35f), desfoque = 14.dp), contentAlignment = Alignment.Center) {
+                        FaIcone(Fa.PLUS, 16f, marca.sobrePrimaria)
                     }
-                    T("Anunciar", 10f, if (aba == Aba.ANUNCIAR) acentoEscuro else suaveEscuro, 500, Modifier.padding(top = 7.dp), linha = 15f)
+                    T("Anunciar", 9f, if (aba == Aba.ANUNCIAR) acentoEscuro else suaveEscuro, if (aba == Aba.ANUNCIAR) 800 else 600, Modifier.offset(y = (-10).dp), max = 1)
                 }
-                ItemNav(Fa.USER_GEAR, "Proprietário", aba == Aba.PROPRIETARIO, aoProprietario, Modifier.weight(1f))
+                ItemNav(Fa.USER_GEAR, if (papel == Papel.ADMINISTRADOR) "Painel" else "Proprietário", aba == Aba.PROPRIETARIO, aoProprietario, Modifier.weight(1f))
             }
         }
     }
@@ -149,9 +149,12 @@ fun BarraInferior(aba: Aba, papel: Papel, aoInicio: () -> Unit, aoAnunciar: () -
 
 @Composable
 private fun ItemNav(glifo: String, rotulo: String, activo: Boolean, aoTocar: () -> Unit, modifier: Modifier) {
+    val marca = LocalMarca.current
     val cor = if (activo) acentoEscuro else suaveEscuro
-    Column(modifier.height(42.dp).toque(aoTocar = aoTocar).padding(horizontal = 4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        FaIcone(glifo, 18f, cor)
-        T(rotulo, 10f, cor, 500, Modifier.padding(top = 2.dp), linha = 15f)
+    Column(modifier.toque(aoTocar = aoTocar), horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(Modifier.size(width = 56.dp, height = 30.dp).sup(15.dp, fundo = if (activo) marca.primaria.copy(alpha = .16f) else null), contentAlignment = Alignment.Center) {
+            FaIcone(glifo, 14f, cor)
+        }
+        T(rotulo, 9f, cor, if (activo) 800 else 600, Modifier.padding(top = 3.dp), max = 1)
     }
 }

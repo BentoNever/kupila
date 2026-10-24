@@ -97,10 +97,11 @@ class AdminViewModel @Inject constructor(
     private val admin get() = conta.recursos.value!!.perfil
     val meuUid get() = conta.recursos.value?.perfil?.uid
 
-    init { actualizar() }
+    // Abrir um modal = leitura automática (respeita os intervalos mínimos); o botão ↻ força a leitura.
+    init { actualizar(automatica = true) }
     /** Utilizadores por delta (`updatedAt`): só o que mudou desde a última abertura. */
-    fun actualizar() = viewModelScope.launch {
-        conta.recursos.value?.eventos?.actualizar(listOf(Conjunto.UTILIZADORES, Conjunto.PRESENCA, Conjunto.TESTEMUNHOS_PENDENTES, Conjunto.AUDITORIA, Conjunto.RESERVAS_TODAS, Conjunto.INTENCOES_TODAS))
+    fun actualizar(automatica: Boolean = false) = viewModelScope.launch {
+        conta.recursos.value?.eventos?.actualizar(listOf(Conjunto.UTILIZADORES, Conjunto.PRESENCA, Conjunto.TESTEMUNHOS_PENDENTES, Conjunto.AUDITORIA, Conjunto.RESERVAS_TODAS, Conjunto.INTENCOES_TODAS), automatica)
         actualizadoEm.value = System.currentTimeMillis()
     }
 

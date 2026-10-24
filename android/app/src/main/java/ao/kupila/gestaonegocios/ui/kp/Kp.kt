@@ -92,7 +92,7 @@ object Spotec {
  * Tamanhos do PDV Digital (tipografia Material 3 com a fonte do telemóvel): os px do HTML (8–12) passam para a escala
  * legível do PDV (rótulos ~12 sp, texto ~14 sp, títulos ≥ 18 sp). Um só ponto: todos os ecrãs acompanham.
  */
-fun pdvSp(px: Float): Float = if (px < 16f) px * 0.75f + 5.5f else px + 1.5f
+fun pdvSp(px: Float): Float = if (px < 16f) px * 0.68f + 5f else px
 
 /** Texto com as medidas exactas da origem (px → sp). */
 @Composable

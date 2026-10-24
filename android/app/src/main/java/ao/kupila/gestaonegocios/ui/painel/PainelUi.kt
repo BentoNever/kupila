@@ -151,6 +151,15 @@ class PainelViewModel @Inject constructor(
         val r = reservas.value.firstOrNull { it.s("listingId") == a.id && it.s("status") == "ACTIVE" } ?: error("Reserva activa não encontrada para este produto.")
         transaccoes.cancelarReserva(r.id, "Cancelada pelo Administrador no painel.", perfil!!); "Reserva cancelada; produto disponível de novo."
     }
+    /** Gesto "deslizar para actualizar": leitura explícita (ignora os intervalos automáticos). */
+    val aActualizar = MutableStateFlow(false)
+    fun actualizar() = viewModelScope.launch {
+        val r = conta.recursos.value ?: return@launch
+        aActualizar.value = true
+        r.eventos.actualizar(listOf(Conjunto.AUTORIZACOES, if (admin) Conjunto.RESERVAS_TODAS else Conjunto.RESERVAS_DONO))
+        if (admin) r.catalogo.sincronizar(automatica = false) else r.catalogo.sincronizarMeus()
+        aActualizar.value = false
+    }
     /** Conclui uma autorização recebida (o código chega na app do Proprietário — D-08). */
     fun concluir(p: Registo) = accao("usar:${p.id}") { autorizacoes.usar(p.id, p.s("code"), perfil!!); "Autorização aplicada." }
 }
@@ -170,183 +179,126 @@ fun PainelEcra(vm: PainelViewModel, aoAbrir: (String) -> Unit, aoEditar: (String
     val p = vm.perfil ?: return
     val admin = vm.admin
     val marca = LocalMarca.current
-    Box(Modifier.fillMaxSize().background(Kp.slate50)) {
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp, 18.dp, 12.dp, 92.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Column {
-                T(if (admin) "Painel do Administrador" else "Painel do Proprietário", 18f, Kp.slate800, 900, linha = 22f)
-                T(if (admin) "Gestão organizada da plataforma: utilizadores, segurança, financeiro, catálogo e operação." else "Gestão exclusiva dos seus bens, reservas activas e dados de perfil.",
-                    11f, Kp.slate500, Modifier.padding(top = 4.dp), linha = 16f)
-                Box(Modifier.padding(top = 12.dp).fillMaxWidth().height(1.dp).background(Kp.slate900))
-            }
-            // Autorizações recebidas: concluir com um toque
-            pedidos.filter { it.s("status") == "CODE_SENT" && !admin }.forEach { pd ->
-                Row(Modifier.fillMaxWidth().sup(16.dp, fundo = Kp.amber50, borda = Kp.amber200).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    FaIcone(Fa.KEY, 11f, Kp.amber800); Spacer(Modifier.width(8.dp))
-                    T("Autorização recebida: ${AccaoAutorizada.de(pd.s("action"))?.verbo} “${pd.s("listingTitle")}”", 10f, Kp.amber900, 700, Modifier.weight(1f))
-                    Botao("Concluir", Kp.amber400, Kp.slate900, null, ocupado == "usar:${pd.id}") { vm.concluir(pd) }
+    var todos by rememberSaveable { mutableStateOf(false) }
+    val l = lista.orEmpty()
+    val agora = System.currentTimeMillis()
+    val activas = reservas.filter { it.s("status") == "ACTIVE" }
+    val porDecidir = pedidos.count { if (admin) it.s("status") == "PENDING_ADMIN" else it.s("status") == "CODE_SENT" }
+    val custodia = activas.sumOf { it.n("ownerNetAmount") }
+    // "Requer atenção": gerado sozinho a partir do que já está no telemóvel (zero leituras extra).
+    val alertas = buildList {
+        pedidos.filter { !admin && it.s("status") == "CODE_SENT" }.forEach { pd ->
+            add(Alerta(Fa.KEY, "Autorização recebida", "${AccaoAutorizada.de(pd.s("action"))?.verbo} “${pd.s("listingTitle")}”", "Concluir", Kp.amber700, ocupado == "usar:${pd.id}") { vm.concluir(pd) })
+        }
+        if (admin && porDecidir > 0) add(Alerta(Fa.KEY, "$porDecidir pedido(s) de autorização", "Proprietários aguardam a sua decisão.", "Decidir", Kp.amber700, false, aoAutorizacoes))
+        activas.filter { ((it.ms("expiresAt") ?: Long.MAX_VALUE) - agora) in 1..6 * 3_600_000L }.forEach { r ->
+            val h = ((r.ms("expiresAt") ?: agora) - agora) / 3_600_000
+            add(Alerta(Fa.CLOCK, "Reserva a expirar", "${r.s("listingTitle")} · ${if (h < 1) "menos de 1 h" else "$h h"} restantes", "Ver", Kp.red600, false) { aoAbrir(r.s("listingId")) })
+        }
+    }
+    val sinc by vm.aActualizar.collectAsStateWithLifecycle()
+    androidx.compose.material3.pulltorefresh.PullToRefreshBox(sinc, vm::actualizar, Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp, 12.dp, 12.dp, 96.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            // Cabeçalho da marca com os números que importam.
+            Box(Modifier.fillMaxWidth().sup(22.dp, pincel = ao.kupila.gestaonegocios.ui.kp.GradienteMarca, sombra = Kp.slate900.copy(.18f), desfoque = 18.dp)) {
+                ao.kupila.gestaonegocios.ui.kp.TracoSpotec(Modifier.matchParentSize().padding(start = 150.dp, top = 8.dp, bottom = 6.dp), alfa = 0.22f, espessura = 3f)
+                Column(Modifier.fillMaxWidth().padding(16.dp, 14.dp)) {
+                    T(if (admin) "Painel do Administrador" else "Painel do Proprietário", 8f, Color.White.copy(.65f), 800, espacamento = 1.2f, maiusculas = true)
+                    T("${ao.kupila.gestaonegocios.ui.entrada.saudacao()}, ${p.nome.trim().substringBefore(" ")}", 14f, Color.White, 800, Modifier.padding(top = 2.dp), max = 1)
+                    Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Indicador(l.count { it.estado == EstadoAnuncio.ACTIVO }.toString(), "Activos", Modifier.weight(1f))
+                        Indicador(l.count { it.estado == EstadoAnuncio.RESERVADO }.toString(), "Reservados", Modifier.weight(1f))
+                        Indicador(porDecidir.toString(), "Por decidir", Modifier.weight(1f), destaque = porDecidir > 0)
+                    }
+                    Row(Modifier.padding(top = 8.dp).fillMaxWidth().sup(14.dp, fundo = Color.White.copy(.08f)).padding(12.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        FaIcone(Fa.VAULT, 9f, marca.primaria); Spacer(Modifier.width(8.dp))
+                        T("Em custódia", 9f, Color.White.copy(.75f), Modifier.weight(1f))
+                        T(FormatoAoa.formatar(Dinheiro.de(java.math.BigDecimal.valueOf(custodia))), 11f, Color.White, 800)
+                    }
                 }
             }
-            if (admin) CentroAdministrativo(aoUtilizadores, aoCatalogo, aoMonitor, aoAdministradores, aoAutorizacoes, aoHistorico)
-            else Row(Modifier.fillMaxWidth().sup(16.dp, fundo = Color.White, borda = Kp.slate200, sombra = Kp.slate900.copy(.08f), desfoque = 10.dp).padding(14.dp),
-                verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) { FaIcone(Fa.ID_CARD, 12f, marca.c600); Spacer(Modifier.width(8.dp)); T("Cadastro do Proprietário", 11f, Kp.slate800, 700) }
-                    T(listOf(p.nome, listOf(p.residencia.municipio, p.residencia.provincia).filter { it.isNotBlank() }.joinToString(", "),
-                        p.telefonePrincipal.takeIf { it.isNotBlank() }?.let { "+244 $it" }).filter { !it.isNullOrBlank() }.joinToString(" • "), 10f, Kp.slate500, Modifier.padding(top = 4.dp))
-                }
-                Botao("Gerir", marca.c50, marca.c700, marca.c100, false, aoTocar = aoPerfil)
+            if (alertas.isNotEmpty()) Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Titulo("Requer atenção", alertas.size.toString())
+                alertas.forEach { CartaoAlerta(it) }
             }
-            if (admin) Seccao(Fa.LAYER_GROUP, "Catálogo", "Produtos Cadastrados", "Consulta rápida e acesso aos anúncios publicados na plataforma.")
-            CarrosselPainel(lista.orEmpty(), admin, aoAbrir, aoReservaProtegida, aoConfianca)
-            if (admin) Seccao(Fa.RECTANGLE_LIST, "Gestão", "Lista de Anúncios", "Gestão detalhada dos produtos disponíveis no painel.")
-            Column(Modifier.fillMaxWidth().then(if (admin) Modifier.sup(20.dp, fundo = Color.White, borda = Kp.slate200).padding(12.dp) else Modifier),
-                verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                T("Os Seus Pertences Cadastrados", 11f, Kp.slate800, 700)
-                val l = lista
-                if (l != null && l.isEmpty()) T("Ainda não tem produtos cadastrados. Toque em Anunciar.", 10f, Kp.slate400)
-                l.orEmpty().forEach { a ->
-                    val pendente = pedidos.any { it.s("listingId") == a.id && it.s("status") in setOf("PENDING_ADMIN", "CODE_SENT") }
-                    ItemPertence(a, reservas.firstOrNull { it.s("listingId") == a.id && it.s("status") == "ACTIVE" }, admin, pendente, ocupado, vm, aoAbrir, aoEditar)
+            Titulo("Acções rápidas")
+            val accoes = if (admin) listOf(
+                Atalho(Fa.USERS, "Utilizadores", null, aoUtilizadores), Atalho(Fa.CHART_LINE, "Monitor", null, aoMonitor), Atalho(Fa.KEY, "Autorizações", porDecidir, aoAutorizacoes),
+                Atalho(Fa.LAYER_GROUP, "Catálogo", null, aoCatalogo), Atalho(Fa.CLOCK_ROTATE_LEFT, "Histórico", null, aoHistorico), Atalho(Fa.USER_SHIELD, "Equipa", null, aoAdministradores))
+            else listOf(Atalho(Fa.ID_CARD, "Meu cadastro", null, aoPerfil), Atalho(Fa.KEY, "Autorizações", porDecidir, aoAutorizacoes), Atalho(Fa.SHIELD_HEART, "Credibilidade", null, aoConfianca))
+            accoes.chunked(3).forEach { linha ->
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    linha.forEach { BotaoAtalho(it, Modifier.weight(1f)) }
+                    repeat(3 - linha.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
-            if (admin) Seccao(Fa.QRCODE, "Operação", "Vistorias & Confirmação", "Validação presencial e acompanhamento operacional dos anúncios.")
             ValidarOtp(ocupado == "otp", vm::validarOtp)
-            if (admin) Seccao(Fa.WALLET, "Financeiro", "Reservas & Liquidação", "Resumo dos sinais confirmados e valores convertidos/recebidos.")
+            Titulo(if (admin) "Anúncios da plataforma" else "Os seus pertences", l.size.toString())
+            if (lista != null && l.isEmpty()) T("Ainda não tem produtos cadastrados. Toque em Anunciar.", 10f, Kp.slate400)
+            (if (todos) l else l.take(3)).forEach { a ->
+                val pendente = pedidos.any { it.s("listingId") == a.id && it.s("status") in setOf("PENDING_ADMIN", "CODE_SENT") }
+                ItemPertence(a, reservas.firstOrNull { it.s("listingId") == a.id && it.s("status") == "ACTIVE" }, admin, pendente, ocupado, vm, aoAbrir, aoEditar)
+            }
+            if (l.size > 3) KpBotaoSecPainel(if (todos) "Mostrar menos" else "Ver todos (${l.size})") { todos = !todos }
             Escrow(reservas)
         }
         SnackbarHost(snack, Modifier.align(Alignment.BottomCenter).padding(bottom = 70.dp))
     }
 }
 
+private class Alerta(val icone: String, val titulo: String, val texto: String, val accao: String, val cor: Color, val ocupado: Boolean, val aoTocar: () -> Unit)
+private class Atalho(val icone: String, val rotulo: String, val contador: Int?, val aoTocar: () -> Unit)
+
+@Composable
+private fun Indicador(valor: String, rotulo: String, modifier: Modifier, destaque: Boolean = false) {
+    val marca = LocalMarca.current
+    Column(modifier.sup(14.dp, fundo = Color.White.copy(.08f), borda = if (destaque) marca.primaria.copy(.6f) else Color.White.copy(.10f)).padding(10.dp, 8.dp)) {
+        T(valor, 14f, if (destaque) marca.primaria else Color.White, 900, max = 1)
+        T(rotulo, 7.5f, Color.White.copy(.7f), max = 1)
+    }
+}
+
+@Composable
+private fun Titulo(texto: String, contador: String? = null) = Row(verticalAlignment = Alignment.CenterVertically) {
+    T(texto, 11f, Kp.slate900, 800, Modifier.weight(1f))
+    contador?.let { T(it, 8f, LocalMarca.current.c700, 800, Modifier.sup(999.dp, fundo = LocalMarca.current.c50).padding(horizontal = 8.dp, vertical = 2.dp)) }
+}
+
+@Composable
+private fun CartaoAlerta(a: Alerta) {
+    Row(Modifier.fillMaxWidth().sup(16.dp, fundo = Color.White, borda = a.cor.copy(.25f)).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.size(34.dp).sup(12.dp, fundo = a.cor.copy(.10f)), contentAlignment = Alignment.Center) { FaIcone(a.icone, 10f, a.cor) }
+        Spacer(Modifier.width(10.dp))
+        Column(Modifier.weight(1f)) { T(a.titulo, 10f, Kp.slate900, 800, max = 1); T(a.texto, 8.5f, Kp.slate500, max = 2) }
+        Spacer(Modifier.width(8.dp))
+        T(if (a.ocupado) "…" else a.accao, 9f, Color.White, 800, Modifier.sup(10.dp, fundo = a.cor).toque(!a.ocupado, a.aoTocar).padding(horizontal = 12.dp, vertical = 7.dp))
+    }
+}
+
+@Composable
+private fun BotaoAtalho(a: Atalho, modifier: Modifier) {
+    val marca = LocalMarca.current
+    Box(modifier) {
+        Column(Modifier.fillMaxWidth().sup(16.dp, fundo = Color.White, borda = Kp.slate200, sombra = Kp.slate900.copy(.04f), desfoque = 6.dp).toque(aoTocar = a.aoTocar).padding(vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(Modifier.size(36.dp).sup(12.dp, fundo = marca.primaria.copy(.10f)), contentAlignment = Alignment.Center) { FaIcone(a.icone, 11f, marca.c700) }
+            T(a.rotulo, 8.5f, Kp.slate800, 700, Modifier.padding(top = 6.dp), max = 1, centro = true)
+        }
+        a.contador?.takeIf { it > 0 }?.let { T(it.toString(), 7f, Color.White, 900, Modifier.align(Alignment.TopEnd).padding(6.dp).sup(999.dp, fundo = Kp.red500).padding(horizontal = 6.dp, vertical = 1.dp)) }
+    }
+}
+
 @Composable
 private fun Botao(texto: String, fundo: Color, cor: Color, borda: Color?, ocupado: Boolean, icone: String? = null, regular: Boolean = false, aoTocar: () -> Unit) {
     Row(Modifier.sup(10.dp, fundo = fundo, borda = borda).toque(!ocupado, aoTocar).padding(horizontal = 10.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically) {
-        icone?.let { FaIcone(it, 11f, cor, regular = regular); Spacer(Modifier.width(6.dp)) }
-        T(if (ocupado) "A processar…" else texto, 11f, cor, 700)
-    }
-}
-
-/** Cabeçalho de secção do painel administrativo (ícone + kicker + título). */
-@Composable
-private fun Seccao(icone: String, kicker: String, titulo: String, sub: String) {
-    val marca = LocalMarca.current
-    Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        Box(Modifier.size(30.dp).sup(10.dp, fundo = Kp.slate50, borda = Kp.slate200), contentAlignment = Alignment.Center) { FaIcone(icone, 10f, marca.c700) }
-        Column {
-            T(kicker, 7f, marca.c600, 900, espacamento = 1.4f, maiusculas = true)
-            T(titulo, 11f, Kp.slate900, 900, Modifier.padding(top = 4.dp))
-            T(sub, 7.5f, Kp.slate500)
-        }
-    }
-}
-
-/** "CENTRO ADMINISTRATIVO · Gestão da Plataforma" + "Ferramentas administrativas". */
-@Composable
-private fun CentroAdministrativo(aoUtilizadores: () -> Unit, aoCatalogo: () -> Unit, aoMonitor: () -> Unit, aoAdministradores: () -> Unit, aoAutorizacoes: () -> Unit, aoHistorico: () -> Unit) {
-    val marca = LocalMarca.current
-    Column(Modifier.fillMaxWidth().sup(20.dp, pincel = gradiente(135f, marca.c900, marca.c800), borda = marca.c700, sombra = marca.c950.copy(.25f), desfoque = 20.dp).padding(13.dp)) {
-        Row(verticalAlignment = Alignment.Top) {
-            Column(Modifier.weight(1f)) {
-                T("Centro administrativo", 7f, Color.White.copy(.85f), 900, espacamento = 1.4f, maiusculas = true)
-                T("Gestão da Plataforma", 13f, Color.White, 900, Modifier.padding(top = 6.dp))
-                T("Acessos rápidos para utilizadores, catálogo e monitoramento. As demais ferramentas estão organizadas abaixo por finalidade.", 7.5f, marca.c100, Modifier.padding(top = 6.dp), linha = 13f)
-            }
-            Box(Modifier.size(36.dp).sup(12.dp, fundo = Color.White.copy(.12f), borda = Color.White.copy(.18f)), contentAlignment = Alignment.Center) { FaIcone(Fa.SHIELD_HALVED, 14f, Kp.yellow400) }
-        }
-        Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            listOf(Triple(Fa.USERS, "Utilizadores", aoUtilizadores), Triple(Fa.HOUSE, "Catálogo", aoCatalogo), Triple(Fa.CHART_LINE, "Monitoramento", aoMonitor)).forEach { (ic, r, f) ->
-                Row(Modifier.weight(1f).height(25.dp).sup(10.dp, fundo = Color.White.copy(.10f), borda = Color.White.copy(.14f)).toque(aoTocar = f).padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically) { FaIcone(ic, 8f, Kp.yellow400); Spacer(Modifier.width(6.dp)); T(r, 7f, Color.White, 800, max = 1) }
-            }
-        }
-    }
-    Seccao(Fa.SHIELD_HALVED, "Administração", "Gestão & Segurança", "Utilizadores, permissões, autorizações, auditoria e supervisão operacional.")
-    Column(Modifier.fillMaxWidth().sup(20.dp, fundo = Color.White, borda = Kp.slate200, sombra = Kp.slate900.copy(.05f), desfoque = 10.dp).padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(verticalAlignment = Alignment.Top) {
-            Column(Modifier.weight(1f)) { T("Ferramentas administrativas", 11f, Kp.slate900, 900); T("Aceda a cada área conforme o objectivo da operação.", 7.5f, Kp.slate500, Modifier.padding(top = 4.dp)) }
-            T("ADMIN", 7f, marca.c800, 900, Modifier.sup(999.dp, fundo = marca.c50, borda = marca.c200).padding(horizontal = 9.dp, vertical = 4.dp))
-        }
-        Box(Modifier.fillMaxWidth().height(1.dp).background(Kp.slate100))
-        Grupo(Fa.USERS, "Utilizadores & Contas", listOf(Triple(Fa.ADDRESS_BOOK, "Clientes & Proprietários" to "Consultar fichas e gerir o estado das contas.", aoUtilizadores),
-            Triple(Fa.USER_SHIELD, "Administradores" to "Consultar a equipa administrativa autorizada.", aoAdministradores)))
-        Grupo(Fa.LOCK, "Segurança & Governança", listOf(Triple(Fa.KEY, "Autorizações" to "Desanúncio e exclusão de produtos.", aoAutorizacoes),
-            Triple(Fa.CLOCK_ROTATE_LEFT, "Histórico" to "Auditoria e operações registadas.", aoHistorico)))
+        icone?.let { FaIcone(it, 9f, cor, regular = regular); Spacer(Modifier.width(6.dp)) }
+        T(if (ocupado) "A processar…" else texto, 9f, cor, 700)
     }
 }
 
 @Composable
-private fun Grupo(icone: String, titulo: String, itens: List<Triple<String, Pair<String, String>, () -> Unit>>) {
-    val marca = LocalMarca.current
-    Row(verticalAlignment = Alignment.CenterVertically) { FaIcone(icone, 7.5f, marca.c600); Spacer(Modifier.width(8.dp)); T(titulo, 7.5f, Kp.slate500, 800, espacamento = 1.2f, maiusculas = true) }
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        itens.forEach { (ic, tx, f) ->
-            Row(Modifier.weight(1f).heightIn(min = 66.dp).sup(16.dp, fundo = Color.White, borda = Kp.slate200).toque(aoTocar = f).padding(10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Box(Modifier.size(30.dp).sup(10.dp, fundo = Color.White, borda = Kp.slate200, sombra = Kp.slate900.copy(.06f), desfoque = 4.dp), contentAlignment = Alignment.Center) { FaIcone(ic, 10f, marca.c800) }
-                Column { T(tx.first, 9f, Kp.slate900, 800, max = 2); T(tx.second, 6.5f, Kp.slate500, Modifier.padding(top = 3.dp), linha = 9.5f, max = 3) }
-            }
-        }
-    }
-}
-
-/** "Produtos Cadastrados": dois cartões visíveis por vez. */
-@Composable
-private fun CarrosselPainel(lista: List<AnuncioPublico>, admin: Boolean, aoAbrir: (String) -> Unit, aoReservaProtegida: (String) -> Unit, aoConfianca: () -> Unit) {
-    val estado = rememberLazyListState()
-    val ambito = rememberCoroutineScope()
-    val actual by remember { derivedStateOf { estado.firstVisibleItemIndex + 1 } }
-    Column(Modifier.fillMaxWidth().then(if (admin) Modifier.sup(20.dp, fundo = Color.White, borda = Kp.slate200).padding(12.dp) else Modifier), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) { T("Produtos Cadastrados", 11f, Kp.slate800, 700); T("Dois anúncios visíveis por vez · actualização em tempo real", 8f, Kp.slate400, Modifier.padding(top = 2.dp)) }
-            T("${if (lista.isEmpty()) 0 else actual}/${lista.size}", 7f, Kp.slate500, 850, Modifier.sup(999.dp, fundo = Kp.slate100, borda = Kp.slate200).padding(horizontal = 8.dp, vertical = 4.dp))
-        }
-        if (lista.isNotEmpty()) Box {
-            LazyRow(state = estado, flingBehavior = rememberSnapFlingBehavior(estado), modifier = Modifier.fillMaxWidth(), contentPadding = PaddingValues(0.dp)) {
-                itemsIndexed(lista, key = { _, a -> a.id }) { i, a ->
-                    CartaoPainel(a, i + 1, Modifier.fillParentMaxWidth(.5f).padding(horizontal = 1.dp), { aoAbrir(a.id) }, { aoReservaProtegida(a.id) }, aoConfianca)
-                }
-            }
-            if (lista.size > 2) {
-                Seta(Fa.CHEVRON_LEFT, Modifier.align(Alignment.CenterStart).padding(start = 3.dp)) { ambito.launch { estado.animateScrollToItem((estado.firstVisibleItemIndex - 1).coerceAtLeast(0)) } }
-                Seta(Fa.CHEVRON_RIGHT, Modifier.align(Alignment.CenterEnd).padding(end = 3.dp)) { ambito.launch { estado.animateScrollToItem((estado.firstVisibleItemIndex + 1).coerceAtMost(lista.size - 1)) } }
-            }
-        }
-    }
-}
-
-@Composable
-private fun Seta(glifo: String, modifier: Modifier, aoTocar: () -> Unit) {
-    Box(modifier.size(29.dp, 36.dp).sup(12.dp, fundo = Color.White.copy(.94f), borda = Kp.slate200, sombra = Kp.slate900.copy(.13f), desfoque = 16.dp).toque(aoTocar = aoTocar),
-        contentAlignment = Alignment.Center) { FaIcone(glifo, 9f, LocalMarca.current.c800) }
-}
-
-@Composable
-private fun CartaoPainel(a: AnuncioPublico, numero: Int, modifier: Modifier, aoAbrir: () -> Unit, aoReserva: () -> Unit, aoConfianca: () -> Unit) {
-    val marca = LocalMarca.current
-    Box(modifier.sup(14.dp, fundo = Color.White, borda = Color(0xFFE9EEF3), sombra = Kp.slate900.copy(.055f), desfoque = 16.dp).toque(aoTocar = aoAbrir)) {
-        Column {
-            Box(Modifier.fillMaxWidth().aspectRatio(1.33f).background(Color(0xFFEEF2F7))) {
-                a.fotos.firstOrNull()?.let { AsyncImage(modeloImagem(it.miniatura ?: it.url), a.titulo, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
-                T(numero.toString().padStart(2, '0'), 6.5f, Color.White, 900, Modifier.padding(5.dp).sup(7.dp, fundo = Kp.slate900.copy(.78f), borda = Color.White.copy(.58f)).padding(horizontal = 5.dp, vertical = 4.dp))
-                val (txt, cor) = when (a.estado) { EstadoAnuncio.RESERVADO -> "Reservado" to Kp.amber700; EstadoAnuncio.ACTIVO -> "Activo" to marca.c700; else -> a.estado.rotulo to Kp.slate600 }
-                T(txt, 6.5f, cor, 900, Modifier.align(Alignment.TopEnd).padding(5.dp).sup(999.dp, fundo = Color.White.copy(.95f)).padding(horizontal = 6.dp, vertical = 2.dp))
-                T(a.detalhes.subcategoria.ifBlank { a.categoria.rotuloPlural }, 6.5f, Color.White, 850, Modifier.align(Alignment.BottomStart).padding(5.dp)
-                    .sup(999.dp, fundo = Kp.slate900.copy(.8f)).padding(horizontal = 6.dp, vertical = 2.dp), max = 1)
-            }
-            Column(Modifier.padding(6.dp, 6.dp, 32.dp, 6.dp)) {
-                T(a.titulo, 8.5f, Kp.slate900, 800, max = 1)
-                Row(Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) { FaIcone(Fa.LOCATION_DOT, 6f, marca.c600); Spacer(Modifier.width(3.dp)); T(a.municipio.ifBlank { a.provincia }, 6.5f, Kp.slate500, max = 1) }
-                T(precoComUnidade(a), 8f, marca.c800, 900, Modifier.padding(top = 3.dp), max = 1)
-            }
-        }
-        Column(Modifier.align(Alignment.BottomEnd).padding(5.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            listOf(Fa.SHIELD_HALVED to aoReserva, Fa.SHIELD_HEART to aoConfianca).forEach { (g, f) ->
-                Box(Modifier.size(20.dp).sup(7.dp, fundo = Color.White.copy(.97f), borda = Kp.slate200).toque(aoTocar = f), contentAlignment = Alignment.Center) { FaIcone(g, 7.5f, marca.c800) }
-            }
-        }
-    }
-}
-
-/** "Os Seus Pertences Cadastrados": cartão com estado e acções (Proprietário pede autorização; Administrador age). */
+private fun KpBotaoSecPainel(texto: String, aoTocar: () -> Unit) =
+    ao.kupila.gestaonegocios.ui.kp.KpBotaoSec(texto, aoTocar, icone = Fa.CHEVRON_DOWN, altura = 38.dp, tamanho = 9.5f)
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ItemPertence(a: AnuncioPublico, reserva: Registo?, admin: Boolean, pendente: Boolean, ocupado: String?, vm: PainelViewModel, aoAbrir: (String) -> Unit, aoEditar: (String) -> Unit) {
@@ -373,13 +325,13 @@ private fun ItemPertence(a: AnuncioPublico, reserva: Registo?, admin: Boolean, p
                 a.estado == EstadoAnuncio.RESERVADO && admin -> Botao("Cancelar Reserva", Kp.amber50, Kp.amber800, null, ocupado == "can:${a.id}", Fa.ROTATE_LEFT) { vm.cancelarReserva(a) }
                 a.estado == EstadoAnuncio.RESERVADO -> {}
                 admin -> {
-                    Botao("Editar", Kp.emerald50, marca.c700, null, false, Fa.PEN_TO_SQUARE, regular = true) { aoEditar(a.id) }
+                    Botao("Editar", marca.c50, marca.c700, null, false, Fa.PEN_TO_SQUARE, regular = true) { aoEditar(a.id) }
                     if (a.estado == EstadoAnuncio.DESANUNCIADO) Botao("Reactivar", Kp.slate50, Kp.slate700, null, ocupado == "rea:${a.id}", Fa.EYE, regular = true) { vm.reactivar(a) }
                     else Botao("Desanunciar", Kp.slate50, Kp.slate700, null, ocupado == "des:${a.id}", Fa.EYE_SLASH) { vm.desanunciar(a) }
                     Botao("Eliminar", Kp.red50, Kp.red600, null, ocupado == "eli:${a.id}", Fa.TRASH_CAN, regular = true) { vm.eliminar(a) }
                 }
                 else -> {
-                    Botao("Editar", Kp.emerald50, marca.c700, null, false, Fa.PEN_TO_SQUARE, regular = true) { aoEditar(a.id) }
+                    Botao("Editar", marca.c50, marca.c700, null, false, Fa.PEN_TO_SQUARE, regular = true) { aoEditar(a.id) }
                     if (pendente) T("Autorização em curso", 10f, Kp.amber800, 700, Modifier.sup(10.dp, fundo = Kp.amber50).padding(horizontal = 10.dp, vertical = 7.dp))
                     else {
                         if (a.estado == EstadoAnuncio.ACTIVO) Botao("Solicitar Desanúncio", Kp.slate50, Kp.slate700, null, ocupado == "aut:${a.id}", Fa.EYE_SLASH) { vm.pedir(a, AccaoAutorizada.DESANUNCIAR) }
@@ -394,7 +346,7 @@ private fun ItemPertence(a: AnuncioPublico, reserva: Registo?, admin: Boolean, p
 /** Contagem decrescente (1/s) da reserva activa, como `reservation-countdown`. */
 @Composable
 private fun Contagem(expiraMs: Long) {
-    val agora by produceState(System.currentTimeMillis(), expiraMs) { while (true) { value = System.currentTimeMillis(); delay(1000) } }
+    val agora = ao.kupila.gestaonegocios.ui.comum.rememberAgora()
     val s = ((expiraMs - agora) / 1000).coerceAtLeast(0)
     Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
         FaIcone(Fa.CLOCK, 9f, Kp.amber700, regular = true); Spacer(Modifier.width(6.dp))
@@ -428,7 +380,7 @@ private fun Escrow(reservas: List<Registo>) {
     fun soma(f: (Registo) -> Boolean) = Dinheiro.de(java.math.BigDecimal.valueOf(reservas.filter(f).sumOf { it.n("ownerNetAmount") }))
     val custodia = soma { it.s("status") in setOf("ACTIVE", "COMPLETED") && it.s("payoutStatus") in setOf("HELD", "RELEASE_REQUESTED", "PROCESSING", "") }
     val recebido = soma { it.s("payoutStatus") == "RELEASED" }
-    Column(Modifier.fillMaxWidth().sup(20.dp, fundo = Kp.slate900, sombra = Kp.slate900.copy(.25f), desfoque = 16.dp).padding(16.dp)) {
+    Column(Modifier.fillMaxWidth().sup(20.dp, pincel = ao.kupila.gestaonegocios.ui.kp.GradienteMarca, sombra = Kp.slate900.copy(.25f), desfoque = 16.dp).padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             T("Sinais de Reservas Confirmadas", 11f, Kp.slate400, Modifier.weight(1f))
             T("Escrow Ativo", 10f, Kp.amber400, 700, Modifier.sup(999.dp, fundo = Kp.amber400.copy(.15f)).padding(horizontal = 8.dp, vertical = 3.dp))

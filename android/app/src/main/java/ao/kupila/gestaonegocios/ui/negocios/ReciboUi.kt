@@ -52,8 +52,7 @@ fun ReciboEcra(vm: NegociosViewModel, reservaId: String, aoFechar: () -> Unit, a
     val reservas by vm.reservasCliente.collectAsStateWithLifecycle()
     val ocupado by vm.ocupado.collectAsStateWithLifecycle()
     val rc = reservas.firstOrNull { it.r.id == reservaId }
-    var agora by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(Unit) { while (true) { delay(1000); agora = System.currentTimeMillis() } }
+    val agora = ao.kupila.gestaonegocios.ui.comum.rememberAgora()
     Column(Modifier.background(Color.White).verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         if (rc == null) { T("A carregar o recibo…", 12f, Kp.gray400, Modifier.padding(32.dp)); return@Column }
         val r = rc.r

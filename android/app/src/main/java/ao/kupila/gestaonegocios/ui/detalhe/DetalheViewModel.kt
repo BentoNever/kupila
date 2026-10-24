@@ -43,7 +43,8 @@ sealed interface AcessoPrivado {
     data class Falhou(val mensagem: String) : AcessoPrivado
 }
 
-data class AccoesDetalhe(val podeEditar: Boolean, val podeExcluirDirecto: Boolean, val podePedirAutorizacao: Boolean, val podeReservar: Boolean, val motivoSemReserva: String?)
+data class AccoesDetalhe(val podeEditar: Boolean, val podeExcluirDirecto: Boolean, val podePedirAutorizacao: Boolean, val podeReservar: Boolean, val motivoSemReserva: String?,
+                         val proprio: Boolean = false, val reservado: Boolean = false)
 
 /**
  * Detalhe do anúncio. O id vem da rota; cada abertura tem o seu próprio ViewModel (back stack entry), por isso uma resposta
@@ -101,14 +102,13 @@ class DetalheViewModel @Inject constructor(
             val gere = Permissoes.podeGerirAnuncio(p, a.donoId)
             val dono = p.uid == a.donoId
             val motivo = when {
-                dono -> "Este produto é seu."
                 !Permissoes.podeReservar(p) -> "A sua conta não está activa para efectuar reservas."
                 !a.estado.disponivelParaReserva -> "Este produto não está disponível para reserva."
                 r.offline -> "A reserva exige ligação ao serviço."
                 else -> null
             }
             AccoesDetalhe(podeEditar = gere, podeExcluirDirecto = p.papel == Papel.ADMINISTRADOR, podePedirAutorizacao = dono && p.papel == Papel.PROPRIETARIO,
-                podeReservar = motivo == null, motivoSemReserva = motivo)
+                podeReservar = motivo == null, motivoSemReserva = motivo, proprio = dono, reservado = a.estado == ao.kupila.gestaonegocios.dominio.anuncio.EstadoAnuncio.RESERVADO)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 

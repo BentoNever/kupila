@@ -75,8 +75,9 @@ class RaizViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            // Verificação a cada 5 s (precisão suficiente para minutos de inactividade, 5× menos acordares).
             while (isActive) {
-                delay(1000)
+                delay(5000)
                 if (conta.recursos.value == null) { ultimaActividade = SystemClock.elapsedRealtime(); _inactividade.value = Inactividade.Fase.Activa; continue }
                 val minutos = ajustes.ajustes.value.inactividadeMinutos
                 val f = Inactividade.fase(SystemClock.elapsedRealtime() - ultimaActividade, minutos)

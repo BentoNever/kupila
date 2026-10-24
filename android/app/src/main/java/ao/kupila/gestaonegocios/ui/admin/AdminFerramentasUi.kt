@@ -387,9 +387,11 @@ fun HistoricoEcra(vm: AdminViewModel, aoFechar: () -> Unit) {
     Column(Modifier.background(Color.White)) {
         KpCabecalhoModal("", "Histórico de Operações", aoFechar, icone = Fa.SHIELD_HALVED, corIcone = Kp.yellow400,
             subtitulo = "Auditoria de utilizadores, produtos e reservas", fundo = Kp.slate900)
-        Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (l.isEmpty()) T("Sem operações registadas.", 12f, Kp.gray400, Modifier.fillMaxWidth().padding(vertical = 32.dp), centro = true)
-            l.take(300).forEach { op ->
+        // Lista preguiçosa: só os registos visíveis são desenhados (memória constante com 300 operações).
+        androidx.compose.foundation.lazy.LazyColumn(Modifier.weight(1f, fill = false), contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (l.isEmpty()) item { T("Sem operações registadas.", 12f, Kp.gray400, Modifier.fillMaxWidth().padding(vertical = 32.dp), centro = true) }
+            items(l.take(300).size, key = { l[it].id }) { i -> val op = l[i]
                 Column(Modifier.fillMaxWidth().sup(12.dp, fundo = Color.White, borda = Kp.gray200).padding(12.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Column(Modifier.weight(1f)) {

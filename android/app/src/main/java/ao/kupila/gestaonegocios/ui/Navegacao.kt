@@ -1,5 +1,11 @@
 package ao.kupila.gestaonegocios.ui
 
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -168,7 +174,18 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
         ))
         ao.kupila.gestaonegocios.ui.actualizacao.FaixaActualizacao(abrirEcra = { abrir(Rotas.ACTUALIZACAO) })
         Box(Modifier.weight(1f).fillMaxWidth()) {
-            androidx.compose.foundation.layout.Column(Modifier.fillMaxSize()) {
+            // GESTO: deslizar na horizontal muda de separador (Início ↔ Anunciar ↔ Painel). Carrosséis e listas horizontais
+            // consomem o gesto primeiro, por isso continuam a funcionar normalmente.
+            val abas = if (anuncia) listOf(Aba.EXPLORAR, Aba.ANUNCIAR, Aba.PROPRIETARIO) else listOf(Aba.EXPLORAR)
+            val limiteAba = with(androidx.compose.ui.platform.LocalDensity.current) { 90.dp.toPx() }
+            androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().pointerInput(aba, anuncia) {
+                var total = 0f
+                detectHorizontalDragGestures(onDragStart = { total = 0f }, onDragEnd = {
+                    val i = abas.indexOf(aba)
+                    if (total < -limiteAba && i < abas.lastIndex) aba = abas[i + 1]
+                    else if (total > limiteAba && i > 0) aba = abas[i - 1]
+                }) { _, dx -> total += dx }
+            }) {
                 BarraLocalizacao(r.perfil.nome, explorar.geografia.provincias, filtro.provincia, explorar::provincia)
                 when (aba) {
                     Aba.EXPLORAR -> ao.kupila.gestaonegocios.ui.home.HomeEcra(explorar, aoAbrir = { abrir(Rotas.detalhe(it)) },
@@ -248,6 +265,9 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                             "OPEN_LISTING" -> n.entidadeId?.let { abrir(Rotas.detalhe(it)) }
                             "OPEN_PAYMENT" -> n.entidadeId?.let { abrir(Rotas.checkout(it)) }
                             "OPEN_AUTHORIZATION" -> abrir(Rotas.AUTORIZACOES)
+                            // Directo ao destino (sem passos intermédios): pendências → Pendentes; reserva do Cliente → recibo com o OTP.
+                            "OPEN_PENDING" -> abrir(if (Permissoes.eAdministrador(r.perfil)) Rotas.PENDENTES else Rotas.NEGOCIOS)
+                            "OPEN_RESERVATION" -> abrir(if (papel == ao.kupila.gestaonegocios.dominio.perfis.Papel.CLIENTE && n.entidadeId != null) Rotas.recibo(n.entidadeId!!) else Rotas.NEGOCIOS)
                             else -> abrir(Rotas.NEGOCIOS)
                         }
                     })
@@ -305,10 +325,39 @@ private fun contarPendentes(r: RecursosConta): kotlinx.coroutines.flow.Flow<Int>
  */
 @Composable
 private fun Modal(aoFechar: () -> Unit, cheio: Boolean = false, conteudo: @Composable () -> Unit) {
-    Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Black.copy(alpha = .55f)).then(Modifier.clickableSemEfeito(aoFechar)),
+    // GESTO: arrastar o modal para baixo fecha-o (como os cartões arrastáveis da origem). Funciona no cabeçalho e no conteúdo
+    // quando este já está no topo; um arrasto curto devolve o modal ao lugar com animação.
+    val limite = with(androidx.compose.ui.platform.LocalDensity.current) { 110.dp.toPx() }
+    var desvio by androidx.compose.runtime.remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    val ambito = rememberCoroutineScope()
+    val soltar: () -> Unit = {
+        if (desvio > limite) aoFechar()
+        else ambito.launch { androidx.compose.animation.core.animate(desvio, 0f) { v, _ -> desvio = v } }
+    }
+    val ligacao = androidx.compose.runtime.remember {
+        object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {
+            override fun onPreScroll(available: androidx.compose.ui.geometry.Offset, source: androidx.compose.ui.input.nestedscroll.NestedScrollSource): androidx.compose.ui.geometry.Offset {
+                if (available.y < 0 && desvio > 0f) { val c = maxOf(available.y, -desvio); desvio += c; return androidx.compose.ui.geometry.Offset(0f, c) }
+                return androidx.compose.ui.geometry.Offset.Zero
+            }
+            override fun onPostScroll(consumed: androidx.compose.ui.geometry.Offset, available: androidx.compose.ui.geometry.Offset, source: androidx.compose.ui.input.nestedscroll.NestedScrollSource): androidx.compose.ui.geometry.Offset {
+                if (available.y > 0 && source == androidx.compose.ui.input.nestedscroll.NestedScrollSource.UserInput) { desvio += available.y; return androidx.compose.ui.geometry.Offset(0f, available.y) }
+                return androidx.compose.ui.geometry.Offset.Zero
+            }
+            override suspend fun onPreFling(available: androidx.compose.ui.unit.Velocity): androidx.compose.ui.unit.Velocity {
+                if (desvio > 0f) { soltar(); return available }
+                return androidx.compose.ui.unit.Velocity.Zero
+            }
+        }
+    }
+    val alfa = (1f - desvio / (limite * 3f)).coerceIn(0.3f, 1f)
+    Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Black.copy(alpha = .55f * alfa)).then(Modifier.clickableSemEfeito(aoFechar)),
         contentAlignment = androidx.compose.ui.Alignment.Center) {
         val forma = if (cheio) androidx.compose.foundation.shape.RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp) else androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
         Box((if (cheio) Modifier.fillMaxSize().padding(top = 3.dp) else Modifier.fillMaxWidth().padding(7.dp).wrapContentHeight())
+            .offset { androidx.compose.ui.unit.IntOffset(0, desvio.toInt()) }
+            .nestedScroll(ligacao)
+            .pointerInput(Unit) { detectVerticalDragGestures(onDragEnd = soltar, onDragCancel = soltar) { m, dy -> m.consume(); desvio = (desvio + dy).coerceAtLeast(0f) } }
             .clip(forma).background(androidx.compose.ui.graphics.Color.White).then(Modifier.clickableSemEfeito { })) { conteudo() }
     }
 }
