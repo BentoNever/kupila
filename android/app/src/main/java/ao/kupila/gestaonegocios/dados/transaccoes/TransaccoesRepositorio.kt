@@ -110,7 +110,7 @@ class TransaccoesRepositorio @Inject constructor(private val central: CentralSpa
      * pagamento já reservou o bem, a intenção fica com conflito e reembolso necessário — nunca uma segunda reserva silenciosa.
      * O OTP é gerado aqui (SecureRandom); a reserva guarda só o hash; o código vai para o comprovativo do Cliente.
      */
-    suspend fun confirmarSinal(intentId: String, admin: Perfil, prazoMinutos: Long): String {
+    suspend fun confirmarSinal(intentId: String, admin: Perfil, prazoMinutos: Long, modo: String = "ADMIN_MANUAL"): String {
         val iRef = db.document("paymentIntents/$intentId")
         val otp = Otp.gerar(); val sal = Otp.sal(); val hash = Otp.hash(otp, sal)
         val resultado = db.runTransaction { tx ->
@@ -144,14 +144,14 @@ class TransaccoesRepositorio @Inject constructor(private val central: CentralSpa
                 "location" to p.getString("location"), "neighborhood" to pr.getString("neighborhood"), "referencePoint" to pr.getString("referencePoint"),
                 "ownerPhone" to (dono?.get("phonePrimary") ?: ""), "paymentIntentId" to intentId, "paymentSubmissionId" to i.getString("lastSubmissionId"),
                 "holdOwnerPayout" to true, "payoutStatus" to "HELD", "payoutReleaseTrigger" to "INSPECTION_DECISION",
-                "confirmedBy" to admin.uid, "confirmationMode" to "ADMIN_MANUAL", "createdAt" to agora, "updatedAt" to agora, "source" to "ANDROID"))
+                "confirmedBy" to admin.uid, "confirmationMode" to modo, "createdAt" to agora, "updatedAt" to agora, "source" to "ANDROID"))
             val e = (p.get("engagementStats") as? Map<*, *>).orEmpty()
             tx.set(pRef, mapOf("status" to "RESERVED", "reservedAt" to agora, "reservationExpiresAt" to expira, "reservedByUserId" to i.getString("userId"),
                 "reservedByName" to i.getString("userName"), "commissionPercentSnapshot" to (i.getDouble("commissionPercent") ?: 0.0),
                 "commissionAmountSnapshot" to (i.getDouble("commissionAmount") ?: 0.0), "reservationDurationMinutesSnapshot" to prazoMinutos,
                 "engagementStats" to e + mapOf("reservationCount" to ((e["reservationCount"] as? Number)?.toInt() ?: 0) + 1, "lastReservedAt" to agora),
                 "updatedAt" to agora), SetOptions.merge())
-            tx.set(iRef, mapOf("status" to "COMPLETED", "reservationId" to rid, "confirmedAt" to agora, "confirmedBy" to admin.uid, "confirmationMode" to "ADMIN_MANUAL",
+            tx.set(iRef, mapOf("status" to "COMPLETED", "reservationId" to rid, "confirmedAt" to agora, "confirmedBy" to admin.uid, "confirmationMode" to modo,
                 "updatedAt" to agora), SetOptions.merge())
             i.getString("lastSubmissionId")?.let { sid ->
                 tx.set(db.document("paymentSubmissions/$sid"), mapOf("status" to "CONFIRMED", "reservationId" to rid, "otpForClient" to otp,
@@ -285,8 +285,8 @@ class TransaccoesRepositorio @Inject constructor(private val central: CentralSpa
         val req = db.document("refundRequests/$pedidoId").get().await()
         if (req.getString("ownerId") != dono.uid) throw ErroCentral("permission-denied", "Apenas o Proprietário titular desta reserva pode confirmar ou contestar a não conclusão.")
         if (req.getString("status") != "PENDING_OWNER_CONFIRMATION") throw ErroCentral("failed-precondition", "Esta solicitação já foi respondida.")
-        if (confirmado && req.getString("ownerEvidenceViewedAt").isNullOrBlank())
-            throw ErroCentral("failed-precondition", "Abra e valide primeiro a evidência associada. A confirmação da não conclusão exige que o Proprietário consulte a prova.")
+        // Zero burocracia (aprovado pelo utilizador em 2026-10-24): a evidência continua disponível, mas consultá-la deixou de ser
+        // obrigatório para o Proprietário confirmar. A integridade é verificada automaticamente na aprovação.
         val agora = Origem.agoraIso()
         val estado = if (confirmado) "OWNER_CONFIRMED" else "CONTESTED_PENDING_ADMIN"
         val b = db.batch()

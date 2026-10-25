@@ -62,7 +62,7 @@ import javax.inject.Inject
 
 private val Context.preferenciasAnunciar by preferencesDataStore("kupila_anunciar")
 
-data class FotoForm(val dataUrl: String, val dHash: String, val sintetica: Boolean = false)
+data class FotoForm(val dataUrl: String, val dHash: String, val sintetica: Boolean = false, val qualidade: Double = 0.0)
 
 sealed interface Destino { data class Pagamento(val intentId: String) : Destino; data class Publicado(val id: String) : Destino; data object Guardado : Destino }
 
@@ -86,6 +86,11 @@ data class EstadoAnunciar(
     val sugestao: String? = null,
     val destino: Destino? = null,
     val administrador: Boolean = false,
+    /** Preço sugerido pelos anúncios semelhantes guardados no telemóvel (zero leituras) e a explicação. */
+    val precoSugerido: ao.kupila.gestaonegocios.dominio.financeiro.Dinheiro? = null,
+    val precoSugeridoTexto: String? = null,
+    /** Formas de recebimento usadas antes (um toque para reutilizar). */
+    val recebimentosAnteriores: List<MeioRecebimento> = emptyList(),
 ) {
     val percentagem get() = ConclusaoRascunho.percentagem(ConclusaoRascunho.Campos(form.titulo.isNotBlank(), form.preco != null, form.municipio.isNotBlank(),
         form.bairro.isNotBlank() && form.pontoReferencia.isNotBlank(), ValidacaoAnuncio.detalhes(form.detalhes).isEmpty(), fotos.isNotEmpty(), documentos.isNotEmpty(),
@@ -105,6 +110,7 @@ class AnunciarViewModel @Inject constructor(
     private val transaccoes: TransaccoesRepositorio,
     private val rascunhos: RascunhosRepositorio,
     private val imagens: Imagens,
+    private val documentos: ao.kupila.gestaonegocios.dados.media.Documentos,
     val geografia: Geografia,
     @param:ApplicationContext private val contexto: Context,
     guardado: SavedStateHandle,
@@ -116,6 +122,13 @@ class AnunciarViewModel @Inject constructor(
     private var autosave: Job? = null
     private val chavePolitica = stringPreferencesKey("politica_lida")
     private val chaveRecebimento = stringPreferencesKey("ultimo_recebimento")
+    private val chaveRecebimentos = stringPreferencesKey("recebimentos_anteriores")
+    private var capaManual = false
+    /** Catálogo local para sugerir o preço (lido uma vez do Room, sem rede). */
+    private var catalogoLocal: List<ao.kupila.gestaonegocios.dominio.anuncio.AnuncioPublico> = emptyList()
+    private fun chavePonto(f: FormularioAnuncio) = stringPreferencesKey("ponto:" + listOf(f.provincia, f.municipio, f.bairro.trim().lowercase()).joinToString("|"))
+    private fun decodificar(s: String): MeioRecebimento? = if (s.startsWith("IBAN:")) MeioRecebimento.Iban(s.removePrefix("IBAN:")) else if (s.startsWith("EXPRESS:")) MeioRecebimento.MulticaixaExpress(s.removePrefix("EXPRESS:")) else null
+    private fun codificar(r: MeioRecebimento?) = when (r) { is MeioRecebimento.Iban -> "IBAN:${r.iban}"; is MeioRecebimento.MulticaixaExpress -> "EXPRESS:${r.telefone}"; null -> "" }
 
     val resumo: StateFlow<ResumoFinanceiro?> = MutableStateFlow<ResumoFinanceiro?>(null)
 
@@ -144,9 +157,34 @@ class AnunciarViewModel @Inject constructor(
                 }
                 else -> novo(lida)
             }
-            recalcular()
+            catalogoLocal = runCatching { conta.recursos.value?.catalogo?.todos()?.first().orEmpty() }.getOrDefault(emptyList())
+            val anteriores = contexto.preferenciasAnunciar.data.first()[chaveRecebimentos].orEmpty().split("||").mapNotNull { decodificar(it) }
+            _e.update { it.copy(recebimentosAnteriores = anteriores) }
+            preencherPonto(); recalcular()
         }
     }
+
+    /** Ponto de referência: o último usado neste bairro aparece sozinho (pode alterar). */
+    private suspend fun preencherPonto() {
+        val f = _e.value.form
+        if (f.pontoReferencia.isNotBlank() || f.bairro.isBlank()) return
+        contexto.preferenciasAnunciar.data.first()[chavePonto(f)]?.let { p -> _e.update { it.copy(form = it.form.copy(pontoReferencia = p)) } }
+    }
+
+    /** Preço sugerido: mediana dos anúncios semelhantes (mesma categoria/modalidade/subcategoria; município → província → país). */
+    private fun sugerirPreco() {
+        val f = _e.value.form
+        val base = catalogoLocal.filter { it.categoria == f.categoria && it.modalidade == f.modalidade && it.id != _e.value.edicaoDe &&
+            (f.detalhes.subcategoria.isBlank() || it.detalhes.subcategoria == f.detalhes.subcategoria) }
+        val (grupo, onde) = listOf(base.filter { it.municipio == f.municipio && f.municipio.isNotBlank() } to f.municipio, base.filter { it.provincia == f.provincia } to f.provincia, base to "Angola")
+            .firstOrNull { it.first.size >= 3 } ?: (emptyList<ao.kupila.gestaonegocios.dominio.anuncio.AnuncioPublico>() to "")
+        if (grupo.isEmpty()) { _e.update { it.copy(precoSugerido = null, precoSugeridoTexto = null) }; return }
+        val valores = grupo.map { it.preco.valor }.sorted()
+        val mediana = valores[valores.size / 2]
+        val sugerido = ao.kupila.gestaonegocios.dominio.financeiro.Dinheiro.de(mediana)
+        _e.update { it.copy(precoSugerido = sugerido, precoSugeridoTexto = "Mediana de ${grupo.size} anúncios semelhantes em $onde") }
+    }
+    fun usarPrecoSugerido() { _e.value.precoSugerido?.let { p -> mudar { it.copy(preco = p, aluguer = it.aluguer?.copy(precoUnidade = p)) } } }
 
     /** Novo anúncio já preenchido com o que se sabe (perfil e último recebimento usado). */
     private suspend fun novo(lida: Boolean) {
@@ -163,7 +201,7 @@ class AnunciarViewModel @Inject constructor(
     // ------------------------------------------------------------------ edição de campos
     private fun mudar(f: (FormularioAnuncio) -> FormularioAnuncio) {
         _e.update { it.copy(form = f(it.form), erros = emptyList(), erroGeral = null) }
-        recalcular(); agendarAutosave()
+        recalcular(); sugerirPreco(); agendarAutosave()
     }
 
     fun titulo(v: String) {
@@ -200,7 +238,7 @@ class AnunciarViewModel @Inject constructor(
     fun diferenciais(d: ao.kupila.gestaonegocios.dominio.anuncio.Diferenciais) = mudar { it.copy(diferenciais = d) }
     fun provincia(v: String) = mudar { it.copy(provincia = v, municipio = if (geografia.valido(v, it.municipio)) it.municipio else "") }
     fun municipio(v: String) = mudar { it.copy(municipio = v) }
-    fun bairro(v: String) = mudar { it.copy(bairro = v.take(100)) }
+    fun bairro(v: String) { mudar { it.copy(bairro = v.take(100)) }; viewModelScope.launch { preencherPonto() } }
     fun pontoReferencia(v: String) = mudar { it.copy(pontoReferencia = v.take(160)) }
     fun referenciaDocumento(v: String) = mudar { it.copy(referenciaDocumento = v.take(80)) }
     fun recebimento(r: MeioRecebimento) = mudar { it.copy(recebimento = r) }
@@ -222,14 +260,19 @@ class AnunciarViewModel @Inject constructor(
             viewModelScope.launch {
                 runCatching { imagens.fotoInline(uri) }.onSuccess { (bytes, hash) ->
                     if (_e.value.fotos.any { it.dHash == hash && hash.isNotEmpty() }) _e.update { it.copy(erroGeral = "Esta fotografia já foi adicionada.") }
-                    else _e.update { it.copy(fotos = (it.fotos + FotoForm(Origem.dataUrlJpeg(bytes), hash)).take(ValidacaoAnuncio.MAX_FOTOS)) }
+                    else {
+                        val q = imagens.qualidade(bytes)
+                        // Capa automática: a foto mais nítida e bem iluminada vai para o início (até a pessoa escolher outra).
+                        _e.update { st -> val l = (st.fotos + FotoForm(Origem.dataUrlJpeg(bytes), hash, qualidade = q)).take(ValidacaoAnuncio.MAX_FOTOS)
+                            st.copy(fotos = if (capaManual) l else l.sortedByDescending { it.qualidade }) }
+                    }
                 }.onFailure { e -> _e.update { it.copy(erroGeral = e.message) } }
                 _e.update { it.copy(aProcessarMedia = it.aProcessarMedia - 1) }; agendarAutosave()
             }
         }
     }
     fun removerFoto(i: Int) { _e.update { it.copy(fotos = it.fotos.filterIndexed { j, _ -> j != i }) }; agendarAutosave() }
-    fun capa(i: Int) { _e.update { e -> val l = e.fotos.toMutableList(); if (i in l.indices) { val f = l.removeAt(i); l.add(0, f) }; e.copy(fotos = l) }; agendarAutosave() }
+    fun capa(i: Int) { capaManual = true; _e.update { e -> val l = e.fotos.toMutableList(); if (i in l.indices) { val f = l.removeAt(i); l.add(0, f) }; e.copy(fotos = l) }; agendarAutosave() }
 
     fun adicionarDocumentos(uris: List<Uri>) {
         val livres = ValidacaoAnuncio.MAX_DOCUMENTOS - _e.value.documentos.size
@@ -250,7 +293,18 @@ class AnunciarViewModel @Inject constructor(
                     DocRascunho(nome, if (mime == "application/pdf") "application/pdf" else "image/jpeg", bytes.size.toLong(), IdentidadeBem.sha256(bytes), f.absolutePath, null)
                 }.onSuccess { d ->
                     if (_e.value.documentos.any { it.sha256 == d.sha256 }) _e.update { it.copy(erroGeral = "Este documento já foi adicionado.") }
-                    else _e.update { it.copy(documentos = it.documentos + d) }
+                    else {
+                        _e.update { it.copy(documentos = it.documentos + d) }
+                        // O número do documento é lido sozinho (OCR no telemóvel); a pessoa só confirma.
+                        if (_e.value.form.referenciaDocumento.isBlank()) runCatching {
+                            val bytes = File(d.caminho!!).readBytes()
+                            val img = if (d.mime == "application/pdf") documentos.primeiraPaginaPdf(bytes) else bytes
+                            img?.let { documentos.referenciaDeDocumento(documentos.lerTexto(it)) }
+                        }.getOrNull()?.let { ref ->
+                            if (_e.value.form.referenciaDocumento.isBlank()) { mudar { it.copy(referenciaDocumento = ref.take(80)) }
+                                _e.update { it.copy(sugestao = "Número do documento lido automaticamente: $ref. Confirme.") } }
+                        }
+                    }
                 }.onFailure { e -> _e.update { it.copy(erroGeral = e.message) } }
                 _e.update { it.copy(aProcessarMedia = it.aProcessarMedia - 1) }; agendarAutosave()
             }
@@ -301,7 +355,12 @@ class AnunciarViewModel @Inject constructor(
         _e.update { it.copy(aPublicar = true, erros = emptyList(), erroGeral = null, progresso = "A preparar o anúncio…") }
         runCatching {
             guardarRascunho()
-            contexto.preferenciasAnunciar.edit { pr -> pr[chaveRecebimento] = when (val x = form.recebimento) { is MeioRecebimento.Iban -> "IBAN:${x.iban}"; is MeioRecebimento.MulticaixaExpress -> "EXPRESS:${x.telefone}"; null -> "" } }
+            contexto.preferenciasAnunciar.edit { pr ->
+                val actual = codificar(form.recebimento)
+                pr[chaveRecebimento] = actual
+                pr[chaveRecebimentos] = (listOf(actual) + pr[chaveRecebimentos].orEmpty().split("||")).filter { it.isNotBlank() }.distinct().take(3).joinToString("||")
+                if (form.bairro.isNotBlank() && form.pontoReferencia.isNotBlank()) pr[chavePonto(form)] = form.pontoReferencia
+            }
             val agora = Origem.agoraIso()
             val id = e.edicaoDe ?: "KPL-${System.currentTimeMillis()}-${(100..999).random()}"
             // Identidade anti-duplicação (documento, ficheiros, fotos, descritor) e reivindicação central por transacção.

@@ -100,7 +100,8 @@ class CadastroViewModel @Inject constructor(
     fun senha(v: String) = _estado.update { it.copy(form = it.form.copy(senha = v)) }
     fun confirmar(v: String) = _estado.update { it.copy(form = it.form.copy(confirmar = v)) }
     fun leituraConcluida() = mudar { it.copy(politicasLidas = true) }
-    fun aceitar(v: Boolean) { if (_estado.value.form.politicasLidas) mudar { it.copy(politicasAceites = v) } }
+    /** Aceite imediato (resumo à vista); `politicasLidas` continua a registar, com verdade, se a leitura completa foi feita. */
+    fun aceitar(v: Boolean) = mudar { it.copy(politicasAceites = v) }
 
     fun foto(uri: Uri) = viewModelScope.launch {
         _estado.update { it.copy(aProcessarFoto = true) }
@@ -124,10 +125,8 @@ class CadastroViewModel @Inject constructor(
         }
         if (!completar) {
             if (f.senha.length < 6) put("senha", "Escolha uma palavra-passe com pelo menos 6 caracteres.")
-            if (f.senha != f.confirmar) put("confirmar", "As palavras-passe não coincidem.")
         }
-        if (!f.politicasLidas) put("politicas", "Leia as Políticas de Uso e Regras de Intermediação até ao fim.")
-        else if (!f.politicasAceites) put("politicas", "Marque a caixa de aceite das políticas.")
+        if (!f.politicasAceites) put("politicas", "Marque a caixa de aceite das políticas.")
     }
 
     fun enviar() = viewModelScope.launch {

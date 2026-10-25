@@ -55,6 +55,7 @@ class AjustesRepositorio @Inject constructor(@param:ApplicationContext private v
     private val chaveIdentidade = stringPreferencesKey("identidade")
     private val chaveModoLocal = stringPreferencesKey("modo_local")
     private val chavePaletaLocal = stringPreferencesKey("paleta_local")
+    private val chaveAutoConfirmar = stringPreferencesKey("auto_confirmar")
 
     /** Lido de forma síncrona UMA vez no arranque (antes do 1.º frame); depois actualizado por eventos. */
     private val _identidade = MutableStateFlow(runBlocking { lerIdentidade() })
@@ -79,6 +80,14 @@ class AjustesRepositorio @Inject constructor(@param:ApplicationContext private v
     fun definirSpotec(s: Boolean) = ambito.launch {
         contexto.dadosAjustes.edit { it[chavePaletaLocal] = if (s) "spotec" else "plataforma" }
         _spotec.value = s
+    }
+
+    private val _autoConfirmar = MutableStateFlow(runBlocking { contexto.dadosAjustes.data.first()[chaveAutoConfirmar] != "nao" })
+    /** Administrador: confirmar sozinho pagamentos coincidentes e reembolsos confirmados pelo Proprietário (este aparelho). */
+    val autoConfirmar: StateFlow<Boolean> = _autoConfirmar.asStateFlow()
+    fun definirAutoConfirmar(v: Boolean) = ambito.launch {
+        contexto.dadosAjustes.edit { it[chaveAutoConfirmar] = if (v) "sim" else "nao" }
+        _autoConfirmar.value = v
     }
 
     fun definirModoLocal(m: ModoAparencia?) = ambito.launch {

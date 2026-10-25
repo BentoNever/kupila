@@ -50,6 +50,7 @@ class CheckoutViewModel @Inject constructor(
     private val transaccoes: TransaccoesRepositorio,
     private val imagens: Imagens,
     private val documentos: Documentos,
+    @param:dagger.hilt.android.qualifiers.ApplicationContext private val contexto: android.content.Context,
     guardado: SavedStateHandle,
 ) : ViewModel() {
     private val intentId: String = checkNotNull(guardado["id"])
@@ -61,7 +62,11 @@ class CheckoutViewModel @Inject constructor(
         parar = conta.recursos.value?.eventos?.seguir("paymentIntents/$intentId") { r ->
             if (r == null) { _e.update { it.copy(fase = FaseCheckout.INEXISTENTE) }; return@seguir }
             val d = r.d + ("id" to r.id)
-            _e.update { it.copy(intent = d, fase = fase(d), metodo = (d["method"] as? String)?.takeIf { m -> m.isNotBlank() } ?: it.metodo) }
+            // Método lembrado: sem método escolhido nesta intenção, usa o da última vez (um passo a menos).
+            val lembrado = ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.ler(contexto, "checkout.metodo")
+            val semMetodo = (d["method"] as? String).isNullOrBlank()
+            _e.update { it.copy(intent = d, fase = fase(d), metodo = (d["method"] as? String)?.takeIf { m -> m.isNotBlank() } ?: lembrado ?: it.metodo) }
+            if (semMetodo && lembrado != null && fase(d) == FaseCheckout.PAGAR) metodo(lembrado)
         } ?: {}
     }
 
@@ -78,6 +83,7 @@ class CheckoutViewModel @Inject constructor(
 
     fun metodo(m: String) {
         _e.update { it.copy(metodo = m) }
+        ao.kupila.gestaonegocios.dados.rascunhos.RascunhoAuto.escrever(contexto, "checkout.metodo", m)
         viewModelScope.launch { runCatching { transaccoes.metodo(intentId, m, _e.value.telefoneExpress) } }
     }
     fun telefone(t: String) = _e.update { it.copy(telefoneExpress = t.filter(Char::isDigit).take(9)) }

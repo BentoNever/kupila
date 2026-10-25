@@ -105,6 +105,27 @@ class Imagens @Inject constructor(@param:ApplicationContext private val contexto
             ?: throw ImagemInvalida("O ficheiro excede o limite de ${maxBytes / 1024} KB mesmo depois de optimizado.")
     }
 
+    /**
+     * Qualidade da fotografia para escolher a capa sozinho: nitidez (variância do Laplaciano numa versão pequena) penalizada por
+     * imagens muito escuras ou muito claras. Valor relativo — só serve para comparar as fotos do mesmo anúncio.
+     */
+    fun qualidade(jpeg: ByteArray): Double = runCatching {
+        val o = android.graphics.BitmapFactory.Options().apply { inSampleSize = 8 }
+        val b = android.graphics.BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size, o) ?: return 0.0
+        val w = b.width; val h = b.height
+        val px = IntArray(w * h); b.getPixels(px, 0, w, 0, 0, w, h)
+        val g = DoubleArray(px.size) { i -> val c = px[i]; 0.299 * ((c shr 16) and 255) + 0.587 * ((c shr 8) and 255) + 0.114 * (c and 255) }
+        var soma = 0.0; var soma2 = 0.0; var n = 0
+        for (y in 1 until h - 1) for (x in 1 until w - 1) {
+            val i = y * w + x
+            val l = 4 * g[i] - g[i - 1] - g[i + 1] - g[i - w] - g[i + w]
+            soma += l; soma2 += l * l; n++
+        }
+        val variancia = if (n == 0) 0.0 else soma2 / n - (soma / n) * (soma / n)
+        val brilho = g.average()
+        variancia * (1.0 - kotlin.math.abs(brilho - 128.0) / 160.0).coerceIn(0.2, 1.0)
+    }.getOrDefault(0.0)
+
     fun dHash(b: Bitmap): String {
         val p = Bitmap.createScaledBitmap(b, 9, 8, true)
         val lum = DoubleArray(72) { i -> val c = p.getPixel(i % 9, i / 9); Color.red(c) * 0.299 + Color.green(c) * 0.587 + Color.blue(c) * 0.114 }

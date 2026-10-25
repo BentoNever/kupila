@@ -116,6 +116,8 @@ fun CheckoutEcra(vm: CheckoutViewModel, aoVoltar: () -> Unit, aoConcluido: (tipo
                 FaseCheckout.INEXISTENTE -> Aviso("Pagamento não encontrado. Volte ao produto e tente de novo.", Kp.red50, Kp.red700)
                 FaseCheckout.EXPIRADO -> Aviso("Por segurança cada referência vale 30 minutos. Volte e gere uma nova; nada foi cobrado em duplicado.", Kp.amber50, Kp.amber800)
                 FaseCheckout.CONCLUIDO -> {
+                    // Zero passos: a confirmação chegou com o ecrã aberto → abre sozinho o recibo/anúncio (uma vez).
+                    androidx.compose.runtime.LaunchedEffect(Unit) { kotlinx.coroutines.delay(1200); aoConcluido(e.tipo, i["reservationId"] as? String, i["listingId"] as? String ?: "") }
                     Passo(1, if (reserva) "Reserva confirmada" else "Pagamento confirmado", if (reserva) "O código OTP está nas suas reservas." else "O anúncio entra no catálogo.")
                     KpBotao(if (reserva) "Ver a reserva e o código OTP" else "Ver o anúncio", { aoConcluido(e.tipo, i["reservationId"] as? String, i["listingId"] as? String ?: "") },
                         icone = Fa.CIRCLE_CHECK, altura = 37.dp, raio = 12.dp, tamanho = 9f)

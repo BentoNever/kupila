@@ -92,6 +92,8 @@ class NegociosViewModel @Inject constructor(
     private val _mensagem = MutableStateFlow<String?>(null); val mensagem: StateFlow<String?> = _mensagem.asStateFlow()
     private val _ocupado = MutableStateFlow<String?>(null); val ocupado: StateFlow<String?> = _ocupado.asStateFlow()
     fun limparMensagem() { _mensagem.value = null }
+    val autoConfirmar = ajustes.autoConfirmar
+    fun autoConfirmar(v: Boolean) { ajustes.definirAutoConfirmar(v) }
 
     init { actualizar(automatica = true) }
 

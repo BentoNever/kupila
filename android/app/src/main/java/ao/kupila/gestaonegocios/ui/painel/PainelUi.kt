@@ -142,7 +142,11 @@ class PainelViewModel @Inject constructor(
     }
 
     fun pedir(a: AnuncioPublico, accao: AccaoAutorizada) = accao("aut:${a.id}") {
-        autorizacoes.pedir(a.id, a.titulo, accao, perfil!!); "Pedido de ${accao.substantivo} enviado ao Administrador. Quando autorizado, conclui com um toque."
+        // Zero burocracia: desanunciar um produto disponível e sem reserva activa é imediato (sem pedir autorização).
+        // A exclusão (irreversível) continua a passar pelo Administrador.
+        val semReserva = a.estado == EstadoAnuncio.ACTIVO && reservas.value.none { it.s("listingId") == a.id && it.s("status") == "ACTIVE" }
+        if (accao == AccaoAutorizada.DESANUNCIAR && semReserva) { anuncios.desanunciar(a.id, "Desanunciado pelo Proprietário."); "Anúncio desanunciado. Pode reactivá-lo quando quiser." }
+        else { autorizacoes.pedir(a.id, a.titulo, accao, perfil!!); "Pedido de ${accao.substantivo} enviado ao Administrador. Quando autorizado, conclui com um toque." }
     }
     fun desanunciar(a: AnuncioPublico) = accao("des:${a.id}") { anuncios.desanunciar(a.id, "Desanunciado pelo Administrador."); "Anúncio desanunciado." }
     fun reactivar(a: AnuncioPublico) = accao("rea:${a.id}") { anuncios.reactivar(a.id); "Anúncio reactivado." }
@@ -334,7 +338,8 @@ private fun ItemPertence(a: AnuncioPublico, reserva: Registo?, admin: Boolean, p
                     Botao("Editar", marca.c50, marca.c700, null, false, Fa.PEN_TO_SQUARE, regular = true) { aoEditar(a.id) }
                     if (pendente) T("Autorização em curso", 10f, Kp.amber800, 700, Modifier.sup(10.dp, fundo = Kp.amber50).padding(horizontal = 10.dp, vertical = 7.dp))
                     else {
-                        if (a.estado == EstadoAnuncio.ACTIVO) Botao("Solicitar Desanúncio", Kp.slate50, Kp.slate700, null, ocupado == "aut:${a.id}", Fa.EYE_SLASH) { vm.pedir(a, AccaoAutorizada.DESANUNCIAR) }
+                        if (a.estado == EstadoAnuncio.ACTIVO) Botao("Desanunciar", Kp.slate50, Kp.slate700, null, ocupado == "aut:${a.id}", Fa.EYE_SLASH) { vm.pedir(a, AccaoAutorizada.DESANUNCIAR) }
+                        if (a.estado == EstadoAnuncio.DESANUNCIADO) Botao("Reactivar", Kp.slate50, Kp.slate700, null, ocupado == "rea:${a.id}", Fa.EYE, regular = true) { vm.reactivar(a) }
                         Botao("Solicitar Exclusão", Kp.red50, Kp.red600, null, ocupado == "aut:${a.id}", Fa.TRASH_CAN, regular = true) { vm.pedir(a, AccaoAutorizada.EXCLUIR) }
                     }
                 }

@@ -42,6 +42,42 @@ class Documentos @Inject constructor(@param:ApplicationContext private val conte
         return texto to ref
     }
 
+    /** Texto de uma imagem (ML Kit no aparelho, sem rede). */
+    suspend fun lerTexto(jpeg: ByteArray): String {
+        val bmp = android.graphics.BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size) ?: return ""
+        return runCatching { TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS).process(InputImage.fromBitmap(bmp, 0)).await().text }.getOrDefault("")
+    }
+
+    /** Primeira página de um PDF como JPEG (para ler o número do documento de titularidade). */
+    suspend fun primeiraPaginaPdf(pdf: ByteArray): ByteArray? = withContext(Dispatchers.IO) {
+        runCatching {
+            val f = File(pasta(), "ocr-${System.nanoTime()}.pdf").apply { writeBytes(pdf) }
+            android.os.ParcelFileDescriptor.open(f, android.os.ParcelFileDescriptor.MODE_READ_ONLY).use { fd ->
+                android.graphics.pdf.PdfRenderer(fd).use { r ->
+                    r.openPage(0).use { p ->
+                        val esc = 1600f / maxOf(p.width, p.height)
+                        val b = Bitmap.createBitmap((p.width * esc).toInt(), (p.height * esc).toInt(), Bitmap.Config.ARGB_8888).apply { eraseColor(Color.WHITE) }
+                        p.render(b, null, null, android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                        java.io.ByteArrayOutputStream().use { o -> b.compress(Bitmap.CompressFormat.JPEG, 90, o); o.toByteArray() }
+                    }
+                }
+            }.also { f.delete() }
+        }.getOrNull()
+    }
+
+    /**
+     * Número/referência de um documento de titularidade lido por OCR: primeiro o valor a seguir a uma palavra-chave
+     * (N.º, Número, Registo, Matrícula, Livrete, Título, Certidão, Processo, Ref.), depois uma matrícula angolana, depois o
+     * código mais longo com dígitos. Nunca inventa: sem candidato, devolve null e o campo fica para a pessoa.
+     */
+    fun referenciaDeDocumento(texto: String): String? {
+        val t = texto.replace('\n', ' ')
+        Regex("(?i)(n\\.?\\s?[ºo°]|n[uú]mero|registo|matr[ií]cula|livrete|t[ií]tulo|certid[aã]o|processo|ref\\.?|refer[eê]ncia)\\s*[:.\\-]?\\s*([A-Z0-9][A-Z0-9/\\-.]{3,24})")
+            .findAll(t).map { it.groupValues[2].trimEnd('.', '-', '/') }.firstOrNull { c -> c.count(Char::isDigit) >= 3 }?.let { return it }
+        Regex("\\b[A-Z]{2}-\\d{2}-\\d{2}-[A-Z]{2}\\b").find(t)?.let { return it.value }
+        return Regex("\\b[A-Z0-9][A-Z0-9/\\-.]{5,24}\\b").findAll(t.uppercase()).map { it.value }.filter { c -> c.count(Char::isDigit) >= 4 }.maxByOrNull { it.length }
+    }
+
     private fun pasta() = File(contexto.cacheDir, "documentos").apply { mkdirs() }
 
     /** Renderiza as linhas num bitmap A4 (595×842 pt a 2×) — mesmo conteúdo para JPG e PDF. */

@@ -158,6 +158,12 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
     val abrir: (String) -> Unit = { rota -> avancarPara = null; nav.navigate(rota) { launchSingleTop = true } }
     val fechar: () -> Unit = { avancarPara = nav.currentBackStackEntry?.let(::rotaConcreta); nav.popBackStack() }
     androidx.activity.compose.BackHandler(enabled = !modalAberto && aba != Aba.EXPLORAR) { aba = Aba.EXPLORAR }
+    // Administrador: confirmações automáticas sempre que os dados sincronizam (sem toques; casos duvidosos ficam para decisão).
+    if (Permissoes.eAdministrador(r.perfil)) androidx.compose.runtime.LaunchedEffect(r) {
+        kotlinx.coroutines.flow.combine(r.eventos.observar(ao.kupila.gestaonegocios.dados.eventos.Conjunto.INTENCOES_TODAS),
+            r.eventos.observar(ao.kupila.gestaonegocios.dados.eventos.Conjunto.REEMBOLSOS_TODOS)) { i, rf -> i to rf }
+            .collect { (i, rf) -> kotlinx.coroutines.delay(1500); raiz.automacao.executar(i, rf) }
+    }
 
     androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().background(ao.kupila.gestaonegocios.ui.kp.Kp.slate50)) {
         CabecalhoApp(papel, identidade.logoLocal, AccoesCabecalho(
@@ -221,8 +227,8 @@ private fun AreaAutenticada(raiz: RaizViewModel, r: RecursosConta) {
                     PoliticasEcra(p.manualPoliticas, p.versao, comAceite = true, aoVoltar = fechar, aoConfirmarLeitura = { anunciar.leituraPolitica(); fechar() })
                 } }
                 composable(Rotas.CHECKOUT) { Modal(fechar) {
-                    CheckoutEcra(hiltViewModel(), aoVoltar = fechar, aoRegras = { abrir(Rotas.POLITICAS) }, aoConcluido = { tipo, _, listingId ->
-                        nav.navigate(if (tipo == "RESERVATION") Rotas.NEGOCIOS else Rotas.detalhe(listingId)) { popUpTo(Rotas.CHECKOUT) { inclusive = true } }
+                    CheckoutEcra(hiltViewModel(), aoVoltar = fechar, aoRegras = { abrir(Rotas.POLITICAS) }, aoConcluido = { tipo, reservaId, listingId ->
+                        nav.navigate(if (tipo == "RESERVATION") (reservaId?.let { Rotas.recibo(it) } ?: Rotas.NEGOCIOS) else Rotas.detalhe(listingId)) { popUpTo(Rotas.CHECKOUT) { inclusive = true } }
                     })
                 } }
                 composable(Rotas.RASCUNHOS) { Modal(fechar) {

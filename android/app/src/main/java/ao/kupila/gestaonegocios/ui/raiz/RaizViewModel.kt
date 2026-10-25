@@ -26,6 +26,7 @@ class RaizViewModel @Inject constructor(
     val ajustes: AjustesRepositorio,
     val conteudos: Conteudos,
     val geografia: Geografia,
+    val automacao: ao.kupila.gestaonegocios.dados.transaccoes.AutomacaoAdmin,
 ) : ViewModel() {
     val estado = sessao.estado
     val identidade = ajustes.identidade

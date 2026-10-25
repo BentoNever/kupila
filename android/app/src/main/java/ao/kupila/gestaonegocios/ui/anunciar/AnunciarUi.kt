@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -263,6 +264,15 @@ fun AnunciarEcra(vm: AnunciarViewModel, aoVoltar: () -> Unit, aoLerPoliticas: ()
                         else MeioRecebimento.MulticaixaExpress((f.recebimento as? MeioRecebimento.MulticaixaExpress)?.telefone.orEmpty()))
                 }, altura = 31.dp, tamanho = 8.5f)
             }
+            // Um toque reutiliza uma forma de recebimento usada antes.
+            if (e.recebimentosAnteriores.isNotEmpty()) Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                e.recebimentosAnteriores.forEach { r ->
+                    val sel = r == f.recebimento
+                    val txt = when (r) { is MeioRecebimento.Iban -> "IBAN …" + r.iban.takeLast(4); is MeioRecebimento.MulticaixaExpress -> "Express " + r.telefone }
+                    T(txt, 8f, if (sel) marca.sobrePrimaria else marca.c800, 700, Modifier.sup(999.dp, fundo = if (sel) marca.primaria else marca.c50, borda = marca.c100)
+                        .toque { vm.recebimento(r) }.padding(horizontal = 10.dp, vertical = 5.dp))
+                }
+            }
             when (val x = f.recebimento) {
                 is MeioRecebimento.Iban -> Campo("IBAN Bancário", true) {
                     KpEntrada(x.iban, { vm.recebimento(MeioRecebimento.Iban(it.uppercase().filter { c -> c.isLetterOrDigit() }.take(25))) }, dica = "AO06.0000.0000.0000.0000.0", altura = 31.dp, tamanhoTexto = 8.5f,
@@ -505,6 +515,16 @@ private fun PrecoSinal(e: EstadoAnunciar, r: ResumoFinanceiro?, vm: AnunciarView
         Campo(if (f.modalidade == Modalidade.VENDA) "Preço do Negócio (Kwanza - AOA)" else "Preço por unidade (Kwanza - AOA)", true) {
             KpEntrada(precoTexto, { precoTexto = it; vm.preco(it) }, dica = "Ex: 15000000", altura = 31.dp, tamanhoTexto = 8.5f, teclado = KeyboardType.Decimal)
             T(f.preco?.let { FormatoAoa.formatar(it) } ?: "Informe o preço total do produto.", 7f, Kp.slate500, Modifier.padding(top = 4.dp))
+            // Preço inteligente: mediana dos anúncios semelhantes guardados no telemóvel (um toque para usar).
+            e.precoSugerido?.takeIf { it != f.preco }?.let { s ->
+                Row(Modifier.padding(top = 6.dp).fillMaxWidth().sup(10.dp, fundo = marca.c50, borda = marca.c100).toque {
+                    vm.usarPrecoSugerido(); precoTexto = s.valor.stripTrailingZeros().toPlainString()
+                }.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    FaIcone(Fa.BOLT, 8f, marca.c700); Spacer(Modifier.width(6.dp))
+                    Column(Modifier.weight(1f)) { T("Sugestão: ${FormatoAoa.formatar(s)}", 8.5f, marca.c800, 800); T(e.precoSugeridoTexto.orEmpty(), 7f, Kp.slate500) }
+                    T("Usar", 8f, marca.sobrePrimaria, 800, Modifier.sup(8.dp, fundo = marca.primaria).padding(horizontal = 10.dp, vertical = 4.dp))
+                }
+            }
         }
         val p = r?.entrada?.parametros
         Column(Modifier.fillMaxWidth().sup(10.dp, fundo = marca.c50, borda = marca.c100).padding(9.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

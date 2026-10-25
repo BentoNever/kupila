@@ -201,6 +201,10 @@ private fun DialogoReembolso(ocupado: Boolean, aoFechar: () -> Unit, aoEnviar: (
     var motivo by remember { mutableStateOf(MotivoReembolso.entries.first()) }
     var desc by ao.kupila.gestaonegocios.dados.rascunhos.rememberRascunho("reembolso.descricao")
     val ctxR = androidx.compose.ui.platform.LocalContext.current
+    // Texto já pronto para o motivo escolhido (a pessoa só ajusta, se quiser) — cumpre o mínimo de 20 caracteres.
+    androidx.compose.runtime.LaunchedEffect(motivo) {
+        if (desc.isBlank() || desc.startsWith("Fiz a vistoria")) desc = "Fiz a vistoria do produto e o negócio não foi fechado. Motivo: ${motivo.rotulo.lowercase()}."
+    }
     var uri by remember { mutableStateOf<Uri?>(null) }
     val escolher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri = it }
     ao.kupila.gestaonegocios.ui.kp.KpDialogo("Pedir reembolso", aoFechar, ao.kupila.gestaonegocios.ui.comum.Fa.SHIELD_HEART, ao.kupila.gestaonegocios.ui.kp.Kp.yellow300,

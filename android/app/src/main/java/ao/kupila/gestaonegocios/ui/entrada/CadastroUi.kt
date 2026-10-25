@@ -27,6 +27,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -106,7 +107,19 @@ fun CadastroEcra(vm: CadastroViewModel, logo: String?, aoVoltar: () -> Unit, aoL
                                     else -> FaIcone(Fa.USER, 16f, Kp.gray400)
                                 }
                             }
-                            T("Foto obrigatória. Será optimizada automaticamente para garantir carregamento rápido e menor consumo de dados.", 9f, Color(0xFF6B7280), Modifier.weight(1f), linha = 13.5f)
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                // Câmara ou galeria, à escolha (sem passar por outra app).
+                                val ctx = androidx.compose.ui.platform.LocalContext.current
+                                val camara = androidx.activity.compose.rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bmp ->
+                                    bmp?.let { b -> val ficheiro = File(ctx.cacheDir, "camara-${System.currentTimeMillis()}.jpg").apply { outputStream().use { o -> b.compress(android.graphics.Bitmap.CompressFormat.JPEG, 92, o) } }
+                                        vm.foto(android.net.Uri.fromFile(ficheiro)) }
+                                }
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    KpBotaoSec("Câmara", { camara.launch(null) }, Modifier.weight(1f), icone = Fa.CAMERA, altura = 32.dp, tamanho = 9.5f)
+                                    KpBotaoSec("Galeria", { escolher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, Modifier.weight(1f), icone = Fa.IMAGE, altura = 32.dp, tamanho = 9.5f)
+                                }
+                                T("Foto obrigatória, optimizada automaticamente.", 8.5f, Color(0xFF6B7280), linha = 12f)
+                            }
                         }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -123,29 +136,26 @@ fun CadastroEcra(vm: CadastroViewModel, logo: String?, aoVoltar: () -> Unit, aoL
                         T("Usado para alertas de reserva e interesse relevante nos seus anúncios.", 8f, Kp.gray400, Modifier.padding(top = 4.dp))
                     }
                 }
-                if (!e.completar) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Box(Modifier.weight(1f)) { Campo("Palavra-passe", true, e.erros["senha"]) { KpEntrada(f.senha, vm::senha, senha = true, altura = 42.dp, raio = 12.dp, padH = 10.dp) } }
-                    Box(Modifier.weight(1f)) { Campo("Confirmar", true, e.erros["confirmar"]) {
-                        KpEntrada(f.confirmar, vm::confirmar, senha = true, altura = 42.dp, raio = 12.dp, padH = 10.dp, ime = ImeAction.Done) } }
-                }
+                // Uma só palavra-passe, com "mostrar" (como no login) — sem repetir.
+                if (!e.completar) { var ver by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+                    Campo("Palavra-passe (mín. 6 caracteres)", true, e.erros["senha"]) { KpEntrada(f.senha, vm::senha, senha = !ver, altura = 42.dp, raio = 12.dp, padH = 10.dp, ime = ImeAction.Done,
+                        direita = { Box(Modifier.size(30.dp).toque { ver = !ver }, contentAlignment = Alignment.Center) { FaIcone(if (ver) Fa.EYE_SLASH else Fa.EYE, 10f, Kp.gray400, regular = true) } }) } }
                 Column(Modifier.fillMaxWidth().sup(16.dp, fundo = Kp.slate50, borda = Kp.slate200).padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FaIcone(Fa.FILE_SHIELD, 12f, marca.c600, Modifier.padding(top = 2.dp))
                         Column {
-                            T("Políticas de Uso obrigatórias", 10f, Kp.slate800, 700, linha = 15f)
-                            T("Antes de criar a conta, leia as regras de utilização, privacidade, reservas, intermediação, taxas e comissões do Kupila.", 9f, Kp.slate500, linha = 14f)
+                            T("Políticas de Uso — resumo", 10f, Kp.slate800, 700, linha = 15f)
+                            // Resumo de uma página: o essencial à vista; as políticas completas ficam a um toque.
+                            listOf("A reserva só nasce depois de o pagamento do sinal ser validado; o OTP da vistoria fica no seu recibo.",
+                                "Sem negócio após a vistoria, o sinal é reembolsável menos a comissão do Kupila.",
+                                "Os anúncios exigem fotografias reais e documento de titularidade; duplicados são bloqueados.",
+                                "Os seus dados pessoais só são vistos por quem precisa deles para concluir o negócio.").forEach { T("• $it", 9f, Kp.slate600, linha = 14f) }
                         }
                     }
-                    KpBotaoSec("Ler Políticas e Regras do Kupila", aoLerPoliticas, icone = Fa.BOOK_OPEN, altura = 33.dp, tamanho = 10f)
+                    KpBotaoSec("Ler as políticas completas", aoLerPoliticas, icone = Fa.BOOK_OPEN, altura = 33.dp, tamanho = 10f)
                     Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Checkbox(f.politicasAceites, vm::aceitar, enabled = f.politicasLidas, modifier = Modifier.size(16.dp),
-                            colors = CheckboxDefaults.colors(checkedColor = marca.c600))
-                        T("Li integralmente e aceito as Políticas de Uso e Regras de Intermediação do Kupila.", 9f, Kp.slate700, linha = 13.5f)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        FaIcone(if (f.politicasLidas) Fa.CIRCLE_CHECK else Fa.LOCK, 8f, if (f.politicasLidas) Kp.emerald700 else Kp.amber700); Spacer(Modifier.width(4.dp))
-                        T(if (f.politicasLidas) "Leitura concluída: já pode aceitar." else "Abra as políticas e conclua a leitura para habilitar o aceite.", 8f,
-                            if (f.politicasLidas) Kp.emerald700 else Kp.amber700)
+                        Checkbox(f.politicasAceites, vm::aceitar, modifier = Modifier.size(16.dp), colors = CheckboxDefaults.colors(checkedColor = marca.c600))
+                        T("Aceito as Políticas de Uso e Regras de Intermediação do Kupila.", 9f, Kp.slate700, linha = 13.5f, modifier = Modifier.toque { vm.aceitar(!f.politicasAceites) })
                     }
                     e.erros["politicas"]?.let { T(it, 8f, Kp.red600) }
                 }

@@ -86,6 +86,17 @@ fun PendentesEcra(vm: NegociosViewModel, aoVoltar: () -> Unit) {
         KpCabecalhoModal("Administração", "Processos Pendentes", aoVoltar, icone = Fa.LIST_CHECK, corIcone = Color.White, corKicker = Kp.yellow400,
             subtitulo = "${todos.size} processo(s) pendente(s) · toque num registo para gerir")
         Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) {
+            // Zero burocracia: pagamentos coincidentes (referência + montante, comprovativo único) e reembolsos confirmados pelo
+            // Proprietário são confirmados sozinhos neste aparelho. Os restantes ficam abaixo para decisão.
+            val auto by vm.autoConfirmar.collectAsStateWithLifecycle()
+            Row(Modifier.fillMaxWidth().background(marca.c50).padding(16.dp, 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                FaIcone(Fa.BOLT, 10f, marca.c700); Spacer(Modifier.width(8.dp))
+                Column(Modifier.weight(1f)) {
+                    T("Confirmação automática", 9.5f, Kp.slate900, 800)
+                    T("Pagamentos com referência e montante coincidentes e reembolsos confirmados pelo Proprietário.", 7.5f, Kp.slate500, linha = 11f)
+                }
+                androidx.compose.material3.Switch(auto, vm::autoConfirmar, colors = androidx.compose.material3.SwitchDefaults.colors(checkedTrackColor = marca.primaria))
+            }
             Row(Modifier.fillMaxWidth().background(Color.White).padding(16.dp, 10.dp), verticalAlignment = Alignment.CenterVertically) {
                 T("Concluídos, cancelados e expirados são excluídos automaticamente.", 7.5f, Kp.slate500, Modifier.weight(1f))
                 Row(Modifier.height(24.dp).sup(10.dp, fundo = marca.c50, borda = marca.c100).toque(aoTocar = { vm.actualizar() }).padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
